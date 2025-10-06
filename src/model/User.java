@@ -1,5 +1,5 @@
 package model;
-
+import java.util.*;
 import java.time.LocalDateTime;
 
 public class User {
@@ -18,7 +18,7 @@ public class User {
         this.password = password;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.assignedTasks = new ArrayList<>()
+        this.assignedTasks = new ArrayList<>();
     }
 
     public void addTask(Task task) {
