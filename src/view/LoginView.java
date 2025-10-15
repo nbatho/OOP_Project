@@ -92,12 +92,7 @@ public class LoginView extends JFrame {
         chkRemember = new JCheckBox("Ghi nhớ đăng nhập");
         chkRemember.setFont(new Font("Segoe UI", Font.PLAIN, UIScale.scale(13)));
         chkRemember.setOpaque(false);
-        JLabel lblForgot = new JLabel("Quên mật khẩu?");
-        lblForgot.setFont(new Font("Segoe UI", Font.PLAIN, UIScale.scale(13)));
-        lblForgot.setForeground(new Color(0x00796B));
-        lblForgot.setHorizontalAlignment(SwingConstants.RIGHT);
         rememberPanel.add(chkRemember, BorderLayout.WEST);
-        rememberPanel.add(lblForgot, BorderLayout.EAST);
         gbc.gridy = 6;
         card.add(rememberPanel, gbc);
 

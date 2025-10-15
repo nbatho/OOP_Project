@@ -15,6 +15,7 @@ public class Main {
         UIScale.init();
         LoginView view = new  LoginView();
         new LoginController(view);
+
         view.setVisible(true);
     }
 }

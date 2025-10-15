@@ -10,7 +10,7 @@ public class RegisterView extends JFrame {
     private JPasswordField txtRePassword;
     private JCheckBox chkAgree;
     private JButton btnRegister;
-    private JLabel lblLoginLink;
+    private JLabel lblLoginLink; // label thật sự dùng cho "Đăng nhập"
 
     public RegisterView() {
         setTitle("Đăng ký");
@@ -43,7 +43,7 @@ public class RegisterView extends JFrame {
                 BorderFactory.createLineBorder(new Color(230, 230, 230), 1, true),
                 BorderFactory.createEmptyBorder(UIScale.scale(30), UIScale.scale(40), UIScale.scale(30), UIScale.scale(40))
         ));
-        card.setPreferredSize(new Dimension(UIScale.scale(420), UIScale.scale(540)));
+        card.setPreferredSize(new Dimension(UIScale.scale(420), UIScale.scale(580)));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(UIScale.scale(8), 0, UIScale.scale(8), 0);
@@ -115,19 +115,25 @@ public class RegisterView extends JFrame {
         gbc.gridy = 10;
         card.add(chkAgree, gbc);
 
-        // --- Nút & đăng nhập ---
-        JPanel bottomPanel = new JPanel(new BorderLayout());
+        // --- Nút & đăng nhập (layout dọc, căn giữa) ---
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
         bottomPanel.setOpaque(false);
 
+        // --- Nút Đăng ký ---
         btnRegister = new JButton("Đăng ký");
         btnRegister.setFont(new Font("Segoe UI", Font.BOLD, UIScale.scale(14)));
         btnRegister.setBackground(new Color(0x00796B));
         btnRegister.setForeground(Color.WHITE);
         btnRegister.setFocusPainted(false);
         btnRegister.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        bottomPanel.add(btnRegister, BorderLayout.WEST);
+        btnRegister.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnRegister.setMaximumSize(new Dimension(Integer.MAX_VALUE, UIScale.scale(45))); // full width
+        bottomPanel.add(btnRegister);
+        bottomPanel.add(Box.createVerticalStrut(UIScale.scale(15)));
 
-        JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        // --- Link Đăng nhập ---
+        JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         loginPanel.setOpaque(false);
         JLabel lblHaveAcc = new JLabel("Đã có tài khoản?");
         lblHaveAcc.setFont(new Font("Segoe UI", Font.PLAIN, UIScale.scale(12)));
@@ -136,8 +142,7 @@ public class RegisterView extends JFrame {
         lblLoginLink.setForeground(new Color(0x00796B));
         loginPanel.add(lblHaveAcc);
         loginPanel.add(lblLoginLink);
-
-        bottomPanel.add(loginPanel, BorderLayout.EAST);
+        bottomPanel.add(loginPanel);
 
         gbc.gridy = 11;
         card.add(bottomPanel, gbc);
@@ -163,8 +168,12 @@ public class RegisterView extends JFrame {
         ));
     }
 
-    public static void main(String[] args) {
-        UIScale.init(); // nếu bạn có class UIScale
-        new RegisterView();
+    // --- Getter cho controller ---
+    public JButton getBtnRegister() {
+        return btnRegister;
+    }
+
+    public JLabel getLblLogin() {
+        return lblLoginLink; // sửa đúng biến thật
     }
 }

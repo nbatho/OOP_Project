@@ -14,7 +14,7 @@ public class LoginController {
             @Override
             public void mouseClicked(MouseEvent e) {
                 lview.dispose();
-                new RegisterView();
+                new RegisterController(new RegisterView());
             }
         });
 
