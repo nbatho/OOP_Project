@@ -167,13 +167,28 @@ public class RegisterView extends JFrame {
                 BorderFactory.createEmptyBorder(10, 12, 10, 12)
         ));
     }
-
     // --- Getter cho controller ---
+    public JTextField getTxtUsername() {
+        return txtFullName;
+    }
+    public JPasswordField getTxtPassword() {
+        return txtPassword;
+    }
+
+    public JPasswordField getTxtRePassword() {
+        return txtRePassword;
+    }
+
+    public JTextField getTxtEmail() {
+        return txtEmail;
+    }
+    public JCheckBox getAgree() {
+        return chkAgree;
+    }
     public JButton getBtnRegister() {
         return btnRegister;
     }
-
     public JLabel getLblLogin() {
-        return lblLoginLink; // sửa đúng biến thật
+        return lblLoginLink;
     }
 }

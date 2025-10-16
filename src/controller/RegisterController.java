@@ -2,12 +2,10 @@ package controller;
 
 import view.RegisterView;
 import view.LoginView;
-import view.Dashboard;
+import model.User;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.*;
+import java.awt.event.*;
 
 public class RegisterController {
     private final RegisterView view;
@@ -19,10 +17,7 @@ public class RegisterController {
         this.view.getBtnRegister().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Giả sử đăng ký thành công
-                Dashboard dashboard = new Dashboard();
-                dashboard.setVisible(true);
-                view.dispose();
+                handleRegister();
             }
         });
 
@@ -30,11 +25,47 @@ public class RegisterController {
         this.view.getLblLogin().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                LoginView loginView = new LoginView();
-                new LoginController(loginView);
-                loginView.setVisible(true);
-                view.dispose();
+                handleLoginRedirect();
             }
         });
+    }
+
+    private void handleRegister() {
+        String username = view.getTxtUsername().getText().trim();
+        String password = new String(view.getTxtPassword().getPassword());
+        String repassword = new String(view.getTxtRePassword().getPassword());
+        String email = view.getTxtEmail().getText().trim();
+        boolean checkAgree = view.getAgree().isSelected();
+        // Kiểm tra dữ liệu nhập vào
+        if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
+            JOptionPane.showMessageDialog(view, "Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
+
+        if (!password.equals(repassword)) {
+            JOptionPane.showMessageDialog(view, "Mật khẩu nhập lại không khớp!");
+            return;
+        }
+        if (!view.getAgree().isSelected()) {
+            JOptionPane.showMessageDialog(view,
+                    "Bạn cần đồng ý với Điều khoản sử dụng và Chính sách bảo mật trước khi đăng ký!",
+                    "Cảnh báo",
+                    JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        // Gọi model User để tạo tài khoản
+        if (User.createAccount(username, password, email)) {
+            JOptionPane.showMessageDialog(view, "Tạo tài khoản thành công!");
+            handleLoginRedirect();
+        } else {
+            JOptionPane.showMessageDialog(view, "Tên đăng nhập đã tồn tại hoặc lỗi hệ thống!");
+        }
+    }
+
+    private void handleLoginRedirect() {
+        LoginView loginView = new LoginView();
+        new LoginController(loginView);
+        loginView.setVisible(true);
+        view.dispose();
     }
 }
