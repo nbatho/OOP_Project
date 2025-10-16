@@ -50,7 +50,7 @@ public class User {
     }
     public static boolean checkLogin(String email, String password,boolean remember) {
 
-        return false;
+        return true;
     }
 
     // Getter && Setter
