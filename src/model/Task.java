@@ -183,7 +183,7 @@ public class Task {
                 ", status='" + status + '\'' +
                 ", priority='" + priority + '\'' +
                 ", deadline=" + deadline +
-                ", assignee=" + (assignee != null ? assignee.getName() : "null") +
+                ", assignee=" + (assignee != null ? assignee.getUsername() : "null") +
                 ", project=" + (project != null ? project.getName() : "null") +
                 '}';
     }

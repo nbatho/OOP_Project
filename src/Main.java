@@ -2,6 +2,7 @@ import javax.swing.*;
 import view.LoginView;
 import controller.LoginController;
 import view.UIScale;
+import controller.UserController;
 public class Main {
     public static void main(String[] args) {
         try {
@@ -12,6 +13,7 @@ public class Main {
                 }
             }
         } catch (Exception ignored) {}
+        UserController.seedSampleUsers();
         UIScale.init();
         LoginView view = new  LoginView();
         new LoginController(view);

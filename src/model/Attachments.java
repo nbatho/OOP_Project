@@ -74,7 +74,7 @@ public class Attachments {
                 "id=" + id +
                 ", filePath='" + filePath + '\'' +
                 ", uploadedAt=" + uploadedAt +
-                ", uploader=" + (uploader != null ? uploader.getName() : "null") +
+                ", uploader=" + (uploader != null ? uploader.getUsername() : "null") +
                 ", task=" + (task != null ? task.getTitle() : "null") +
                 '}';
     }

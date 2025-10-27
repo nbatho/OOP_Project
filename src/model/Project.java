@@ -118,7 +118,7 @@ public class Project {
                 ", description='" + description + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
-                ", owner=" + (owner != null ? owner.getName() : "null") +
+                ", owner=" + (owner != null ? owner.getUsername() : "null") +
                 ", taskCount=" + (tasks != null ? tasks.size() : 0) +
                 '}';
     }

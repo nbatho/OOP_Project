@@ -6,7 +6,6 @@ import java.awt.*;
 public class LoginView extends JFrame {
     private JTextField txtUsername;
     private JPasswordField txtPassword;
-    private JCheckBox chkRemember;
     private JButton btnLogin;
     private JLabel lblRegister;
     public LoginView() {
@@ -87,14 +86,6 @@ public class LoginView extends JFrame {
         gbc.gridy = 5;
         card.add(txtPassword, gbc);
 
-        JPanel rememberPanel = new JPanel(new BorderLayout());
-        rememberPanel.setOpaque(false);
-        chkRemember = new JCheckBox("Ghi nhớ đăng nhập");
-        chkRemember.setFont(new Font("Segoe UI", Font.PLAIN, UIScale.scale(13)));
-        chkRemember.setOpaque(false);
-        rememberPanel.add(chkRemember, BorderLayout.WEST);
-        gbc.gridy = 6;
-        card.add(rememberPanel, gbc);
 
         btnLogin = new JButton("Đăng nhập");
         btnLogin.setFont(new Font("Segoe UI", Font.BOLD, UIScale.scale(14)));
@@ -134,5 +125,4 @@ public class LoginView extends JFrame {
     public JLabel getLblRegister() { return lblRegister; }
     public JTextField getTxtUsername() { return txtUsername; }
     public JPasswordField getTxtPassword() { return txtPassword; }
-    public JCheckBox getChkRemember() { return chkRemember; }
 }

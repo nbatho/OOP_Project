@@ -74,7 +74,7 @@ public class Comments {
                 "id=" + id +
                 ", content='" + content + '\'' +
                 ", createdAt=" + createdAt +
-                ", user=" + (user != null ? user.getName() : "null") +
+                ", user=" + (user != null ? user.getUsername() : "null") +
                 ", task=" + (task != null ? task.getTitle() : "null") +
                 '}';
     }

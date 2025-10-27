@@ -28,6 +28,8 @@ public class RegisterController {
                 handleLoginRedirect();
             }
         });
+
+        this.view.setVisible(true);
     }
 
     private void handleRegister() {
@@ -35,8 +37,7 @@ public class RegisterController {
         String password = new String(view.getTxtPassword().getPassword());
         String repassword = new String(view.getTxtRePassword().getPassword());
         String email = view.getTxtEmail().getText().trim();
-        boolean checkAgree = view.getAgree().isSelected();
-        // Kiểm tra dữ liệu nhập vào
+
         if (username.isEmpty() || password.isEmpty() || email.isEmpty()) {
             JOptionPane.showMessageDialog(view, "Vui lòng nhập đầy đủ thông tin!");
             return;
@@ -46,6 +47,7 @@ public class RegisterController {
             JOptionPane.showMessageDialog(view, "Mật khẩu nhập lại không khớp!");
             return;
         }
+
         if (!view.getAgree().isSelected()) {
             JOptionPane.showMessageDialog(view,
                     "Bạn cần đồng ý với Điều khoản sử dụng và Chính sách bảo mật trước khi đăng ký!",
@@ -53,12 +55,14 @@ public class RegisterController {
                     JOptionPane.WARNING_MESSAGE);
             return;
         }
-        // Gọi model User để tạo tài khoản
-        if (User.createAccount(username, password, email)) {
+
+        boolean created = UserController.createAccount(username, email, password);
+
+        if (created) {
             JOptionPane.showMessageDialog(view, "Tạo tài khoản thành công!");
             handleLoginRedirect();
         } else {
-            JOptionPane.showMessageDialog(view, "Tên đăng nhập đã tồn tại hoặc lỗi hệ thống!");
+            JOptionPane.showMessageDialog(view, "Tên đăng nhập hoặc email đã tồn tại!");
         }
     }
 
