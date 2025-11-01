@@ -4,9 +4,12 @@ import view.LoginView;
 import view.RegisterView;
 import view.DashboardView;
 import model.User;
+import view.TableView;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 
@@ -36,7 +39,13 @@ public class LoginController {
                 if (User.checkLogin(username, password,remember)) {
                     JOptionPane.showMessageDialog(lview, "Đăng nhập thành công!");
                     lview.dispose();
-                    new DashboardView();
+                    //new DashboardView();
+                    JFrame frame = new JFrame("Bảng công việc");
+                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    frame.setSize(1200, 800);
+                    frame.setLocationRelativeTo(null);
+                    frame.add(new TableView());
+                    frame.setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(lview, "Sai tài khoản hoặc mật khẩu!");
                 }
