@@ -3,26 +3,21 @@ package view;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-
 
 public class DashboardView extends JFrame {
 
-    // ===================== STYLE CONSTANTS =====================
+    // Style constants
     private static final Color COLOR_BACKGROUND = new Color(0xF4F5F7);
     private static final Color COLOR_CARD = new Color(0xFFFFFF);
     private static final Color COLOR_BORDER = new Color(0xE0E0E0);
     private static final Color COLOR_TEXT_PRIMARY = new Color(0x333333);
     private static final Color COLOR_TEXT_MUTED = new Color(0x666666);
     private static final Color COLOR_PRIMARY = new Color(0x3B82F6);
-
     private static final Font FONT_BOLD = new Font("Segoe UI", Font.BOLD, 14);
     private static final Font FONT_NORMAL = new Font("Segoe UI", Font.PLAIN, 12);
     private static final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 24);
 
-    // ===================== UI COMPONENTS =====================
-    // Header components
+    // Header components (public để Controller truy cập)
     public JToggleButton kanbanButton;
     public JToggleButton tableButton;
     public JToggleButton calendarButton;
@@ -32,15 +27,11 @@ public class DashboardView extends JFrame {
     public JButton notifyButton;
     public JButton loginButton;
 
-    // Sidebar & Kanban Panels
+    // Panels
     private JPanel sidebarPanel;
-    private JPanel kanbanPanel;
+    public JPanel mainContentPanel;
+    public CardLayout cardLayout;
 
-    // Lưu tham chiếu các cột Kanban theo tên
-    public Map<String, JPanel> kanbanColumns = new HashMap<>();
-
-
-    // ===================== CONSTRUCTOR =====================
     public DashboardView() {
         setTitle("Quản lý Công việc Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,8 +41,6 @@ public class DashboardView extends JFrame {
         setVisible(true);
     }
 
-
-    // ===================== MAIN UI LAYOUT =====================
     private void initUI() {
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout(10, 10));
@@ -59,11 +48,12 @@ public class DashboardView extends JFrame {
 
         add(createHeaderPanel(), BorderLayout.NORTH);
         add(createSidebarPanel(), BorderLayout.WEST);
-        add(createKanbanBoardPanel(), BorderLayout.CENTER);
+
+        cardLayout = new CardLayout();
+        mainContentPanel = new JPanel(cardLayout);
+        add(mainContentPanel, BorderLayout.CENTER);
     }
 
-
-    // ===================== HEADER PANEL =====================
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(COLOR_CARD);
@@ -78,7 +68,7 @@ public class DashboardView extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // --- Tiêu đề Dashboard ---
+        // Tiêu đề
         JPanel titlePanel = new JPanel();
         titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.Y_AXIS));
         titlePanel.setOpaque(false);
@@ -91,11 +81,10 @@ public class DashboardView extends JFrame {
         titlePanel.add(titleLabel);
         titlePanel.add(subtitleLabel);
         gbc.gridx = 0;
-        gbc.gridy = 0;
         gbc.weightx = 1.0;
         topRow.add(titlePanel, gbc);
 
-        // ---  Chọn chế độ hiển thị (Kanban / Bảng / Lịch) ---
+        // Toggle view
         kanbanButton = new JToggleButton("Kanban", true);
         tableButton = new JToggleButton("Bảng");
         calendarButton = new JToggleButton("Lịch");
@@ -103,7 +92,7 @@ public class DashboardView extends JFrame {
         viewGroup.add(kanbanButton);
         viewGroup.add(tableButton);
         viewGroup.add(calendarButton);
-        JPanel viewTogglePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        JPanel viewTogglePanel = new JPanel();
         viewTogglePanel.setOpaque(false);
         viewTogglePanel.add(kanbanButton);
         viewTogglePanel.add(tableButton);
@@ -112,14 +101,10 @@ public class DashboardView extends JFrame {
         gbc.weightx = 0;
         topRow.add(viewTogglePanel, gbc);
 
-        // ---  Thanh tìm kiếm và nút hành động ---
+        // Search and buttons
         gbc.gridx = 2;
         searchField = new JTextField(" Tìm kiếm...", 20);
-        searchField.setBackground(COLOR_BACKGROUND);
-        searchField.setForeground(COLOR_TEXT_MUTED);
-        searchField.setBorder(new LineBorder(COLOR_BORDER));
         topRow.add(searchField, gbc);
-
         gbc.gridx = 3;
         filterButton = new JButton("Lọc");
         topRow.add(filterButton, gbc);
@@ -137,8 +122,6 @@ public class DashboardView extends JFrame {
         return headerPanel;
     }
 
-
-    // ===================== SIDEBAR PANEL =====================
     private JPanel createSidebarPanel() {
         sidebarPanel = new JPanel();
         sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
@@ -146,7 +129,6 @@ public class DashboardView extends JFrame {
         sidebarPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         sidebarPanel.setPreferredSize(new Dimension(320, 0));
 
-        // Các phần trong sidebar được để trống, Controller sẽ bổ sung nội dung
         sidebarPanel.add(createPlaceholderCard("Thông tin dự án"));
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         sidebarPanel.add(createPlaceholderCard("Thành viên nhóm"));
@@ -169,63 +151,5 @@ public class DashboardView extends JFrame {
         label.setForeground(COLOR_TEXT_MUTED);
         card.add(label, BorderLayout.CENTER);
         return card;
-    }
-
-
-    // ===================== KANBAN BOARD PANEL =====================
-    private JPanel createKanbanBoardPanel() {
-        kanbanPanel = new JPanel();
-        kanbanPanel.setLayout(new GridLayout(1, 4, 15, 0));
-        kanbanPanel.setBackground(COLOR_BACKGROUND);
-        kanbanPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
-
-        addKanbanColumn("Cần làm");
-        addKanbanColumn("Đang làm");
-        addKanbanColumn("Đang review");
-        addKanbanColumn("Hoàn thành");
-
-        return kanbanPanel;
-    }
-
-    private void addKanbanColumn(String title) {
-        JPanel columnPanel = new JPanel(new BorderLayout(10, 10));
-        columnPanel.setBackground(COLOR_CARD);
-        columnPanel.setBorder(new LineBorder(COLOR_BORDER));
-
-        JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(FONT_BOLD);
-        titleLabel.setForeground(COLOR_TEXT_PRIMARY);
-        titleLabel.setBorder(new EmptyBorder(10, 10, 10, 10));
-        columnPanel.add(titleLabel, BorderLayout.NORTH);
-
-        JPanel taskListPanel = new JPanel();
-        taskListPanel.setOpaque(false);
-        taskListPanel.setLayout(new BoxLayout(taskListPanel, BoxLayout.Y_AXIS));
-        columnPanel.add(taskListPanel, BorderLayout.CENTER);
-
-
-        kanbanPanel.add(columnPanel);
-        kanbanColumns.put(title, taskListPanel);
-    }
-
-    // ===================== PUBLIC METHODS =====================
-
-
-    public void clearAllTasks() {
-        for (JPanel listPanel : kanbanColumns.values()) {
-            listPanel.removeAll();
-            listPanel.revalidate();
-            listPanel.repaint();
-        }
-    }
-
-
-    public void addTaskToColumn(String columnName, JComponent taskComponent) {
-        JPanel target = kanbanColumns.get(columnName);
-        if (target != null) {
-            target.add(taskComponent);
-            target.revalidate();
-            target.repaint();
-        }
     }
 }

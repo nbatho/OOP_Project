@@ -41,8 +41,7 @@ public class LoginController {
                 if (user != null) {
                     JOptionPane.showMessageDialog(lview, "Đăng nhập thành công! Xin chào ");
                     lview.dispose();
-                        new DashboardView();
-//                    new DashboardController(new DashboardView(), user);
+                    new DashboardController(new DashboardView());
                 } else {
                     JOptionPane.showMessageDialog(lview, "Sai tài khoản hoặc mật khẩu!");
                 }
