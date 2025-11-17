@@ -56,14 +56,15 @@ public class RegisterController {
             return;
         }
 
-        boolean created = UserController.createAccount(username, email, password);
+//        boolean created = UserController.createAccount(username, email, password);
 
-        if (created) {
-            JOptionPane.showMessageDialog(view, "Tạo tài khoản thành công!");
-            handleLoginRedirect();
-        } else {
-            JOptionPane.showMessageDialog(view, "Tên đăng nhập hoặc email đã tồn tại!");
-        }
+//        if (created) {
+//            JOptionPane.showMessageDialog(view, "Tạo tài khoản thành công!");
+//            handleLoginRedirect();
+//        } else {
+//            JOptionPane.showMessageDialog(view, "Tên đăng nhập hoặc email đã tồn tại!");
+//        }
+
     }
 
     private void handleLoginRedirect() {

@@ -1,64 +1,36 @@
 package model;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 public class User {
-    private String id;
-    private String username;
+    private String user_id;
+    private String full_name;
     private String email;
     private String password;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private List<Task> assignedTasks;
+    private String role;
 
-    public User(String id, String username, String email, String password) {
-        this.id = id;
-        setUsername(username);
-        setEmail(email);
-        setPassword(password);
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-        this.assignedTasks = new ArrayList<>();
+    public User() {}
+
+    public User(String user_id, String full_name, String email, String password, String role) {
+        this.user_id = user_id;
+        this.full_name = full_name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
     }
 
-    // ================== HÀNH VI CỦA USER ==================
-    public void addTask(Task task) {
-        assignedTasks.add(task);
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void removeTask(Task task) {
-        assignedTasks.remove(task);
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
-    public boolean authenticate(String password) {
-        return this.password.equals(password);
+    public String getFull_name() {
+        return full_name;
     }
 
-    public void updateUser(String username, String email) {
-        setUsername(username);
-        setEmail(email);
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    // ================== GETTER & SETTER ==================
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        if (id.isEmpty()) this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        if (username != null && !username.isEmpty()) {
-            this.username = username;
-        }
+    public void setFull_name(String full_name) {
+        this.full_name = full_name;
     }
 
     public String getEmail() {
@@ -66,9 +38,7 @@ public class User {
     }
 
     public void setEmail(String email) {
-        if (email != null && email.contains("@")) {
-            this.email = email;
-        }
+        this.email = email;
     }
 
     public String getPassword() {
@@ -76,24 +46,25 @@ public class User {
     }
 
     public void setPassword(String password) {
-        if (password != null && password.length() >= 4) {
-            this.password = password;
-        }
+        this.password = password;
     }
 
-    public List<Task> getAssignedTasks() {
-        return assignedTasks;
+    public String getRole() {
+        return role;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public void setRole(String role) {
+        this.role = role;
     }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    @Override
+    public String toString() {
+        return "User{" +
+                "user_id='" + user_id + '\'' +
+                ", full_name='" + full_name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

@@ -1,82 +1,47 @@
 package model;
-import java.time.LocalDateTime;
+
 public class Comments {
-    private int id;
-    private String content;
-    private LocalDateTime createdAt;
-    private User user;
-    private Task task;
+    private String comment_id;
+    private String task_id;
+    private String user_id;
+    private String body;
 
-    // ===== Constructor =====
-    public Comments(int id, String content, User user, Task task) {
-        this.id = id;
-        this.content = content;
-        this.user = user;
-        this.task = task;
-//        this.createdAt = LocalDateTime.now();
+    public Comments(String comment_id, String task_id, String user_id, String body) {
+        this.comment_id = comment_id;
+        this.task_id = task_id;
+        this.user_id = user_id;
+        this.body = body;
     }
 
-    // ===== Business Methods =====
-    public void addComment(String newContent) {
-        this.content = newContent;
-//        this.createdAt = LocalDateTime.now();
+    public String getComment_id() {
+        return comment_id;
     }
 
-    public void deleteComment() {
-        this.content = "[deleted]";
+    public void setComment_id(String comment_id) {
+        this.comment_id = comment_id;
     }
 
-    // ===== Getter & Setter =====
-    public int getId() {
-        return id;
+    public String getTask_id() {
+        return task_id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setTask_id(String task_id) {
+        this.task_id = task_id;
     }
 
-    public String getContent() {
-        return content;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
-//    public LocalDateTime getCreatedAt() {
-//        return createdAt;
-//    }
-
-//    public void setCreatedAt(LocalDateTime createdAt) {
-//        this.createdAt = createdAt;
-//    }
-
-    public User getUser() {
-        return user;
+    public String getBody() {
+        return body;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setBody(String body) {
+        this.body = body;
     }
-
-    public Task getTask() {
-        return task;
-    }
-
-    public void setTask(Task task) {
-        this.task = task;
-    }
-
-    // ===== toString =====
-    @Override
-    public String toString() {
-        return "Comment{" +
-                "id=" + id +
-                ", content='" + content + '\'' +
-                ", createdAt=" + createdAt +
-                ", user=" + (user != null ? user.getUsername() : "null") +
-                ", task=" + (task != null ? task.getTitle() : "null") +
-                '}';
-    }
-
 }

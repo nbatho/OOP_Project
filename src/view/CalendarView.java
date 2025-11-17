@@ -53,7 +53,7 @@ public class CalendarView extends JPanel {
         leftPanel.setBorder(new TitledBorder("Chọn ngày"));
 
         JCalendar calendar = new JCalendar();
-        calendar.setWeekOfYearVisible(false); // ✅ Ẩn cột số tuần (18,19,...)
+        calendar.setWeekOfYearVisible(false);
         calendar.addPropertyChangeListener("calendar", evt -> {
             Calendar cal = (Calendar) evt.getNewValue();
             if (cal != null) {
@@ -96,19 +96,19 @@ public class CalendarView extends JPanel {
 
 
     private void updateTaskList() {
-        List<String> todayTasks = new ArrayList<>();
-        for (Task t : tasks) {
-            if (t.getDeadline() != null && t.getDeadline().isEqual(selectedDate)) {
-                todayTasks.add(t.getTitle() + " - " + t.getStatus());
-            }
-        }
-
-        if (todayTasks.isEmpty()) {
-            todayTasks.add("Không có công việc nào trong ngày này");
-        }
-
-        taskList.setListData(todayTasks.toArray(new String[0]));
-        dateLabel.setText("Công việc ngày " + selectedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+//        List<String> todayTasks = new ArrayList<>();
+//        for (Task t : tasks) {
+//            if (t.getDeadline() != null && t.getDeadline().isEqual(selectedDate)) {
+//                todayTasks.add(t.getTitle() + " - " + t.getStatus());
+//            }
+//        }
+//
+//        if (todayTasks.isEmpty()) {
+//            todayTasks.add("Không có công việc nào trong ngày này");
+//        }
+//
+//        taskList.setListData(todayTasks.toArray(new String[0]));
+//        dateLabel.setText("Công việc ngày " + selectedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
 
 
@@ -117,23 +117,23 @@ public class CalendarView extends JPanel {
     }
 
     public void updateTaskList(List<Task> tasks, LocalDate date) {
-        List<String> lines = new ArrayList<>();
-        for (Task t : tasks) {
-            lines.add(t.getTitle() + " - " + t.getStatus() + " (" + t.getPriority() + ")");
-        }
-        if (lines.isEmpty()) lines.add("Không có công việc trong ngày này");
-
-        taskList.setListData(lines.toArray(new String[0]));
-        dateLabel.setText("Công việc ngày " + date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+//        List<String> lines = new ArrayList<>();
+//        for (Task t : tasks) {
+//            lines.add(t.getTitle() + " - " + t.getStatus() + " (" + t.getPriority() + ")");
+//        }
+//        if (lines.isEmpty()) lines.add("Không có công việc trong ngày này");
+//
+//        taskList.setListData(lines.toArray(new String[0]));
+//        dateLabel.setText("Công việc ngày " + date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
 
 
     public void updateUpcomingList(List<Task> tasks) {
-        List<String> lines = new ArrayList<>();
-        for (Task t : tasks) {
-            lines.add(t.getTitle() + " - hạn: " + t.getDeadline().format(DateTimeFormatter.ofPattern("dd/MM")));
-        }
-        if (lines.isEmpty()) lines.add("Không có công việc nào sắp đến hạn");
-        upcomingList.setListData(lines.toArray(new String[0]));
+//        List<String> lines = new ArrayList<>();
+//        for (Task t : tasks) {
+//            lines.add(t.getTitle() + " - hạn: " + t.getDeadline().format(DateTimeFormatter.ofPattern("dd/MM")));
+//        }
+//        if (lines.isEmpty()) lines.add("Không có công việc nào sắp đến hạn");
+//        upcomingList.setListData(lines.toArray(new String[0]));
     }
 }

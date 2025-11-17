@@ -36,7 +36,7 @@ public class LoginController {
                     return;
                 }
 
-                // Gọi controller xử lý nghiệp vụ đăng nhập
+
                 User user = UserController.checkLogin(name, password);
                 if (user != null) {
                     JOptionPane.showMessageDialog(lview, "Đăng nhập thành công! Xin chào ");

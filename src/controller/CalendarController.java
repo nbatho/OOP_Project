@@ -45,18 +45,20 @@ public class CalendarController {
 
 
     private List<Task> getTasksByDate(LocalDate date) {
-        return tasks.stream()
-                .filter(t -> t.getDeadline() != null && t.getDeadline().isEqual(date))
-                .collect(Collectors.toList());
+//        return tasks.stream()
+//                .filter(t -> t.getDeadline() != null && t.getDeadline().isEqual(date))
+//                .collect(Collectors.toList());
+        return tasks;
     }
 
 
     private List<Task> getUpcomingTasks() {
-        LocalDate today = LocalDate.now();
-        return tasks.stream()
-                .filter(t -> t.getDeadline() != null && !t.getDeadline().isBefore(today))
-                .sorted(Comparator.comparing(Task::getDeadline))
-                .limit(5)
-                .collect(Collectors.toList());
+//        LocalDate today = LocalDate.now();
+//        return tasks.stream()
+//                .filter(t -> t.getDeadline() != null && !t.getDeadline().isBefore(today))
+//                .sorted(Comparator.comparing(Task::getDeadline))
+//                .limit(5)
+//                .collect(Collectors.toList());
+        return tasks;
     }
 }
