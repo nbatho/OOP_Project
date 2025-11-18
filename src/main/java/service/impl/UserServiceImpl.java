@@ -1,4 +1,6 @@
 package main.java.service.impl;
 
-public class UserServiceImpl {
+import main.java.service.UserService;
+
+public class UserServiceImpl implements UserService {
 }

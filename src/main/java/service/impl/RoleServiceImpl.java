@@ -1,4 +1,6 @@
 package main.java.service.impl;
 
-public class RoleServiceImpl {
+import main.java.service.RoleService;
+
+public class RoleServiceImpl implements RoleService {
 }

@@ -1,4 +1,6 @@
 package main.java.service.impl;
 
-public class CommentServiceImpl {
+import main.java.service.CommentService;
+
+public class CommentServiceImpl implements CommentService {
 }

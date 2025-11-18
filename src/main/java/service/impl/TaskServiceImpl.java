@@ -1,4 +1,6 @@
 package main.java.service.impl;
 
-public class TaskServiceImpl {
+import main.java.service.TaskService;
+
+public class TaskServiceImpl implements TaskService {
 }

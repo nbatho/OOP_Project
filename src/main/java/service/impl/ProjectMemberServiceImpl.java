@@ -1,4 +1,6 @@
 package main.java.service.impl;
 
-public class ProjectMemberServiceImpl {
+import main.java.service.ProjectMemberService;
+
+public class ProjectMemberServiceImpl implements ProjectMemberService {
 }

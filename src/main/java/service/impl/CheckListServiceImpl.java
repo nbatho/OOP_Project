@@ -1,4 +1,6 @@
 package main.java.service.impl;
 
-public class CheckListServiceImpl {
+import main.java.service.CheckListService;
+
+public class CheckListServiceImpl implements CheckListService {
 }

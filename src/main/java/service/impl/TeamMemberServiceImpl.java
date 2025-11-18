@@ -1,4 +1,6 @@
 package main.java.service.impl;
 
-public class TeamMemberServiceImpl {
+import main.java.service.TeamMemberService;
+
+public class TeamMemberServiceImpl implements TeamMemberService {
 }

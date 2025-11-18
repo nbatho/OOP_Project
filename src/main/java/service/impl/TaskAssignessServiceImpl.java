@@ -1,4 +1,6 @@
 package main.java.service.impl;
 
-public class TaskAssignessServiceImpl {
+import main.java.service.TaskAssignessService;
+
+public class TaskAssignessServiceImpl implements TaskAssignessService {
 }
