@@ -1,8 +1,8 @@
 import javax.swing.*;
-import view.LoginView;
-import controller.LoginController;
-import view.UIScale;
-import controller.UserController;
+import main.java.view.LoginView;
+import main.java.controller.LoginController;
+import main.java.view.UIScale;
+import main.java.controller.UserController;
 public class Main {
     public static void main(String[] args) {
         try {
