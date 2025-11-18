@@ -15,7 +15,7 @@ public class RegisterView extends JFrame {
     public RegisterView() {
         setTitle("Đăng ký");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(UIScale.scale(680), UIScale.scale(1020));
+        setSize(UIScale.scale(600), UIScale.scale(800));
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         initUI();
@@ -31,7 +31,7 @@ public class RegisterView extends JFrame {
         lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, UIScale.scale(15)));
         lblSubtitle.setForeground(Color.DARK_GRAY);
 
-        JPanel titlePanel = new JPanel(new GridLayout(2, 1, 0, UIScale.scale(8)));
+        JPanel titlePanel = new JPanel(new GridLayout(2, 1, 0, UIScale.scale(5)));
         titlePanel.setOpaque(false);
         titlePanel.add(lblTitle);
         titlePanel.add(lblSubtitle);
@@ -41,12 +41,11 @@ public class RegisterView extends JFrame {
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(230, 230, 230), 1, true),
-                BorderFactory.createEmptyBorder(UIScale.scale(30), UIScale.scale(40), UIScale.scale(30), UIScale.scale(40))
+                BorderFactory.createEmptyBorder(UIScale.scale(25), UIScale.scale(20), UIScale.scale(25), UIScale.scale(20))
         ));
-        card.setPreferredSize(new Dimension(UIScale.scale(420), UIScale.scale(580)));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(UIScale.scale(8), 0, UIScale.scale(8), 0);
+        gbc.insets = new Insets(UIScale.scale(6), 0, UIScale.scale(6), 0); // Giảm từ 8 xuống 6
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.weightx = 1;
@@ -70,7 +69,7 @@ public class RegisterView extends JFrame {
         gbc.gridy = 2;
         card.add(lblName, gbc);
 
-        txtFullName = new JTextField("Nguyễn Văn A");
+        txtFullName = new JTextField("");
         styleInput(txtFullName);
         gbc.gridy = 3;
         card.add(txtFullName, gbc);
@@ -81,7 +80,7 @@ public class RegisterView extends JFrame {
         gbc.gridy = 4;
         card.add(lblEmail, gbc);
 
-        txtEmail = new JTextField("example@email.com");
+        txtEmail = new JTextField("");
         styleInput(txtEmail);
         gbc.gridy = 5;
         card.add(txtEmail, gbc);
@@ -92,7 +91,7 @@ public class RegisterView extends JFrame {
         gbc.gridy = 6;
         card.add(lblPassword, gbc);
 
-        txtPassword = new JPasswordField("Tối thiểu 6 ký tự");
+        txtPassword = new JPasswordField("");
         styleInput(txtPassword);
         gbc.gridy = 7;
         card.add(txtPassword, gbc);
@@ -103,7 +102,7 @@ public class RegisterView extends JFrame {
         gbc.gridy = 8;
         card.add(lblRePassword, gbc);
 
-        txtRePassword = new JPasswordField("Nhập lại mật khẩu");
+        txtRePassword = new JPasswordField("");
         styleInput(txtRePassword);
         gbc.gridy = 9;
         card.add(txtRePassword, gbc);
@@ -128,9 +127,9 @@ public class RegisterView extends JFrame {
         btnRegister.setFocusPainted(false);
         btnRegister.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         btnRegister.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnRegister.setMaximumSize(new Dimension(Integer.MAX_VALUE, UIScale.scale(45))); // full width
+        btnRegister.setMaximumSize(new Dimension(Integer.MAX_VALUE, UIScale.scale(45)));
         bottomPanel.add(btnRegister);
-        bottomPanel.add(Box.createVerticalStrut(UIScale.scale(15)));
+        bottomPanel.add(Box.createVerticalStrut(UIScale.scale(10))); // Giảm từ 15 xuống 10
 
         // --- Link Đăng nhập ---
         JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
@@ -151,15 +150,22 @@ public class RegisterView extends JFrame {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(new Color(0xF8FDFD));
-        content.add(Box.createVerticalStrut(UIScale.scale(40)));
+        content.setBorder(BorderFactory.createEmptyBorder(
+                UIScale.scale(30),  // top - giảm từ 40
+                UIScale.scale(50),  // left - padding 2 bên
+                UIScale.scale(30),  // bottom - giảm từ 40
+                UIScale.scale(50)   // right - padding 2 bên
+        ));
+        content.add(Box.createVerticalStrut(UIScale.scale(20))); // Giảm từ 40 xuống 20
         content.add(titlePanel);
-        content.add(Box.createVerticalStrut(UIScale.scale(40)));
+        content.add(Box.createVerticalStrut(UIScale.scale(20))); // Giảm từ 40 xuống 20
         content.add(card);
+        content.add(Box.createVerticalStrut(UIScale.scale(20))); // Giảm từ 40 xuống 20
 
         add(content, BorderLayout.CENTER);
     }
 
-    // Hàm style input giống web
+
     private void styleInput(JTextField field) {
         field.setFont(new Font("Segoe UI", Font.PLAIN, UIScale.scale(14)));
         field.setBorder(BorderFactory.createCompoundBorder(

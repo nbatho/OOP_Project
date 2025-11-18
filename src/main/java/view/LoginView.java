@@ -11,7 +11,7 @@ public class LoginView extends JFrame {
     public LoginView() {
         setTitle("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(UIScale.scale(680), UIScale.scale(1020));
+        setSize(UIScale.scale(600), UIScale.scale(800));
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         initUI();
@@ -37,7 +37,7 @@ public class LoginView extends JFrame {
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(230, 230, 230), 1, true),
-                BorderFactory.createEmptyBorder(UIScale.scale(25), UIScale.scale(35), UIScale.scale(25), UIScale.scale(35))
+                BorderFactory.createEmptyBorder(UIScale.scale(25), UIScale.scale(20), UIScale.scale(25), UIScale.scale(20))
         ));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -112,11 +112,12 @@ public class LoginView extends JFrame {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(new Color(0xF9F9F9));
+        content.setBorder(BorderFactory.createEmptyBorder(0, UIScale.scale(50), 0, UIScale.scale(50))); // Thêm dòng này
         content.add(Box.createVerticalStrut(UIScale.scale(40)));
         content.add(titlePanel);
         content.add(Box.createVerticalStrut(UIScale.scale(30)));
         content.add(card);
-
+        content.add(Box.createVerticalStrut(UIScale.scale(40)));
         add(content, BorderLayout.CENTER);
     }
 
