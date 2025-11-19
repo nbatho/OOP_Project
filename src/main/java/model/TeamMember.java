@@ -1,20 +1,20 @@
 package main.java.model;
 
 public class TeamMember {
-    private String project_id;
+    private String team_id;
     private String user_id;
     private String role_id;
 
     public TeamMember() {}
-    public TeamMember(String project_id, String user_id, String role_id) {
-        this.project_id = project_id;
+    public TeamMember(String team_id, String user_id, String role_id) {
+        this.team_id = team_id;
         this.user_id = user_id;
         this.role_id = role_id;
     }
 
     //Getter
-    public String getProject_id() {
-        return project_id;
+    public String getTeam_id() {
+        return team_id;
     }
 
     public String getUser_id() {
@@ -26,8 +26,8 @@ public class TeamMember {
     }
 
     //Setter
-    public void setProject_id(String project_id) {
-        this.project_id = project_id;
+    public void setTeam_id(String project_id) {
+        this.team_id = project_id;
     }
 
     public void setUser_id(String user_id) {
@@ -41,7 +41,7 @@ public class TeamMember {
     @Override
     public String toString() {
         return "TeamMember{" +
-                "project_id='" + project_id + '\'' +
+                "project_id='" + team_id + '\'' +
                 ", user_id='" + user_id + '\'' +
                 ", role_id='" + role_id + '\'' +
                 '}';
