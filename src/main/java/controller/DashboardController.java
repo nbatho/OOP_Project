@@ -1,5 +1,7 @@
 package main.java.controller;
 
+import main.java.component.ProjectCard;
+import main.java.component.TaskCard;
 import main.java.view.*;
 
 import javax.swing.*;
@@ -61,7 +63,7 @@ public class DashboardController {
     }
 
     private void handleCreateProject() {
-        ProjectCardView projectCardView = new ProjectCardView();
+        ProjectCard projectCardView = new ProjectCard();
         projectCardView.getBtnSave().addActionListener(e -> {
             String title = projectCardView.getTxtTitle().getText();
             String description = projectCardView.getTxtDescription().getText();
@@ -94,7 +96,7 @@ public class DashboardController {
     }
     private void handleShowCard() {
 
-        TaskCardView taskCardView = new TaskCardView();
+        TaskCard taskCardView = new TaskCard();
         // Có thể thêm listener cho nút Save nếu cần
         taskCardView.getBtnSave().addActionListener(e -> {
             // Xử lý lưu task

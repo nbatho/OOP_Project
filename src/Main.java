@@ -1,7 +1,7 @@
 import javax.swing.*;
 import main.java.view.LoginView;
 import main.java.controller.LoginController;
-import main.java.view.UIScale;
+import main.java.view.GlobalStyle;
 import main.java.controller.UserController;
 public class Main {
     public static void main(String[] args) {
@@ -14,7 +14,7 @@ public class Main {
             }
         } catch (Exception ignored) {}
         UserController.seedSampleUsers();
-        UIScale.init();
+        GlobalStyle.init();
         LoginView view = new  LoginView();
         new LoginController(view);
 

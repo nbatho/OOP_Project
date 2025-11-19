@@ -14,26 +14,13 @@ public class TableView extends JPanel {
     public JToggleButton btnFrontend, btnBackend, btnDevOps, btnTesting;
 
     // ===== Theme =====
-    public static final Color COLOR_BACKGROUND   = new Color(0xF4F5F7);
-    public static final Color COLOR_CARD         = Color.WHITE;
-    public static final Color COLOR_BORDER       = new Color(0xE0E0E0);
-    public static final Color COLOR_TEXT_PRIMARY = new Color(0x333333);
-    public static final Color COLOR_TEXT_MUTED   = new Color(0x666666);
-    public static final Color COLOR_PRIMARY      = new Color(0x3B82F6);
-    public static final Color COLOR_SUCCESS      = new Color(0x22C55E);
+    GlobalStyle style = new GlobalStyle();
 
-    public static final Font FONT_BOLD   = new Font("Segoe UI", Font.BOLD, 14);
-    public static final Font FONT_NORMAL = new Font("Segoe UI", Font.PLAIN, 12);
-    public static final Font FONT_TITLE  = new Font("Segoe UI", Font.BOLD, 24);
-
-    // ===== Responsive ratio =====
-    public static final double[] COL_RATIO = {0.35, 0.20, 0.15, 0.15, 0.15};
-    public static final int[] COL_MIN = {220, 140, 110, 110, 120};
 
     public TableView() {
         setLayout(new BorderLayout(8, 8));
         setOpaque(true);
-        setBackground(COLOR_BACKGROUND);
+        setBackground(style.getCOLOR_BACKGROUND());
         setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // Header
@@ -41,11 +28,11 @@ public class TableView extends JPanel {
         header.setOpaque(false);
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         JLabel title = new JLabel("Bảng công việc theo hạng mục");
-        title.setFont(FONT_TITLE);
-        title.setForeground(COLOR_TEXT_PRIMARY);
+        title.setFont(style.getFONT_TITLE());
+        title.setForeground(style.getCOLOR_TEXT_PRIMARY());
         JLabel sub = new JLabel("Quản lý chi tiết công việc theo từng lĩnh vực");
-        sub.setFont(FONT_NORMAL);
-        sub.setForeground(COLOR_TEXT_MUTED);
+        sub.setFont(style.getFONT_NORMAL());
+        sub.setForeground(style.getCOLOR_TEXT_MUTED());
         header.add(title);
         header.add(Box.createVerticalStrut(6));
         header.add(sub);
@@ -55,7 +42,7 @@ public class TableView extends JPanel {
         JPanel chipsRow = new JPanel(new GridLayout(1, 4, 0, 0));
         chipsRow.setOpaque(true);
         chipsRow.setBackground(new Color(0xEEF2F5));
-        chipsRow.setBorder(new CompoundBorder(new LineBorder(COLOR_BORDER),
+        chipsRow.setBorder(new CompoundBorder(new LineBorder(style.getCOLOR_BORDER()),
                 new EmptyBorder(10, 12, 10, 12)));
 
         ButtonGroup chipsGroup = new ButtonGroup();
@@ -71,19 +58,19 @@ public class TableView extends JPanel {
 
         // Section card
         JPanel sectionCard = new JPanel(new BorderLayout());
-        sectionCard.setBackground(COLOR_CARD);
-        sectionCard.setBorder(new CompoundBorder(new LineBorder(COLOR_BORDER),
+        sectionCard.setBackground(style.getCOLOR_CARD());
+        sectionCard.setBorder(new CompoundBorder(new LineBorder(style.getCOLOR_BORDER()),
                 new EmptyBorder(16, 16, 16, 16)));
 
         JPanel left = new JPanel();
         left.setOpaque(false);
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
         catTitleLabel = new JLabel("Frontend");
-        catTitleLabel.setFont(FONT_BOLD.deriveFont(16f));
-        catTitleLabel.setForeground(COLOR_TEXT_PRIMARY);
+        catTitleLabel.setFont(style.getFONT_BOLD().deriveFont(16f));
+        catTitleLabel.setForeground(style.getCOLOR_TEXT_PRIMARY());
         catStatsLabel = new JLabel("—");
-        catStatsLabel.setFont(FONT_NORMAL);
-        catStatsLabel.setForeground(COLOR_TEXT_MUTED);
+        catStatsLabel.setFont(style.getFONT_NORMAL());
+        catStatsLabel.setForeground(style.getCOLOR_TEXT_MUTED());
         left.add(catTitleLabel);
         left.add(Box.createVerticalStrut(4));
         left.add(catStatsLabel);
@@ -92,7 +79,7 @@ public class TableView extends JPanel {
         pill.setBackground(new Color(0xE6F9F0));
         donePillLabel = new JLabel("—");
         donePillLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        donePillLabel.setForeground(COLOR_SUCCESS);
+        donePillLabel.setForeground(style.getCOLOR_SUCCESS());
         pill.add(donePillLabel);
 
         sectionCard.add(left, BorderLayout.WEST);
@@ -113,22 +100,22 @@ public class TableView extends JPanel {
         };
         table = new JTable(model);
         table.setRowHeight(44);
-        table.setFont(FONT_NORMAL);
+        table.setFont(style.getFONT_NORMAL());
         table.setShowVerticalLines(false);
         table.setGridColor(new Color(0xF1F3F5));
-        table.setBackground(COLOR_CARD);
+        table.setBackground(style.getCOLOR_CARD());
 
         JTableHeader h = table.getTableHeader();
         h.setBackground(new Color(0xEEF2F5));
-        h.setFont(FONT_BOLD);
+        h.setFont(style.getFONT_BOLD());
         ((DefaultTableCellRenderer) h.getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
 
         JScrollPane sp = new JScrollPane(table);
-        sp.getViewport().setBackground(COLOR_CARD);
-        sp.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, COLOR_BORDER));
+        sp.getViewport().setBackground(style.getCOLOR_CARD());
+        sp.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, style.getCOLOR_BORDER()));
 
         JPanel middle = new JPanel(new BorderLayout());
-        middle.setBackground(COLOR_CARD);
+        middle.setBackground(style.getCOLOR_CARD());
         middle.add(topStack, BorderLayout.NORTH);
         middle.add(sp, BorderLayout.CENTER);
 
@@ -139,12 +126,12 @@ public class TableView extends JPanel {
         JToggleButton b = new JToggleButton(text, selected);
         b.setFocusPainted(false);
         b.setContentAreaFilled(false);
-        b.setFont(FONT_BOLD);
+        b.setFont(style.getFONT_BOLD());
         b.setForeground(new Color(0x6B7280));
         b.addChangeListener(e -> {
             if (b.isSelected()) {
-                b.setForeground(COLOR_TEXT_PRIMARY);
-                b.setBorder(new MatteBorder(0, 0, 3, 0, COLOR_PRIMARY));
+                b.setForeground(style.getCOLOR_TEXT_PRIMARY());
+                b.setBorder(new MatteBorder(0, 0, 3, 0, style.getCOLOR_PRIMARY()));
             } else {
                 b.setForeground(new Color(0x6B7280));
                 b.setBorder(new EmptyBorder(6, 0, 6, 0));

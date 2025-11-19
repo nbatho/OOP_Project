@@ -1,5 +1,6 @@
 package main.java.controller;
 
+import main.java.component.MessageCard;
 import main.java.model.User;
 import main.java.view.LoginView;
 import main.java.view.RegisterView;
@@ -32,18 +33,17 @@ public class LoginController {
                 String password = new String(lview.getTxtPassword().getPassword());
 
                 if (name.isEmpty() || password.isEmpty()) {
-                    JOptionPane.showMessageDialog(lview, "Vui lòng nhập đầy đủ thông tin!");
+                    new MessageCard("Vui lòng nhập đầy đủ thông tin!",MessageCard.MessageType.ERROR);
                     return;
                 }
 
 
                 User user = UserController.checkLogin(name, password);
                 if (user != null) {
-                    JOptionPane.showMessageDialog(lview, "Đăng nhập thành công! Xin chào ");
                     lview.dispose();
                     new DashboardController(new DashboardView());
                 } else {
-                    JOptionPane.showMessageDialog(lview, "Sai tài khoản hoặc mật khẩu!");
+                    new MessageCard("Sai tài khoản hoặc mật khẩu!",MessageCard.MessageType.ERROR);
                 }
             }
         });

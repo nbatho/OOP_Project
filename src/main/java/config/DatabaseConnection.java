@@ -23,16 +23,4 @@ public class DatabaseConnection {
 
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
-
-    public static void testConnection() {
-        try (Connection conn = getConnection()) {
-            if (conn != null && !conn.isClosed()) {
-                System.out.println(" Kết nối MySQL thành công!");
-            } else {
-                System.out.println(" Kết nối MySQL thất bại!");
-            }
-        } catch (SQLException e) {
-            System.out.println(" Lỗi kết nối MySQL: " + e.getMessage());
-        }
-    }
 }
