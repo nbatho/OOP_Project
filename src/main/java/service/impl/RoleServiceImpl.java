@@ -40,7 +40,6 @@ public class RoleServiceImpl implements RoleService {
             return roleRepository.createRole(role);
         } catch (Exception e) {
             System.out.println("Lỗi khi tạo role: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -51,7 +50,6 @@ public class RoleServiceImpl implements RoleService {
             return roleRepository.getAllRoles();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy danh sách roles: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -67,7 +65,6 @@ public class RoleServiceImpl implements RoleService {
             return roleRepository.getRoleById(roleId);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy role theo ID: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -87,7 +84,6 @@ public class RoleServiceImpl implements RoleService {
                     .orElse(null);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy role theo tên: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -121,7 +117,6 @@ public class RoleServiceImpl implements RoleService {
             return roleRepository.updateRole(role);
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật role: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -150,7 +145,6 @@ public class RoleServiceImpl implements RoleService {
             return roleRepository.deleteRole(roleId);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa role: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -193,7 +187,6 @@ public class RoleServiceImpl implements RoleService {
             return allCreated;
         } catch (Exception e) {
             System.out.println("Lỗi khi tạo roles mặc định: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

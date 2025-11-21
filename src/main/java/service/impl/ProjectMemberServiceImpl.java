@@ -4,18 +4,15 @@ import java.util.List;
 import main.java.model.ProjectMember;
 import main.java.service.ProjectMemberService;
 import main.java.service.ProjectService;
-import main.java.service.RoleService;
 import main.java.service.UserService;
 
 public class ProjectMemberServiceImpl implements ProjectMemberService {
     private final ProjectService projectService;
     private final UserService userService;
-    private final RoleService roleService;
 
     public ProjectMemberServiceImpl() {
         this.projectService = new ProjectServiceImpl();
         this.userService = new UserServiceImpl();
-        this.roleService = new RoleServiceImpl();
     }
 
     @Override

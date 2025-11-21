@@ -24,7 +24,6 @@ public class TeamRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -42,7 +41,6 @@ public class TeamRepository {
                 return mapResultSetToTeam(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -60,7 +58,6 @@ public class TeamRepository {
                 return mapResultSetToTeam(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -77,7 +74,6 @@ public class TeamRepository {
                 teams.add(mapResultSetToTeam(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return teams;
     }
@@ -93,7 +89,6 @@ public class TeamRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -107,7 +102,6 @@ public class TeamRepository {
             pstmt.setString(1, teamId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -130,7 +124,6 @@ public class TeamRepository {
                 teams.add(mapResultSetToTeam(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return teams;
     }

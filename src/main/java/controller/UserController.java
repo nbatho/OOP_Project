@@ -1,33 +1,21 @@
 package main.java.controller;
 
-import main.java.model.User;
 import java.util.ArrayList;
 import java.util.List;
+import main.java.model.User;
 
 public class UserController {
     private static final List<User> users = new ArrayList<>();
 
     // Tạo sẵn tài khoản mẫu
     public static void seedSampleUsers() {
-        users.add(new User("1", "admin", "admin@gmail.com", "admin","admin"));
+        users.add(new User("1", "admin", "admin@gmail.com", "admin"));
     }
-//
-//    // Đăng ký
-//    public static boolean createAccount(String name, String email, String password) {
-//        for (User u : users) {
-//            if (u.getEmail().equalsIgnoreCase(email)) {
-//                return false;
-//            }
-//        }
-//        int newId = (users.size()) + 1;
-//        users.add(new User(String.valueOf(newId), name, email, password));
-//        return true;
-//    }
-//
+
     public static User checkLogin(String identifier, String password) {
         for (User user : users) {
             System.out.println(user);
-            if ((user.getFull_name().equalsIgnoreCase(identifier) && user.getPassword().equals(password))) {
+            if (user.getFullName().equalsIgnoreCase(identifier) && user.getPasswordHash().equals(password)) {
                 return user;
             }
         }

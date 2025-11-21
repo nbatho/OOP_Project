@@ -26,7 +26,6 @@ public class ProjectRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -44,7 +43,6 @@ public class ProjectRepository {
                 return mapResultSetToProject(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -62,7 +60,6 @@ public class ProjectRepository {
                 return mapResultSetToProject(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -79,7 +76,6 @@ public class ProjectRepository {
                 projects.add(mapResultSetToProject(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return projects;
     }
@@ -98,7 +94,6 @@ public class ProjectRepository {
                 projects.add(mapResultSetToProject(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return projects;
     }
@@ -122,7 +117,6 @@ public class ProjectRepository {
                 projects.add(mapResultSetToProject(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return projects;
     }
@@ -140,7 +134,6 @@ public class ProjectRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -154,7 +147,6 @@ public class ProjectRepository {
             pstmt.setString(1, projectId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }

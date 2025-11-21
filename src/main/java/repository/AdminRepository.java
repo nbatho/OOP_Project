@@ -1,102 +1,105 @@
 package main.java.repository;
 
-import main.java.config.DatabaseConnection;
-import main.java.model.Admin;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import main.java.config.DatabaseConnection;
+import main.java.model.Admin;
 
 public class AdminRepository {
-    
+
+    private enum SQL {
+        INSERT("INSERT INTO admins (user_id) VALUES (?)"),
+        SELECT_ALL("SELECT user_id FROM admins"),
+        SELECT_BY_ID("SELECT user_id FROM admins WHERE user_id = ?"),
+        DELETE("DELETE FROM admins WHERE user_id = ?");
+
+        final String query;
+
+        SQL(String q) { this.query = q; }
+    }
+
+    /* ---------------------- PUBLIC METHODS ---------------------- */
+
     public boolean createAdmin(Admin admin) {
-        String sql = "INSERT INTO admins (user_id) VALUES (?)";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, admin.getUserId());
-            
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi tạo admin: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
+        return executeUpdate(SQL.INSERT.query, admin.getUserId());
     }
-    
+
     public List<Admin> getAllAdmins() {
-        String sql = "SELECT user_id FROM admins";
-        List<Admin> admins = new ArrayList<>();
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            
-            while (rs.next()) {
-                Admin admin = mapResultSetToAdmin(rs);
-                if (admin != null) {
-                    admins.add(admin);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi lấy danh sách admins: " + e.getMessage());
-            e.printStackTrace();
-        }
-        
-        return admins;
+        return queryList(SQL.SELECT_ALL.query);
     }
-    
+
     public Admin getAdminById(String userId) {
-        String sql = "SELECT user_id FROM admins WHERE user_id = ?";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, userId);
-            
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return mapResultSetToAdmin(rs);
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi lấy admin theo ID: " + e.getMessage());
-            e.printStackTrace();
-        }
-        
-        return null;
+        return querySingle(SQL.SELECT_BY_ID.query, userId);
     }
-    
+
+    /** 
+     * Bảng admin chỉ có user_id → không có gì để update.
+     */
     public boolean updateAdmin(Admin admin) {
-        // Admin table chỉ có user_id, không có gì để update
-        return true;
+        return true; // giữ lại để phù hợp interface/logic tổng thể
     }
-    
+
     public boolean deleteAdmin(String userId) {
-        String sql = "DELETE FROM admins WHERE user_id = ?";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, userId);
-            
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi xóa admin: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
+        return executeUpdate(SQL.DELETE.query, userId);
     }
-    
-    private Admin mapResultSetToAdmin(ResultSet rs) {
-        try {
-            Admin admin = new Admin();
-            admin.setUserId(rs.getString("user_id"));
-            return admin;
+
+    /* ---------------------- PRIVATE HELPERS ---------------------- */
+
+    private Admin map(ResultSet rs) throws SQLException {
+        return new Admin(
+            rs.getString("user_id"),
+            rs.getString("full_name") != null ? rs.getString("full_name") : "",
+            rs.getString("email") != null ? rs.getString("email") : "",
+            rs.getString("password_hash") != null ? rs.getString("password_hash") : ""
+        );
+    }
+
+    private List<Admin> queryList(String sql, Object... params) {
+        List<Admin> list = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = prepare(conn, sql, params);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) list.add(map(rs));
+
         } catch (SQLException e) {
-            System.err.println("Lỗi khi mapping ResultSet to Admin: " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("Database error: " + e.getMessage());
+        }
+        return list;
+    }
+
+    private Admin querySingle(String sql, Object... params) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = prepare(conn, sql, params);
+             ResultSet rs = stmt.executeQuery()) {
+
+            return rs.next() ? map(rs) : null;
+
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
             return null;
         }
+    }
+
+    private boolean executeUpdate(String sql, Object... params) {
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = prepare(conn, sql, params)) {
+
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Database error: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private PreparedStatement prepare(Connection conn, String sql, Object... params) throws SQLException {
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        for (int i = 0; i < params.length; i++) {
+            stmt.setObject(i + 1, params[i]);
+        }
+        return stmt;
     }
 }

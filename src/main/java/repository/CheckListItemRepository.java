@@ -51,7 +51,6 @@ public class CheckListItemRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi tạo checklist item: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -71,7 +70,6 @@ public class CheckListItemRepository {
             System.out.println("Found " + items.size() + " checklist items");
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách checklist items: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return items;
@@ -95,7 +93,6 @@ public class CheckListItemRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi tìm checklist item by id: " + e.getMessage());
-            e.printStackTrace();
         }
         return null;
     }
@@ -117,7 +114,6 @@ public class CheckListItemRepository {
             System.out.println("Found " + items.size() + " items in checklist " + checklistId);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy items by checklist_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return items;
@@ -142,7 +138,6 @@ public class CheckListItemRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi update checklist item content: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -166,7 +161,6 @@ public class CheckListItemRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi update checklist item status: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -192,7 +186,6 @@ public class CheckListItemRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi update checklist item: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -216,7 +209,6 @@ public class CheckListItemRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa checklist item: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -240,7 +232,6 @@ public class CheckListItemRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa items by checklist_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }

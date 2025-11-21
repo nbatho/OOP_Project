@@ -47,7 +47,6 @@ public class TaskAssignessRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi tạo task assigness: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -67,7 +66,6 @@ public class TaskAssignessRepository {
             System.out.println("Found " + assignessList.size() + " task assigness");
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách task assigness: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return assignessList;
@@ -93,7 +91,6 @@ public class TaskAssignessRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi tìm task assigness by task_id và user_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return null;
     }
@@ -115,7 +112,6 @@ public class TaskAssignessRepository {
             System.out.println("Found " + assignessList.size() + " users assigned to task " + task_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy assigness by task_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return assignessList;
@@ -138,7 +134,6 @@ public class TaskAssignessRepository {
             System.out.println("Found " + assignessList.size() + " tasks assigned to user " + user_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy assigness by user_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return assignessList;
@@ -165,7 +160,6 @@ public class TaskAssignessRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa task assigness: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -189,7 +183,6 @@ public class TaskAssignessRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa assigness by task_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -213,7 +206,6 @@ public class TaskAssignessRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa assigness by user_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }

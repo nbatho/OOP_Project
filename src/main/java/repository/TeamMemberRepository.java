@@ -42,7 +42,6 @@ public class TeamMemberRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi thêm member: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -66,7 +65,6 @@ public class TeamMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách member: " + e.getMessage());
-            e.printStackTrace();
         }
         return members;
     }
@@ -92,7 +90,6 @@ public class TeamMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi tìm team member: " + e.getMessage());
-            e.printStackTrace();
         }
         return null;
     }
@@ -122,7 +119,6 @@ public class TeamMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi update member: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -148,7 +144,6 @@ public class TeamMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa member: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
