@@ -9,7 +9,7 @@ public class UserController {
 
     // Tạo sẵn tài khoản mẫu
     public static void seedSampleUsers() {
-        users.add(new User("1", "admin", "admin@gmail.com", "admin","admin"));
+        users.add(new User("1", "admin", "admin@gmail.com", "admin"));
     }
 //
 //    // Đăng ký
@@ -27,7 +27,7 @@ public class UserController {
     public static User checkLogin(String identifier, String password) {
         for (User user : users) {
             System.out.println(user);
-            if ((user.getFull_name().equalsIgnoreCase(identifier) && user.getPassword().equals(password))) {
+            if ((user.getFullName().equalsIgnoreCase(identifier) && user.getPasswordHash().equals(password))) {
                 return user;
             }
         }
