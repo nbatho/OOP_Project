@@ -1,23 +1,23 @@
 package main.java.model;
 
-public class Admin extends User{
+public class Admin extends User {
 
     public Admin() {
         super();
     }
 
-    public Admin(String user_id, String full_name, String email, String password) {
-        super(user_id, full_name, email, password, "Admin");
+    public Admin(String userId, String fullName, String email, String passwordHash) {
+        super(userId, fullName, email, passwordHash);
     }
 
     @Override
     public String toString() {
         return "Admin{" +
-                "user_id='" + getUser_id() + '\'' +
-                ", full_name='" + getFull_name() + '\'' +
+                "userId='" + getUserId() + '\'' +
+                ", fullName='" + getFullName() + '\'' +
                 ", email='" + getEmail() + '\'' +
-                ", password='" + getPassword() + '\'' +
-                ", role='" + getRole() + '\'' +
+                ", passwordHash='" + getPasswordHash() + '\'' +
+                ", createdAt=" + getCreatedAt() +
                 '}';
     }
 }

@@ -1,41 +1,38 @@
 package main.java.model;
 
-
 public class Checklist {
-    private String checklist_id;
-    private String task_id;
+    private String checklistId;
+    private String taskId;
     private String title;
 
     public Checklist() {}
 
-    public Checklist(String checklist_id, String task_id, String title) {
-        this.checklist_id = checklist_id;
-        this.task_id = task_id;
+    public Checklist(String checklistId, String taskId, String title) {
+        this.checklistId = checklistId;
+        this.taskId = taskId;
         this.title = title;
     }
 
-    //Getter
-
-    public String getChecklist_id() {
-        return checklist_id;
+    // Getters
+    public String getChecklistId() {
+        return checklistId;
     }
 
-    public String getTask_id() {
-        return task_id;
+    public String getTaskId() {
+        return taskId;
     }
 
     public String getTitle() {
         return title;
     }
 
-    //Setter
-
-    public void setChecklist_id(String checklist_id) {
-        this.checklist_id = checklist_id;
+    // Setters
+    public void setChecklistId(String checklistId) {
+        this.checklistId = checklistId;
     }
 
-    public void setTask_id(String task_id) {
-        this.task_id = task_id;
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 
     public void setTitle(String title) {
@@ -45,8 +42,8 @@ public class Checklist {
     @Override
     public String toString() {
         return "Checklist{" +
-                "checklist_id='" + checklist_id + '\'' +
-                ", task_id='" + task_id + '\'' +
+                "checklistId='" + checklistId + '\'' +
+                ", taskId='" + taskId + '\'' +
                 ", title='" + title + '\'' +
                 '}';
     }

@@ -1,50 +1,50 @@
 package main.java.model;
 
 public class ProjectMember {
-    private String project_id;
-    private String user_id;
-    private String role_id;
+    private String projectId;
+    private String userId;
+    private String roleId;
 
     public ProjectMember() {}
-    public ProjectMember(String project_id, String user_id, String role_id) {
-        this.project_id = project_id;
-        this.user_id = user_id;
-        this.role_id = role_id;
+
+    public ProjectMember(String projectId, String userId, String roleId) {
+        this.projectId = projectId;
+        this.userId = userId;
+        this.roleId = roleId;
     }
 
-    //Getter
-    public String getProject_id() {
-        return project_id;
+    // Getters
+    public String getProjectId() {
+        return projectId;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public String getRole_id() {
-        return role_id;
+    public String getRoleId() {
+        return roleId;
     }
 
-    //Setter
-
-    public void setProject_id(String project_id) {
-        this.project_id = project_id;
+    // Setters
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public void setRole_id(String role_id) {
-        this.role_id = role_id;
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
     }
 
     @Override
     public String toString() {
         return "ProjectMember{" +
-                "project_id='" + project_id + '\'' +
-                ", user_id='" + user_id + '\'' +
-                ", role_id='" + role_id + '\'' +
+                "projectId='" + projectId + '\'' +
+                ", userId='" + userId + '\'' +
+                ", roleId='" + roleId + '\'' +
                 '}';
     }
 }

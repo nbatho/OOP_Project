@@ -1,40 +1,58 @@
 package main.java.model;
 
+import java.sql.Timestamp;
+
 public class Team {
-    private String team_id;
+    private String teamId;
     private String name;
+    private Timestamp createdAt;
 
     public Team() {}
-    public Team(String team_id, String name) {
-        this.team_id = team_id;
+
+    public Team(String teamId, String name) {
+        this.teamId = teamId;
         this.name = name;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    //Getter
+    public Team(String teamId, String name, Timestamp createdAt) {
+        this.teamId = teamId;
+        this.name = name;
+        this.createdAt = createdAt;
+    }
 
-    public String getTeam_id() {
-        return team_id;
+    // Getters
+    public String getTeamId() {
+        return teamId;
     }
 
     public String getName() {
         return name;
     }
 
-    //Setter
+    public Timestamp getCreatedAt() {
+        return createdAt;
+    }
 
-    public void setTeam_id(String team_id) {
-        this.team_id = team_id;
+    // Setters
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "Team{" +
-                "team_id='" + team_id + '\'' +
+                "teamId='" + teamId + '\'' +
                 ", name='" + name + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

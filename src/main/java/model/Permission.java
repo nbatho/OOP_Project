@@ -1,21 +1,21 @@
 package main.java.model;
 
-public class Role {
-    private String roleId;
+public class Permission {
+    private String permissionId;
     private String name;
     private String description;
 
-    public Role() {}
+    public Permission() {}
 
-    public Role(String roleId, String name, String description) {
-        this.roleId = roleId;
+    public Permission(String permissionId, String name, String description) {
+        this.permissionId = permissionId;
         this.name = name;
         this.description = description;
     }
 
     // Getters
-    public String getRoleId() {
-        return roleId;
+    public String getPermissionId() {
+        return permissionId;
     }
 
     public String getName() {
@@ -27,8 +27,8 @@ public class Role {
     }
 
     // Setters
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setPermissionId(String permissionId) {
+        this.permissionId = permissionId;
     }
 
     public void setName(String name) {
@@ -41,8 +41,8 @@ public class Role {
 
     @Override
     public String toString() {
-        return "Role{" +
-                "roleId='" + roleId + '\'' +
+        return "Permission{" +
+                "permissionId='" + permissionId + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 '}';

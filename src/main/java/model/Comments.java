@@ -1,63 +1,82 @@
 package main.java.model;
 
+import java.sql.Timestamp;
+
 public class Comments {
-    private String comment_id;
-    private String task_id;
-    private String user_id;
+    private String commentId;
+    private String taskId;
+    private String userId;
     private String body;
+    private Timestamp createdAt;
 
     public Comments() {}
 
-    public Comments(String comment_id, String task_id, String user_id, String body) {
-        this.comment_id = comment_id;
-        this.task_id = task_id;
-        this.user_id = user_id;
+    public Comments(String commentId, String taskId, String userId, String body) {
+        this.commentId = commentId;
+        this.taskId = taskId;
+        this.userId = userId;
         this.body = body;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    //Getter
-    public String getComment_id() {
-        return comment_id;
+    public Comments(String commentId, String taskId, String userId, String body, Timestamp createdAt) {
+        this.commentId = commentId;
+        this.taskId = taskId;
+        this.userId = userId;
+        this.body = body;
+        this.createdAt = createdAt;
     }
 
-    public String getTask_id() {
-        return task_id;
+    // Getters
+    public String getCommentId() {
+        return commentId;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     public String getBody() {
         return body;
     }
 
-    //Setter
-
-
-    public void setComment_id(String comment_id) {
-        this.comment_id = comment_id;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setTask_id(String task_id) {
-        this.task_id = task_id;
+    // Setters
+    public void setCommentId(String commentId) {
+        this.commentId = commentId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public void setBody(String body) {
         this.body = body;
     }
 
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "Comments{" +
-                "comment_id='" + comment_id + '\'' +
-                ", task_id='" + task_id + '\'' +
-                ", user_id='" + user_id + '\'' +
+                "commentId='" + commentId + '\'' +
+                ", taskId='" + taskId + '\'' +
+                ", userId='" + userId + '\'' +
                 ", body='" + body + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }
