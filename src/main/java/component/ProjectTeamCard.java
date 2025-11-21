@@ -131,21 +131,21 @@ public class ProjectTeamCard extends JPanel {
         JPanel infoPanel = new JPanel(new GridLayout(3, 1, 0, 4));
         infoPanel.setOpaque(false);
 
-        JLabel userIdLabel = new JLabel("User ID: " + member.getUser_id());
+        JLabel userIdLabel = new JLabel("User ID: " + member.getUserId());
         userIdLabel.setFont(style.getFONT_NORMAL());
         userIdLabel.setForeground(style.getCOLOR_TEXT_PRIMARY());
 
-        JLabel roleIdLabel = new JLabel("Role ID: " + member.getRole_id());
+        JLabel roleIdLabel = new JLabel("Role ID: " + member.getRoleId());
         roleIdLabel.setFont(style.getFONT_NORMAL());
         roleIdLabel.setForeground(style.getCOLOR_TEXT_MUTED());
 
-        JLabel projectIdLabel = new JLabel("Project ID: " + member.getProject_id());
-        projectIdLabel.setFont(new Font("Segoe UI", Font.PLAIN, 10));
-        projectIdLabel.setForeground(style.getCOLOR_TEXT_MUTED());
+//        JLabel projectIdLabel = new JLabel("Project ID: " + member.getProject_id());
+//        projectIdLabel.setFont(new Font("Segoe UI", Font.PLAIN, 10));
+//        projectIdLabel.setForeground(style.getCOLOR_TEXT_MUTED());
 
         infoPanel.add(userIdLabel);
         infoPanel.add(roleIdLabel);
-        infoPanel.add(projectIdLabel);
+//        infoPanel.add(projectIdLabel);
 
         row.add(infoPanel, BorderLayout.CENTER);
 

@@ -59,7 +59,7 @@ public class LoginView extends JFrame {
         gbc.gridy = 1;
         card.add(lblLoginSub, gbc);
 
-        JLabel lblUsername = new JLabel("Tên đăng nhập");
+        JLabel lblUsername = new JLabel("Email");
         lblUsername.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(14)));
         gbc.gridy = 2;
         card.add(lblUsername, gbc);

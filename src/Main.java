@@ -13,7 +13,6 @@ public class Main {
                 }
             }
         } catch (Exception ignored) {}
-        UserController.seedSampleUsers();
         GlobalStyle.init();
         LoginView view = new  LoginView();
         new LoginController(view);
