@@ -1,14 +1,13 @@
 package main.java.repository;
 
-import main.java.config.DatabaseConnection;
-import main.java.model.TaskAsigness;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import main.java.config.DatabaseConnection;
+import main.java.model.TaskAsigness;
 
 public class TaskAssignessRepository {
     private static final String INSERT_TASK_ASSIGNESS =
@@ -37,12 +36,12 @@ public class TaskAssignessRepository {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(INSERT_TASK_ASSIGNESS);
 
-            stmt.setString(1, taskAsigness.getTask_id());
-            stmt.setString(2, taskAsigness.getUser_id());
+            stmt.setString(1, taskAsigness.getTaskId());
+            stmt.setString(2, taskAsigness.getUserId());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Task assigness created: Task " + taskAsigness.getTask_id() + " assigned to User " + taskAsigness.getUser_id());
+                System.out.println("Task assigness created: Task " + taskAsigness.getTaskId() + " assigned to User " + taskAsigness.getUserId());
                 return true;
             }
 
@@ -227,8 +226,8 @@ public class TaskAssignessRepository {
      */
     public TaskAsigness mapResultSetToTaskAsigness(ResultSet rs) throws SQLException {
         TaskAsigness taskAsigness = new TaskAsigness();
-        taskAsigness.setTask_id(rs.getString("task_id"));
-        taskAsigness.setUser_id(rs.getString("user_id"));
+        taskAsigness.setTaskId(rs.getString("task_id"));
+        taskAsigness.setUserId(rs.getString("user_id"));
         return taskAsigness;
     }
 

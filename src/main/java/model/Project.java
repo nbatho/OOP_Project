@@ -1,30 +1,39 @@
 package main.java.model;
 
+import java.sql.Timestamp;
 
 public class Project {
-    private String project_id;
-    private String team_id;
+    private String projectId;
+    private String teamId;
     private String name;
     private String description;
+    private Timestamp createdAt;
 
     public Project() {}
 
-    public Project(String project_id, String team_id, String name, String description) {
-        this.project_id = project_id;
-        this.team_id = team_id;
+    public Project(String projectId, String teamId, String name, String description) {
+        this.projectId = projectId;
+        this.teamId = teamId;
         this.name = name;
         this.description = description;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    //Getter
-
-
-    public String getProject_id() {
-        return project_id;
+    public Project(String projectId, String teamId, String name, String description, Timestamp createdAt) {
+        this.projectId = projectId;
+        this.teamId = teamId;
+        this.name = name;
+        this.description = description;
+        this.createdAt = createdAt;
     }
 
-    public String getTeam_id() {
-        return team_id;
+    // Getters
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public String getTeamId() {
+        return teamId;
     }
 
     public String getName() {
@@ -35,15 +44,17 @@ public class Project {
         return description;
     }
 
-    //Setter
-
-
-    public void setProject_id(String project_id) {
-        this.project_id = project_id;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setTeam_id(String team_id) {
-        this.team_id = team_id;
+    // Setters
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
     }
 
     public void setName(String name) {
@@ -54,13 +65,18 @@ public class Project {
         this.description = description;
     }
 
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
     public String toString() {
         return "Project{" +
-                "project_id='" + project_id + '\'' +
-                ", team_id='" + team_id + '\'' +
+                "projectId='" + projectId + '\'' +
+                ", teamId='" + teamId + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

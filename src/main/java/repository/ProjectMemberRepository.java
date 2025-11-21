@@ -1,14 +1,13 @@
 package main.java.repository;
 
-import main.java.config.DatabaseConnection;
-import main.java.model.ProjectMember;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import main.java.config.DatabaseConnection;
+import main.java.model.ProjectMember;
 
 public class ProjectMemberRepository {
     private static final String INSERT_PROJECT_MEMBER =
@@ -41,13 +40,13 @@ public class ProjectMemberRepository {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(INSERT_PROJECT_MEMBER);
 
-            stmt.setString(1, projectMember.getProject_id());
-            stmt.setString(2, projectMember.getUser_id());
-            stmt.setString(3, projectMember.getRole_id());
+            stmt.setString(1, projectMember.getProjectId());
+            stmt.setString(2, projectMember.getUserId());
+            stmt.setString(3, projectMember.getRoleId());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Project member created: Project " + projectMember.getProject_id() + " - User " + projectMember.getUser_id());
+                System.out.println("Project member created: Project " + projectMember.getProjectId() + " - User " + projectMember.getUserId());
                 return true;
             }
 
@@ -281,9 +280,9 @@ public class ProjectMemberRepository {
      */
     public ProjectMember mapResultSetToProjectMember(ResultSet rs) throws SQLException {
         ProjectMember projectMember = new ProjectMember();
-        projectMember.setProject_id(rs.getString("project_id"));
-        projectMember.setUser_id(rs.getString("user_id"));
-        projectMember.setRole_id(rs.getString("role_id"));
+        projectMember.setProjectId(rs.getString("project_id"));
+        projectMember.setUserId(rs.getString("user_id"));
+        projectMember.setRoleId(rs.getString("role_id"));
         return projectMember;
     }
 

@@ -1,8 +1,7 @@
 package main.java.service;
 
-import main.java.model.Role;
-
 import java.util.List;
+import main.java.model.Role;
 
 public interface RoleService {
     /**
@@ -10,40 +9,52 @@ public interface RoleService {
      * @param role đối tượng Role cần tạo
      * @return true nếu tạo thành công, false nếu thất bại
      */
-    boolean create(Role role);
+    boolean createRole(Role role);
 
     /**
      * Lấy danh sách tất cả các role
      * @return List<Role> danh sách role, có thể rỗng
      */
-    List<Role> getAll();
+    List<Role> getAllRoles();
 
     /**
-     * Lấy role theo role_id
-     * @param role_id mã của role cần tìm
+     * Lấy role theo roleId
+     * @param roleId mã của role cần tìm
      * @return Role nếu tìm thấy, null nếu không tìm thấy
      */
-    Role getById(String role_id);
+    Role getRoleById(String roleId);
 
     /**
      * Lấy role theo tên
      * @param name tên role cần tìm
      * @return Role nếu tìm thấy, null nếu không tìm thấy
      */
-    Role getByName(String name);
+    Role getRoleByName(String name);
 
     /**
-     * Cập nhật tên role
-     * @param role_id mã role cần cập nhật
-     * @param name tên mới
+     * Cập nhật thông tin role
+     * @param role đối tượng Role với thông tin mới
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    boolean updateName(String role_id, String name);
+    boolean updateRole(Role role);
 
     /**
-     * Xóa role theo role_id
-     * @param role_id mã role cần xóa
+     * Xóa role theo roleId
+     * @param roleId mã role cần xóa
      * @return true nếu xóa thành công, false nếu thất bại
      */
-    boolean deleteById(String role_id);
+    boolean deleteRole(String roleId);
+
+    /**
+     * Kiểm tra tên role đã tồn tại chưa
+     * @param name tên role cần kiểm tra
+     * @return true nếu tên đã tồn tại, false nếu chưa
+     */
+    boolean isRoleNameExists(String name);
+
+    /**
+     * Tạo các role mặc định của hệ thống
+     * @return true nếu tạo thành công
+     */
+    boolean createDefaultRoles();
 }

@@ -1,72 +1,82 @@
 package main.java.model;
 
+import java.sql.Timestamp;
+
 public class User {
-    private String user_id;
-    private String full_name;
+    private String userId;
+    private String fullName;
     private String email;
-    private String password;
-    private String role; // Admin Manager Member
+    private String passwordHash;
+    private Timestamp createdAt;
 
     public User() {}
 
-    public User(String user_id, String full_name, String email, String password, String role) {
-        this.user_id = user_id;
-        this.full_name = full_name;
+    public User(String userId, String fullName, String email, String passwordHash) {
+        this.userId = userId;
+        this.fullName = fullName;
         this.email = email;
-        this.password = password;
-        this.role = role;
+        this.passwordHash = passwordHash;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    //Getter
-    public String getUser_id() {
-        return user_id;
+    public User(String userId, String fullName, String email, String passwordHash, Timestamp createdAt) {
+        this.userId = userId;
+        this.fullName = fullName;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.createdAt = createdAt;
     }
 
-    public String getFull_name() {
-        return full_name;
+    // Getters
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public String getRole() {
-        return role;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    //Setter
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    // Setters
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public void setFull_name(String full_name) {
-        this.full_name = full_name;
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "user_id='" + user_id + '\'' +
-                ", full_name='" + full_name + '\'' +
+                "userId='" + userId + '\'' +
+                ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

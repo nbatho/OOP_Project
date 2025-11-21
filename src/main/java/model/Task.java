@@ -1,38 +1,54 @@
 package main.java.model;
 
-
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Timestamp;
 
 public class Task {
-    private String task_id;
-    private String project_id;
+    private String taskId;
+    private String projectId;
     private String title;
     private String description;
     private String status;
     private String priority;
-    private Date due_date;
-    private String created_by;
+    private Date dueDate;
+    private String createdBy;
+    private Timestamp createdAt;
 
     public Task() {}
-    public Task(String task_id, String project_id, String title, String description, String status, String priority, Date due_date, String created_by) {
-        this.task_id = task_id;
-        this.project_id = project_id;
+
+    public Task(String taskId, String projectId, String title, String description, 
+                String status, String priority, Date dueDate, String createdBy) {
+        this.taskId = taskId;
+        this.projectId = projectId;
         this.title = title;
         this.description = description;
         this.status = status;
         this.priority = priority;
-        this.due_date = due_date;
-        this.created_by = created_by;
+        this.dueDate = dueDate;
+        this.createdBy = createdBy;
+        this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    //Getter
-
-    public String getTask_id() {
-        return task_id;
+    public Task(String taskId, String projectId, String title, String description,
+                String status, String priority, Date dueDate, String createdBy, Timestamp createdAt) {
+        this.taskId = taskId;
+        this.projectId = projectId;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.priority = priority;
+        this.dueDate = dueDate;
+        this.createdBy = createdBy;
+        this.createdAt = createdAt;
     }
 
-    public String getProject_id() {
-        return project_id;
+    // Getters
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public String getProjectId() {
+        return projectId;
     }
 
     public String getTitle() {
@@ -51,22 +67,25 @@ public class Task {
         return priority;
     }
 
-    public Date getDue_date() {
-        return due_date;
+    public Date getDueDate() {
+        return dueDate;
     }
 
-    public String getCreated_by() {
-        return created_by;
+    public String getCreatedBy() {
+        return createdBy;
     }
 
-    //Setter
-
-    public void setTask_id(String task_id) {
-        this.task_id = task_id;
+    public Timestamp getCreatedAt() {
+        return createdAt;
     }
 
-    public void setProject_id(String project_id) {
-        this.project_id = project_id;
+    // Setters
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
     }
 
     public void setTitle(String title) {
@@ -85,25 +104,30 @@ public class Task {
         this.priority = priority;
     }
 
-    public void setDue_date(Date due_date) {
-        this.due_date = due_date;
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
     }
 
-    public void setCreated_by(String created_by) {
-        this.created_by = created_by;
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
     public String toString() {
         return "Task{" +
-                "task_id='" + task_id + '\'' +
-                ", project_id='" + project_id + '\'' +
+                "taskId='" + taskId + '\'' +
+                ", projectId='" + projectId + '\'' +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status='" + status + '\'' +
                 ", priority='" + priority + '\'' +
-                ", due_date=" + due_date +
-                ", created_by='" + created_by + '\'' +
+                ", dueDate=" + dueDate +
+                ", createdBy='" + createdBy + '\'' +
+                ", createdAt=" + createdAt +
                 '}';
     }
 }

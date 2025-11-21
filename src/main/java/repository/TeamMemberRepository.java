@@ -1,14 +1,13 @@
 package main.java.repository;
 
-import main.java.config.DatabaseConnection;
-import main.java.model.TeamMember;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import main.java.config.DatabaseConnection;
+import main.java.model.TeamMember;
 
 public class TeamMemberRepository {
 
@@ -32,13 +31,13 @@ public class TeamMemberRepository {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(INSERT_TEAM_MEMBER)) {
 
-            stmt.setString(1, teamMember.getTeam_id());
-            stmt.setString(2, teamMember.getUser_id());
-            stmt.setString(3, teamMember.getRole_id());
+            stmt.setString(1, teamMember.getTeamId());
+            stmt.setString(2, teamMember.getUserId());
+            stmt.setString(3, teamMember.getRoleId());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Successfully added team member: " + teamMember.getUser_id());
+                System.out.println("Successfully added team member: " + teamMember.getUserId());
                 return true;
             }
         } catch (SQLException e) {
@@ -50,15 +49,15 @@ public class TeamMemberRepository {
 
     /**
      * Lấy danh sách tất cả member của một team
-     * @param team_id mã team
+     * @param teamId mã team
      * @return List<TeamMember> danh sách member, có thể rỗng nếu không có
      */
-    public List<TeamMember> findAll(String team_id) {
+    public List<TeamMember> findAll(String teamId) {
         List<TeamMember> members = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_TEAMS_MEMBER)) {
 
-            stmt.setString(1, team_id);
+            stmt.setString(1, teamId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     members.add(mapResultSetToTeamMember(rs));
@@ -73,17 +72,17 @@ public class TeamMemberRepository {
     }
 
     /**
-     * Lấy một team member theo team_id và user_id
-     * @param team_id mã team
-     * @param user_id mã user
+     * Lấy một team member theo teamId và userId
+     * @param teamId mã team
+     * @param userId mã user
      * @return TeamMember nếu tìm thấy, null nếu không tìm thấy
      */
-    public TeamMember findByUserId(String team_id, String user_id) {
+    public TeamMember findByUserId(String teamId, String userId) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(SELECT_TEAM_MEMBER_BY_USER_ID)) {
 
-            stmt.setString(1, team_id);
-            stmt.setString(2, user_id);
+            stmt.setString(1, teamId);
+            stmt.setString(2, userId);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -99,25 +98,25 @@ public class TeamMemberRepository {
     }
 
     /**
-     * Cập nhật thông tin user_id và role_id của một team member
-     * @param team_id mã team
-     * @param old_user_id user_id cũ cần update
-     * @param new_user_id user_id mới
-     * @param role_id role_id mới
+     * Cập nhật thông tin userId và roleId của một team member
+     * @param teamId mã team
+     * @param oldUserId userId cũ cần update
+     * @param newUserId userId mới
+     * @param roleId roleId mới
      * @return true nếu update thành công, false nếu thất bại
      */
-    public boolean updateTeamMember(String team_id, String old_user_id, String new_user_id, String role_id) {
+    public boolean updateTeamMember(String teamId, String oldUserId, String newUserId, String roleId) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(UPDATE_TEAM_MEMBER_BY_ID)) {
 
-            stmt.setString(1, new_user_id);
-            stmt.setString(2, role_id);
-            stmt.setString(3, team_id);
-            stmt.setString(4, old_user_id);
+            stmt.setString(1, newUserId);
+            stmt.setString(2, roleId);
+            stmt.setString(3, teamId);
+            stmt.setString(4, oldUserId);
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Team member updated: " + old_user_id);
+                System.out.println("Team member updated: " + oldUserId);
                 return true;
             }
 
@@ -129,21 +128,21 @@ public class TeamMemberRepository {
     }
 
     /**
-     * Xóa một team member theo team_id và user_id
-     * @param team_id mã team
-     * @param user_id mã user
+     * Xóa một team member theo teamId và userId
+     * @param teamId mã team
+     * @param userId mã user
      * @return true nếu xóa thành công, false nếu thất bại
      */
-    public boolean deleteTeamMember(String team_id, String user_id) {
+    public boolean deleteTeamMember(String teamId, String userId) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(DELETE_TEAM_MEMBER_BY_ID)) {
 
-            stmt.setString(1, team_id);
-            stmt.setString(2, user_id);
+            stmt.setString(1, teamId);
+            stmt.setString(2, userId);
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Team member deleted: " + user_id);
+                System.out.println("Team member deleted: " + userId);
                 return true;
             }
 
@@ -162,9 +161,9 @@ public class TeamMemberRepository {
      */
     private TeamMember mapResultSetToTeamMember(ResultSet rs) throws SQLException {
         TeamMember member = new TeamMember();
-        member.setTeam_id(rs.getString("team_id"));
-        member.setUser_id(rs.getString("user_id"));
-        member.setRole_id(rs.getString("role_id"));
+        member.setTeamId(rs.getString("team_id"));
+        member.setUserId(rs.getString("user_id"));
+        member.setRoleId(rs.getString("role_id"));
         return member;
     }
 }

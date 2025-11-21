@@ -1,14 +1,14 @@
 package main.java.model;
 
-public class TaskAsigness {
+public class TaskLabel {
     private String taskId;
-    private String userId;
+    private String labelId;
 
-    public TaskAsigness() {}
+    public TaskLabel() {}
 
-    public TaskAsigness(String taskId, String userId) {
+    public TaskLabel(String taskId, String labelId) {
         this.taskId = taskId;
-        this.userId = userId;
+        this.labelId = labelId;
     }
 
     // Getters
@@ -16,8 +16,8 @@ public class TaskAsigness {
         return taskId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getLabelId() {
+        return labelId;
     }
 
     // Setters
@@ -25,15 +25,15 @@ public class TaskAsigness {
         this.taskId = taskId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setLabelId(String labelId) {
+        this.labelId = labelId;
     }
 
     @Override
     public String toString() {
-        return "TaskAsigness{" +
+        return "TaskLabel{" +
                 "taskId='" + taskId + '\'' +
-                ", userId='" + userId + '\'' +
+                ", labelId='" + labelId + '\'' +
                 '}';
     }
 }

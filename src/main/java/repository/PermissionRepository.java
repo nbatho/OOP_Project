@@ -5,22 +5,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import main.java.config.DatabaseConnection;
-import main.java.model.Team;
+import main.java.model.Permission;
 
-public class TeamRepository {
+public class PermissionRepository {
 
-    public boolean createTeam(Team team) {
-        String sql = "INSERT INTO teams (team_id, name) VALUES (?, ?)";
+    public boolean createPermission(Permission permission) {
+        String sql = "INSERT INTO permissions (permission_id, name, description) VALUES (?, ?, ?)";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            if (team.getTeamId() == null || team.getTeamId().isEmpty()) {
-                team.setTeamId(UUID.randomUUID().toString());
+            if (permission.getPermissionId() == null || permission.getPermissionId().isEmpty()) {
+                permission.setPermissionId(UUID.randomUUID().toString());
             }
             
-            pstmt.setString(1, team.getTeamId());
-            pstmt.setString(2, team.getName());
+            pstmt.setString(1, permission.getPermissionId());
+            pstmt.setString(2, permission.getName());
+            pstmt.setString(3, permission.getDescription());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -29,17 +30,17 @@ public class TeamRepository {
         }
     }
 
-    public Team getTeamById(String teamId) {
-        String sql = "SELECT * FROM teams WHERE team_id = ?";
+    public Permission getPermissionById(String permissionId) {
+        String sql = "SELECT * FROM permissions WHERE permission_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, teamId);
+            pstmt.setString(1, permissionId);
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
-                return mapResultSetToTeam(rs);
+                return mapResultSetToPermission(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -47,8 +48,8 @@ public class TeamRepository {
         return null;
     }
 
-    public Team getTeamByName(String name) {
-        String sql = "SELECT * FROM teams WHERE name = ?";
+    public Permission getPermissionByName(String name) {
+        String sql = "SELECT * FROM permissions WHERE name = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -57,7 +58,7 @@ public class TeamRepository {
             ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
-                return mapResultSetToTeam(rs);
+                return mapResultSetToPermission(rs);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -65,31 +66,32 @@ public class TeamRepository {
         return null;
     }
 
-    public List<Team> getAllTeams() {
-        List<Team> teams = new ArrayList<>();
-        String sql = "SELECT * FROM teams ORDER BY created_at DESC";
+    public List<Permission> getAllPermissions() {
+        List<Permission> permissions = new ArrayList<>();
+        String sql = "SELECT * FROM permissions ORDER BY name";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
             while (rs.next()) {
-                teams.add(mapResultSetToTeam(rs));
+                permissions.add(mapResultSetToPermission(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return teams;
+        return permissions;
     }
 
-    public boolean updateTeam(Team team) {
-        String sql = "UPDATE teams SET name = ? WHERE team_id = ?";
+    public boolean updatePermission(Permission permission) {
+        String sql = "UPDATE permissions SET name = ?, description = ? WHERE permission_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, team.getName());
-            pstmt.setString(2, team.getTeamId());
+            pstmt.setString(1, permission.getName());
+            pstmt.setString(2, permission.getDescription());
+            pstmt.setString(3, permission.getPermissionId());
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -98,13 +100,13 @@ public class TeamRepository {
         }
     }
 
-    public boolean deleteTeam(String teamId) {
-        String sql = "DELETE FROM teams WHERE team_id = ?";
+    public boolean deletePermission(String permissionId) {
+        String sql = "DELETE FROM permissions WHERE permission_id = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, teamId);
+            pstmt.setString(1, permissionId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,34 +114,34 @@ public class TeamRepository {
         }
     }
 
-    public List<Team> getTeamsByUserId(String userId) {
-        List<Team> teams = new ArrayList<>();
+    public List<Permission> getPermissionsByRoleId(String roleId) {
+        List<Permission> permissions = new ArrayList<>();
         String sql = """
-            SELECT t.* FROM teams t
-            INNER JOIN team_members tm ON t.team_id = tm.team_id
-            WHERE tm.user_id = ?
+            SELECT p.* FROM permissions p
+            INNER JOIN role_permissions rp ON p.permission_id = rp.permission_id
+            WHERE rp.role_id = ?
             """;
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            pstmt.setString(1, userId);
+            pstmt.setString(1, roleId);
             ResultSet rs = pstmt.executeQuery();
             
             while (rs.next()) {
-                teams.add(mapResultSetToTeam(rs));
+                permissions.add(mapResultSetToPermission(rs));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return teams;
+        return permissions;
     }
 
-    private Team mapResultSetToTeam(ResultSet rs) throws SQLException {
-        Team team = new Team();
-        team.setTeamId(rs.getString("team_id"));
-        team.setName(rs.getString("name"));
-        team.setCreatedAt(rs.getTimestamp("created_at"));
-        return team;
+    private Permission mapResultSetToPermission(ResultSet rs) throws SQLException {
+        Permission permission = new Permission();
+        permission.setPermissionId(rs.getString("permission_id"));
+        permission.setName(rs.getString("name"));
+        permission.setDescription(rs.getString("description"));
+        return permission;
     }
 }

@@ -1,180 +1,124 @@
 package main.java.repository;
 
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import main.java.config.DatabaseConnection;
 import main.java.model.Role;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class RoleRepository {
-    private static final String INSERT_ROLE =
-            "INSERT INTO roles(role_id, name) VALUES (?, ?)";
-    private static final String SELECT_ALL_ROLES =
-            "SELECT role_id, name FROM roles";
-    private static final String SELECT_ROLE_BY_ID =
-            "SELECT role_id, name FROM roles WHERE role_id = ?";
-    private static final String SELECT_ROLE_BY_NAME =
-            "SELECT role_id, name FROM roles WHERE name = ?";
-    private static final String UPDATE_ROLE_NAME =
-            "UPDATE roles SET name = ? WHERE role_id = ?";
-    private static final String DELETE_ROLE =
-            "DELETE FROM roles WHERE role_id = ?";
 
-    /**
-     * Thêm một role mới vào database
-     * @param role đối tượng Role cần tạo
-     * @return true nếu tạo thành công, false nếu thất bại
-     */
     public boolean createRole(Role role) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(INSERT_ROLE);
-
-            stmt.setString(1, role.getRole_id());
-            stmt.setString(2, role.getName());
-
-            int rows = stmt.executeUpdate();
-            if (rows > 0) {
-                System.out.println("Role created: " + role.getRole_id());
-                return true;
+        String sql = "INSERT INTO roles (role_id, name, description) VALUES (?, ?, ?)";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            if (role.getRoleId() == null || role.getRoleId().isEmpty()) {
+                role.setRoleId(UUID.randomUUID().toString());
             }
-
+            
+            pstmt.setString(1, role.getRoleId());
+            pstmt.setString(2, role.getName());
+            pstmt.setString(3, role.getDescription());
+            
+            return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi tạo role: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
-    /**
-     * Lấy danh sách tất cả các role
-     * @return List<Role> danh sách role, có thể rỗng nếu không có role nào
-     */
-    public List<Role> findAll() {
+    public Role getRoleById(String roleId) {
+        String sql = "SELECT * FROM roles WHERE role_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, roleId);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return mapResultSetToRole(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Role getRoleByName(String name) {
+        String sql = "SELECT * FROM roles WHERE name = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, name);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return mapResultSetToRole(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Role> getAllRoles() {
         List<Role> roles = new ArrayList<>();
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(SELECT_ALL_ROLES);
-            ResultSet rs = stmt.executeQuery();
+        String sql = "SELECT * FROM roles ORDER BY name";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
             while (rs.next()) {
                 roles.add(mapResultSetToRole(rs));
             }
-            System.out.println("Found " + roles.size() + " roles");
         } catch (SQLException e) {
-            System.err.println("Lỗi khi lấy danh sách roles: " + e.getMessage());
             e.printStackTrace();
         }
-
         return roles;
     }
 
-    /**
-     * Lấy role theo role_id
-     * @param role_id mã của role cần tìm
-     * @return Role nếu tìm thấy, null nếu không tìm thấy
-     */
-    public Role findByRoleId(String role_id) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(SELECT_ROLE_BY_ID);
-            stmt.setString(1, role_id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                System.out.println("Role found: " + role_id);
-                return mapResultSetToRole(rs);
-            } else {
-                System.out.println("Role not found: " + role_id);
-            }
+    public boolean updateRole(Role role) {
+        String sql = "UPDATE roles SET name = ?, description = ? WHERE role_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, role.getName());
+            pstmt.setString(2, role.getDescription());
+            pstmt.setString(3, role.getRoleId());
+            
+            return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi tìm role by id: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-        return null;
     }
 
-    /**
-     * Lấy role theo tên
-     * @param name tên role cần tìm
-     * @return Role nếu tìm thấy, null nếu không tìm thấy
-     */
-    public Role findByRoleName(String name) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(SELECT_ROLE_BY_NAME);
-            stmt.setString(1, name);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                System.out.println("Role found: " + name);
-                return mapResultSetToRole(rs);
-            } else {
-                System.out.println("Role not found: " + name);
-            }
+    public boolean deleteRole(String roleId) {
+        String sql = "DELETE FROM roles WHERE role_id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, roleId);
+            return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi tìm role by name: " + e.getMessage());
             e.printStackTrace();
+            return false;
         }
-        return null;
     }
 
-    /**
-     * Cập nhật tên role theo role_id
-     * @param role_id mã role cần cập nhật
-     * @param name tên mới
-     * @return true nếu cập nhật thành công, false nếu thất bại
-     */
-    public boolean updateRoleName(String role_id, String name) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(UPDATE_ROLE_NAME);
-            stmt.setString(1, name);
-            stmt.setString(2, role_id);
-
-            int rows = stmt.executeUpdate();
-            if (rows > 0) {
-                System.out.println("Role updated: " + role_id);
-                return true;
-            }
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi update role: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * Xóa role theo role_id
-     * @param role_id mã role cần xóa
-     * @return true nếu xóa thành công, false nếu thất bại
-     */
-    public boolean deleteByRoleId(String role_id) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(DELETE_ROLE);
-            stmt.setString(1, role_id);
-            int rows = stmt.executeUpdate();
-            if (rows > 0) {
-                System.out.println("Role deleted: " + role_id);
-                return true;
-            } else {
-                System.out.println("Role not found: " + role_id);
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi xóa role: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * Map dữ liệu ResultSet sang đối tượng Role
-     * @param rs ResultSet chứa dữ liệu role
-     * @return đối tượng Role
-     * @throws SQLException nếu lỗi đọc dữ liệu
-     */
-    public Role mapResultSetToRole(ResultSet rs) throws SQLException {
+    private Role mapResultSetToRole(ResultSet rs) throws SQLException {
         Role role = new Role();
-        role.setRole_id(rs.getString("role_id"));
+        role.setRoleId(rs.getString("role_id"));
         role.setName(rs.getString("name"));
+        role.setDescription(rs.getString("description"));
         return role;
     }
-
 }

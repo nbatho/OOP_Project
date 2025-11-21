@@ -1,14 +1,13 @@
 package main.java.repository;
 
-import main.java.config.DatabaseConnection;
-import main.java.model.CheckListItems;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import main.java.config.DatabaseConnection;
+import main.java.model.CheckListItems;
 
 public class CheckListItemRepository {
     private static final String INSERT_CHECKLIST_ITEM =
@@ -39,14 +38,14 @@ public class CheckListItemRepository {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(INSERT_CHECKLIST_ITEM);
 
-            stmt.setString(1, checklistItem.getItem_id());
-            stmt.setString(2, checklistItem.getChecklist_id());
+            stmt.setString(1, checklistItem.getItemId());
+            stmt.setString(2, checklistItem.getChecklistId());
             stmt.setString(3, checklistItem.getContent());
-            stmt.setBoolean(4, checklistItem.isIs_done());
+            stmt.setBoolean(4, checklistItem.isDone());
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item created: " + checklistItem.getItem_id());
+                System.out.println("Checklist item created: " + checklistItem.getItemId());
                 return true;
             }
 
@@ -79,20 +78,20 @@ public class CheckListItemRepository {
     }
 
     /**
-     * Lấy checklist item theo item_id
-     * @param item_id mã của item cần tìm
+     * Lấy checklist item theo itemId
+     * @param itemId mã của item cần tìm
      * @return CheckListItems nếu tìm thấy, null nếu không tìm thấy
      */
-    public CheckListItems findByItemId(String item_id) {
+    public CheckListItems findByItemId(String itemId) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(SELECT_CHECKLIST_ITEM_BY_ID);
-            stmt.setString(1, item_id);
+            stmt.setString(1, itemId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                System.out.println("Checklist item found: " + item_id);
+                System.out.println("Checklist item found: " + itemId);
                 return mapResultSetToChecklistItem(rs);
             } else {
-                System.out.println("Checklist item not found: " + item_id);
+                System.out.println("Checklist item not found: " + itemId);
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi tìm checklist item by id: " + e.getMessage());
@@ -103,19 +102,19 @@ public class CheckListItemRepository {
 
     /**
      * Lấy danh sách tất cả items của một checklist
-     * @param checklist_id mã của checklist
+     * @param checklistId mã của checklist
      * @return List<CheckListItems> danh sách items của checklist, có thể rỗng
      */
-    public List<CheckListItems> findByChecklistId(String checklist_id) {
+    public List<CheckListItems> findByChecklistId(String checklistId) {
         List<CheckListItems> items = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(SELECT_ITEMS_BY_CHECKLIST_ID);
-            stmt.setString(1, checklist_id);
+            stmt.setString(1, checklistId);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 items.add(mapResultSetToChecklistItem(rs));
             }
-            System.out.println("Found " + items.size() + " items in checklist " + checklist_id);
+            System.out.println("Found " + items.size() + " items in checklist " + checklistId);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy items by checklist_id: " + e.getMessage());
             e.printStackTrace();
@@ -126,19 +125,19 @@ public class CheckListItemRepository {
 
     /**
      * Cập nhật nội dung checklist item
-     * @param item_id mã item cần cập nhật
+     * @param itemId mã item cần cập nhật
      * @param content nội dung mới
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    public boolean updateChecklistItemContent(String item_id, String content) {
+    public boolean updateChecklistItemContent(String itemId, String content) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(UPDATE_CHECKLIST_ITEM_CONTENT);
             stmt.setString(1, content);
-            stmt.setString(2, item_id);
+            stmt.setString(2, itemId);
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item content updated: " + item_id);
+                System.out.println("Checklist item content updated: " + itemId);
                 return true;
             }
         } catch (SQLException e) {
@@ -150,19 +149,19 @@ public class CheckListItemRepository {
 
     /**
      * Cập nhật trạng thái hoàn thành của checklist item
-     * @param item_id mã item cần cập nhật
-     * @param is_done trạng thái hoàn thành mới
+     * @param itemId mã item cần cập nhật
+     * @param isDone trạng thái hoàn thành mới
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    public boolean updateChecklistItemStatus(String item_id, boolean is_done) {
+    public boolean updateChecklistItemStatus(String itemId, boolean isDone) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(UPDATE_CHECKLIST_ITEM_STATUS);
-            stmt.setBoolean(1, is_done);
-            stmt.setString(2, item_id);
+            stmt.setBoolean(1, isDone);
+            stmt.setString(2, itemId);
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item status updated: " + item_id);
+                System.out.println("Checklist item status updated: " + itemId);
                 return true;
             }
         } catch (SQLException e) {
@@ -174,21 +173,21 @@ public class CheckListItemRepository {
 
     /**
      * Cập nhật toàn bộ thông tin checklist item
-     * @param item_id mã item cần cập nhật
+     * @param itemId mã item cần cập nhật
      * @param content nội dung mới
-     * @param is_done trạng thái hoàn thành mới
+     * @param isDone trạng thái hoàn thành mới
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    public boolean updateChecklistItem(String item_id, String content, boolean is_done) {
+    public boolean updateChecklistItem(String itemId, String content, boolean isDone) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(UPDATE_CHECKLIST_ITEM);
             stmt.setString(1, content);
-            stmt.setBoolean(2, is_done);
-            stmt.setString(3, item_id);
+            stmt.setBoolean(2, isDone);
+            stmt.setString(3, itemId);
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item updated: " + item_id);
+                System.out.println("Checklist item updated: " + itemId);
                 return true;
             }
         } catch (SQLException e) {
@@ -199,20 +198,20 @@ public class CheckListItemRepository {
     }
 
     /**
-     * Xóa checklist item theo item_id
-     * @param item_id mã item cần xóa
+     * Xóa checklist item theo itemId
+     * @param itemId mã item cần xóa
      * @return true nếu xóa thành công, false nếu thất bại
      */
-    public boolean deleteByItemId(String item_id) {
+    public boolean deleteByItemId(String itemId) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(DELETE_CHECKLIST_ITEM);
-            stmt.setString(1, item_id);
+            stmt.setString(1, itemId);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item deleted: " + item_id);
+                System.out.println("Checklist item deleted: " + itemId);
                 return true;
             } else {
-                System.out.println("Checklist item not found: " + item_id);
+                System.out.println("Checklist item not found: " + itemId);
             }
 
         } catch (SQLException e) {
@@ -224,19 +223,19 @@ public class CheckListItemRepository {
 
     /**
      * Xóa tất cả items của một checklist
-     * @param checklist_id mã của checklist
+     * @param checklistId mã của checklist
      * @return true nếu xóa thành công, false nếu thất bại
      */
-    public boolean deleteByChecklistId(String checklist_id) {
+    public boolean deleteByChecklistId(String checklistId) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(DELETE_ITEMS_BY_CHECKLIST_ID);
-            stmt.setString(1, checklist_id);
+            stmt.setString(1, checklistId);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("All items for checklist " + checklist_id + " deleted");
+                System.out.println("All items for checklist " + checklistId + " deleted");
                 return true;
             } else {
-                System.out.println("No items found for checklist " + checklist_id);
+                System.out.println("No items found for checklist " + checklistId);
             }
 
         } catch (SQLException e) {
@@ -254,10 +253,10 @@ public class CheckListItemRepository {
      */
     public CheckListItems mapResultSetToChecklistItem(ResultSet rs) throws SQLException {
         CheckListItems item = new CheckListItems();
-        item.setItem_id(rs.getString("item_id"));
-        item.setChecklist_id(rs.getString("checklist_id"));
+        item.setItemId(rs.getString("item_id"));
+        item.setChecklistId(rs.getString("checklist_id"));
         item.setContent(rs.getString("content"));
-        item.setIs_done(rs.getBoolean("is_done"));
+        item.setDone(rs.getBoolean("is_done"));
         return item;
     }
 

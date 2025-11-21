@@ -5,18 +5,18 @@ public class Manager extends User {
         super();
     }
 
-    public Manager(String user_id, String full_name, String email, String password) {
-        super(user_id, full_name, email, password, "Manager");
+    public Manager(String userId, String fullName, String email, String passwordHash) {
+        super(userId, fullName, email, passwordHash);
     }
 
     @Override
     public String toString() {
         return "Manager{" +
-                "user_id='" + getUser_id() + '\'' +
-                ", full_name='" + getFull_name() + '\'' +
+                "userId='" + getUserId() + '\'' +
+                ", fullName='" + getFullName() + '\'' +
                 ", email='" + getEmail() + '\'' +
-                ", password='" + getPassword() + '\'' +
-                ", role='" + getRole() + '\'' +
+                ", passwordHash='" + getPasswordHash() + '\'' +
+                ", createdAt=" + getCreatedAt() +
                 '}';
     }
 }

@@ -1,61 +1,61 @@
 package main.java.model;
 
 public class CheckListItems {
-    private String item_id;
-    private String checklist_id;
+    private String itemId;
+    private String checklistId;
     private String content;
-    private boolean is_done;
+    private boolean isDone;
 
     public CheckListItems() {}
 
-    public CheckListItems(String item_id, String checklist_id, String content, boolean is_done) {
-        this.item_id = item_id;
-        this.checklist_id = checklist_id;
+    public CheckListItems(String itemId, String checklistId, String content, boolean isDone) {
+        this.itemId = itemId;
+        this.checklistId = checklistId;
         this.content = content;
-        this.is_done = is_done;
+        this.isDone = isDone;
     }
 
-    //Getter
-    public String getItem_id() {
-        return item_id;
+    // Getters
+    public String getItemId() {
+        return itemId;
     }
 
-    public String getChecklist_id() {
-        return checklist_id;
+    public String getChecklistId() {
+        return checklistId;
     }
 
     public String getContent() {
         return content;
     }
 
-    public boolean isIs_done() {
-        return is_done;
+    public boolean isDone() {
+        return isDone;
     }
 
-    //Setter
-    public void setItem_id(String item_id) {
-        this.item_id = item_id;
+    // Setters
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
     }
 
-    public void setChecklist_id(String checklist_id) {
-        this.checklist_id = checklist_id;
+    public void setChecklistId(String checklistId) {
+        this.checklistId = checklistId;
     }
 
     public void setContent(String content) {
         this.content = content;
     }
 
-    public void setIs_done(boolean is_done) {
-        this.is_done = is_done;
+    public void setDone(boolean done) {
+        isDone = done;
     }
 
     @Override
     public String toString() {
         return "CheckListItems{" +
-                "item_id='" + item_id + '\'' +
-                ", checklist_id='" + checklist_id + '\'' +
+                "itemId='" + itemId + '\'' +
+                ", checklistId='" + checklistId + '\'' +
                 ", content='" + content + '\'' +
-                ", is_done=" + is_done +
+                ", isDone=" + isDone +
                 '}';
     }
 }

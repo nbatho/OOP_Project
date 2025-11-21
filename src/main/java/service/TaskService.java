@@ -1,9 +1,8 @@
 package main.java.service;
 
-import main.java.model.Task;
-
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
+import main.java.model.Task;
 
 public interface TaskService {
     /**
@@ -11,69 +10,84 @@ public interface TaskService {
      * @param task đối tượng Task cần tạo
      * @return true nếu tạo thành công, false nếu thất bại
      */
-    boolean create(Task task);
+    boolean createTask(Task task);
 
     /**
-     * Lấy danh sách tất cả các task theo project_id
-     * @param project_id mã project
+     * Lấy danh sách tất cả các task theo projectId
+     * @param projectId mã project
      * @return List<Task> danh sách task, có thể rỗng
      */
-    List<Task> getAll(String project_id);
+    List<Task> getTasksByProjectId(String projectId);
 
     /**
-     * Lấy task theo task_id
-     * @param task_id mã của task cần tìm
-     * @param project_id mã project
+     * Lấy task theo taskId
+     * @param taskId mã của task cần tìm
+     * @param projectId mã project
      * @return Task nếu tìm thấy, null nếu không tìm thấy
      */
-    Task getById(String task_id, String project_id);
+    Task getTaskById(String taskId, String projectId);
 
     /**
-     * Cập nhật toàn bộ thông tin task
-     * @param task_id mã task cần cập nhật
-     * @param project_id mã project
-     * @param title tiêu đề mới
-     * @param description mô tả mới
-     * @param status trạng thái mới
-     * @param priority ưu tiên mới
-     * @param due_date hạn chót mới
+     * Cập nhật thông tin task
+     * @param task đối tượng Task với thông tin mới
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    boolean update(String task_id, String project_id, String title, String description, 
-                   String status, String priority, Date due_date);
+    boolean updateTask(Task task);
 
     /**
      * Cập nhật trạng thái task
-     * @param task_id mã task cần cập nhật
-     * @param project_id mã project
-     * @param status trạng thái mới
+     * @param taskId mã task cần cập nhật
+     * @param projectId mã project
+     * @param status trạng thái mới (TODO, IN_PROGRESS, DONE)
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    boolean updateStatus(String task_id, String project_id, String status);
+    boolean updateTaskStatus(String taskId, String projectId, String status);
 
     /**
      * Cập nhật mức độ ưu tiên task
-     * @param task_id mã task cần cập nhật
-     * @param project_id mã project
-     * @param priority mức độ ưu tiên mới
+     * @param taskId mã task cần cập nhật
+     * @param projectId mã project
+     * @param priority mức độ ưu tiên mới (HIGH, MEDIUM, LOW)
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    boolean updatePriority(String task_id, String project_id, String priority);
+    boolean updateTaskPriority(String taskId, String projectId, String priority);
 
     /**
      * Cập nhật hạn chót task
-     * @param task_id mã task cần cập nhật
-     * @param project_id mã project
-     * @param due_date hạn chót mới
+     * @param taskId mã task cần cập nhật
+     * @param projectId mã project
+     * @param dueDate hạn chót mới
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    boolean updateDueDate(String task_id, String project_id, Date due_date);
+    boolean updateTaskDueDate(String taskId, String projectId, Date dueDate);
 
     /**
-     * Xóa task theo task_id
-     * @param task_id mã task cần xóa
-     * @param project_id mã project
+     * Xóa task theo taskId
+     * @param taskId mã task cần xóa
+     * @param projectId mã project
      * @return true nếu xóa thành công, false nếu thất bại
      */
-    boolean deleteById(String task_id, String project_id);
+    boolean deleteTask(String taskId, String projectId);
+
+    /**
+     * Kiểm tra task có tồn tại không
+     * @param taskId mã task
+     * @param projectId mã project
+     * @return true nếu task tồn tại
+     */
+    boolean taskExists(String taskId, String projectId);
+
+    /**
+     * Validate status của task
+     * @param status trạng thái cần validate
+     * @return true nếu status hợp lệ
+     */
+    boolean isValidStatus(String status);
+
+    /**
+     * Validate priority của task
+     * @param priority mức độ ưu tiên cần validate
+     * @return true nếu priority hợp lệ
+     */
+    boolean isValidPriority(String priority);
 }
