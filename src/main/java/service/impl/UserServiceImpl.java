@@ -11,11 +11,17 @@ import main.java.service.UserService;
 public class UserServiceImpl implements UserService {
     
     private final UserRepository userRepository;
-    
+    private User currentUser = null;
     public UserServiceImpl() {
         this.userRepository = new UserRepository();
     }
-    
+
+    public static UserServiceImpl getInstance() {
+        return SessionHolder.INSTANCE;
+    }
+    private static class SessionHolder {
+        private static final UserServiceImpl INSTANCE = new UserServiceImpl();
+    }
     @Override
     public boolean createUser(User user) {
         if (user == null) {
@@ -164,6 +170,7 @@ public class UserServiceImpl implements UserService {
         String hashedPassword = hashPassword(password);
         if (user.getPasswordHash().equals(hashedPassword)) {
             System.out.println("Đăng nhập thành công cho user: " + email);
+            this.currentUser = user;
             return user;
         } else {
             System.err.println("Sai mật khẩu cho user: " + email);
@@ -208,5 +215,9 @@ public class UserServiceImpl implements UserService {
         }
         User user = getUserById(userId);
         return user != null;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 }

@@ -1,5 +1,12 @@
 package main.java.service;
 
+import main.java.model.Comments;
+
+import java.util.List;
+
+public interface CommentService {
+    /**
+     * Thêm một comment mới
 import java.util.List;
 import main.java.model.Comments;
 

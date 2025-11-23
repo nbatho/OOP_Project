@@ -2,6 +2,7 @@ package main.java.service.impl;
 
 import java.util.List;
 import main.java.model.ProjectMember;
+import main.java.repository.ProjectMemberRepository;
 import main.java.service.ProjectMemberService;
 import main.java.service.ProjectService;
 import main.java.service.UserService;
@@ -9,10 +10,11 @@ import main.java.service.UserService;
 public class ProjectMemberServiceImpl implements ProjectMemberService {
     private final ProjectService projectService;
     private final UserService userService;
-
+    private final ProjectMemberRepository projectMemberRepository;
     public ProjectMemberServiceImpl() {
         this.projectService = new ProjectServiceImpl();
         this.userService = new UserServiceImpl();
+        this.projectMemberRepository = new ProjectMemberRepository();
     }
 
     @Override
@@ -97,9 +99,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return List.of();
             }
 
-            // return projectMemberRepository.getMembersByProject(project_id);
-            System.out.println("Lấy members theo project: " + project_id);
-            return List.of(); // Placeholder
+//            System.out.println("Lấy members theo project: " + project_id);
+             return projectMemberRepository.findByProjectId(project_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy members của project: " + e.getMessage());
             return List.of();
@@ -114,9 +115,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return List.of();
             }
 
-            // return projectMemberRepository.getProjectsByUser(user_id);
-            System.out.println("Lấy projects theo user: " + user_id);
-            return List.of(); // Placeholder
+                System.out.println("Lấy projects theo user: " + user_id);
+             return projectMemberRepository.findByUserId(user_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy projects của user: " + e.getMessage());
             return List.of();
