@@ -18,7 +18,7 @@ public class LoginController {
 
     public LoginController(LoginView lview) {
         this.lview = lview;
-        this.userService = new UserServiceImpl();
+        this.userService = UserServiceImpl.getInstance();
 
         // Sự kiện: nhấn "Đăng ký"
         this.lview.getLblRegister().addMouseListener(new MouseAdapter() {

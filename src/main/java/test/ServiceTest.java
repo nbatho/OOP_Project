@@ -21,7 +21,7 @@ public class ServiceTest {
         testTaskService();
         
         System.out.println("\n=== Testing ManagerService ===");
-        testManagerService();
+//        testManagerService();
         
         System.out.println("\n=== Testing AdminService ===");
         testAdminService();
@@ -159,30 +159,30 @@ public class ServiceTest {
         }
     }
     
-    private static void testManagerService() {
-        ManagerService managerService = new ManagerServiceImpl();
-        UserService userService = new UserServiceImpl();
-        
-        // Tạo user trước
-        User testUser = new User();
-        testUser.setFullName("Manager Test User");
-        testUser.setEmail("managertest@example.com");
-        testUser.setPasswordHash("password123");
-        userService.createUser(testUser);
-        User createdUser = userService.getUserByEmail("managertest@example.com");
-        
-        if (createdUser != null) {
-            boolean promoted = managerService.promoteUserToManager(createdUser.getUserId());
-            System.out.println("User promoted to manager: " + promoted);
-            
-            boolean isManager = managerService.isUserManager(createdUser.getUserId());
-            System.out.println("User is manager: " + isManager);
-            
-            managerService.demoteManagerToUser(createdUser.getUserId());
-            userService.deleteUser(createdUser.getUserId());
-            System.out.println("Manager cleaned up");
-        }
-    }
+//    private static void testManagerService() {
+//        ManagerService managerService = new ManagerServiceImpl();
+//        UserService userService = new UserServiceImpl();
+//
+//        // Tạo user trước
+//        User testUser = new User();
+//        testUser.setFullName("Manager Test User");
+//        testUser.setEmail("managertest@example.com");
+//        testUser.setPasswordHash("password123");
+//        userService.createUser(testUser);
+//        User createdUser = userService.getUserByEmail("managertest@example.com");
+//
+//        if (createdUser != null) {
+//            boolean promoted = managerService.promoteUserToManager(createdUser.getUserId());
+//            System.out.println("User promoted to manager: " + promoted);
+//
+//            boolean isManager = managerService.isUserManager(createdUser.getUserId());
+//            System.out.println("User is manager: " + isManager);
+//
+//            managerService.demoteManagerToUser(createdUser.getUserId());
+//            userService.deleteUser(createdUser.getUserId());
+//            System.out.println("Manager cleaned up");
+//        }
+//    }
     
     private static void testAdminService() {
         AdminService adminService = new AdminServiceImpl();

@@ -2,16 +2,30 @@ package main.java.controller;
 
 import main.java.component.ProjectCard;
 import main.java.component.TaskCard;
+import main.java.model.Project;
+import main.java.model.ProjectMember;
+import main.java.model.Task;
+import main.java.model.User;
+import main.java.service.ProjectMemberService;
+import main.java.service.impl.ProjectMemberServiceImpl;
+import main.java.service.impl.ProjectServiceImpl;
+import main.java.service.impl.TaskServiceImpl;
+import main.java.service.impl.UserServiceImpl;
 import main.java.view.*;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DashboardController {
-    private DashboardView view;
-    private KanbanView kanbanView;
-    private TableView tableView;
-    private CalendarView calendarView;
-
+    private final DashboardView view;
+    private final KanbanView kanbanView;
+    private final TableView tableView;
+    private final CalendarView calendarView;
+    private final UserServiceImpl userService = UserServiceImpl.getInstance();
+    private final ProjectServiceImpl projectService = new ProjectServiceImpl();
+    private final ProjectMemberServiceImpl projectMemberService = new ProjectMemberServiceImpl();
+    private final TaskServiceImpl taskService = new TaskServiceImpl();
     public DashboardController(DashboardView view) {
         this.view = view;
         this.kanbanView = new KanbanView();
@@ -34,72 +48,184 @@ public class DashboardController {
         // Menu items
         view.getInfoMenuItem().addActionListener(e -> handleShowInfo());
         view.getLogoutMenuItem().addActionListener(e -> handleLogout());
-        
+
         // Lắng nghe sự kiện chọn dự án
         view.setProjectSelectionListener(projectName -> handleProjectSelected(projectName));
-        
+
         // Lắng nghe sự kiện tạo dự án mới
         view.getCreateProjectMenuItem().addActionListener(e -> handleCreateProject());
-    }
-    
-    private void handleProjectSelected(String projectName) {
-        // Cập nhật header với tên dự án
-        view.setCurrentProjectName(projectName);
-        
-        // Lấy thông tin dự án (có thể từ database)
-        String projectInfo = getProjectInfo(projectName);
-        
-        // Cập nhật sidebar
-        view.updateSidebarProjectInfo(projectInfo);
-    }
-    
-    private String getProjectInfo(String projectName) {
-        // TODO: Lấy thông tin từ database/service
-        // Tạm thời trả về dữ liệu mẫu
-        return "Tên: " + projectName + "\n" +
-               "Mô tả: Đây là một dự án quản lý công việc\n" +
-               "Ngày tạo: 01/01/2024\n" +
-               "Trạng thái: Hoạt động";
-    }
 
-    private void handleCreateProject() {
-        ProjectCard projectCardView = new ProjectCard();
-        projectCardView.getBtnSave().addActionListener(e -> {
-            String title = projectCardView.getTxtTitle().getText();
-            String description = projectCardView.getTxtDescription().getText();
+        // Load danh sách dự án ban đầu
+        loadProjectList();
 
-            if (title.isEmpty()) {
-                JOptionPane.showMessageDialog(projectCardView,
-                        "Vui lòng nhập tên dự án!",
-                        "Lỗi",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
+
+    }
+    private void loadProjectMembers(String projectId) {
+        try {
+            List<ProjectMember> listProjectMembers = projectMemberService.getByProjectId(projectId);
+            List<User> listMembers = new ArrayList<>();
+            for (ProjectMember projectMember : listProjectMembers) {
+                User users = userService.getUserById(projectMember.getUserId());
+                if (users != null) {
+
+                listMembers.add(users);
+                }
+            }
+            view.updateMembersList(listMembers);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view,
+                    "Không thể tải danh sách thành viên: " + e.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+    private void loadProjectTasks(String projectId) {
+        try {
+          List<Task> listTasks = taskService.getTasksByProjectId(projectId);
+
+//            // 3. Cập nhật TẤT CẢ các view
+            kanbanView.updateTasks(listTasks);
+
+
+//            tableView.updateTasks(tasks);
+//            calendarView.updateTasks(tasks);
+//
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view,
+                    "Không thể tải danh sách task: " + e.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    /**
+     * Load danh sách dự án từ database và cập nhật vào dropdown menu
+     */
+    private void loadProjectList() {
+        try {
+            List<ProjectMember> listProjectMembers = projectMemberService
+                    .getByUserId(userService.getCurrentUser().getUserId());
+            String[] projectNames = new String[listProjectMembers.size()];
+
+            for (int i = 0; i < listProjectMembers.size(); i++) {
+                Project project = projectService.getProjectById(
+                        listProjectMembers.get(i).getProjectId()
+                );
+                projectNames[i] = project.getName();
             }
 
-            // TODO: Lưu dự án vào database/model
-            System.out.println("Project created: " + title);
+            view.updateProjectList(projectNames);
 
-            // Cập nhật dashboard với dự án mới tạo
-            view.setCurrentProjectName(title);
-            String projectInfo = "Tên: " + title + "\n" +
-                                "Mô tả: " + description + "\n" +
-                                "Ngày tạo: " + java.time.LocalDate.now() + "\n" +
-                                "Trạng thái: Hoạt động";
-            view.updateSidebarProjectInfo(projectInfo);
+            if (projectNames.length > 0) {
+                handleProjectSelected(projectNames[0]);
+            }
 
-            projectCardView.dispose();
-        });
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view,
+                    "Không thể tải danh sách dự án: " + e.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Xử lý khi người dùng chọn một dự án từ dropdown
+     */
+    private void handleProjectSelected(String projectName) {
+        try {
+            view.setCurrentProjectName(projectName);
+
+            // Lấy thông tin chi tiết dự án từ database
+            Project project = projectService.getProjectByName(projectName);
+
+            if (project != null) {
+                String projectInfo = getProjectInfo(project);
+
+                view.updateSidebarProjectInfo(projectInfo);
+
+                loadProjectMembers(project.getProjectId());
+
+                // TODO: Load tasks của dự án này vào KanbanView/TableView/CalendarView
+                 loadProjectTasks(project.getProjectId());
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view,
+                    "Không thể tải thông tin dự án: " + e.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Lấy thông tin dự án để hiển thị
+     */
+    private String getProjectInfo(Project project) {
+        StringBuilder info = new StringBuilder();
+        info.append("Tên: ").append(project.getName()).append("\n");
+        info.append("Mô tả: ").append(project.getDescription()).append("\n");
+        info.append("Ngày tạo: ").append(project.getCreatedAt()).append("\n");
+        return info.toString();
+    }
+
+    /**
+     * Xử lý tạo dự án mới
+     */
+    private void handleCreateProject() {
+//        ProjectCard projectCardView = new ProjectCard();
+//        projectCardView.getBtnSave().addActionListener(e -> {
+//            String title = projectCardView.getTxtTitle().getText();
+//            String description = projectCardView.getTxtDescription().getText();
+//
+//            if (title.isEmpty()) {
+//                JOptionPane.showMessageDialog(projectCardView,
+//                        "Vui lòng nhập tên dự án!",
+//                        "Lỗi",
+//                        JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
+//
+//            try {
+//                // Tạo project mới
+//                Project newProject = new Project();
+//                newProject.setName(title);
+//                newProject.setDescription(description);
+//                newProject.setCreatedBy(userService.getCurrentUser().getId());
+//
+//                // Lưu vào database
+//                projectService.create(newProject);
+//
+//                // Reload danh sách dự án
+//                loadProjectList();
+//
+//                // Tự động chọn dự án mới tạo
+//                handleProjectSelected(title);
+//
+//                JOptionPane.showMessageDialog(projectCardView,
+//                        "Tạo dự án thành công!",
+//                        "Thành công",
+//                        JOptionPane.INFORMATION_MESSAGE);
+//
+//                projectCardView.dispose();
+//
+//            } catch (Exception ex) {
+//                JOptionPane.showMessageDialog(projectCardView,
+//                        "Lỗi khi tạo dự án: " + ex.getMessage(),
+//                        "Lỗi",
+//                        JOptionPane.ERROR_MESSAGE);
+//            }
+//        });
     }
 
     private void handleSearch() {
         System.out.println("Dang Tim kiem");
     }
-    private void handleShowCard() {
 
+    private void handleShowCard() {
         TaskCard taskCardView = new TaskCard();
-        // Có thể thêm listener cho nút Save nếu cần
         taskCardView.getBtnSave().addActionListener(e -> {
-            // Xử lý lưu task
             String title = taskCardView.getTxtTitle().getText();
             String description = taskCardView.getTxtDescription().getText();
             String assignee = taskCardView.getTxtAssignee().getText();
