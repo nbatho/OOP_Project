@@ -9,8 +9,8 @@ import main.java.service.TeamService;
 
 public class ProjectServiceImpl implements ProjectService {
     
-    private ProjectRepository projectRepository;
-    private TeamService teamService;
+    private final ProjectRepository projectRepository;
+    private final TeamService teamService;
     
     public ProjectServiceImpl() {
         this.projectRepository = new ProjectRepository();

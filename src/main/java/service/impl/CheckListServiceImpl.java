@@ -46,7 +46,6 @@ public class CheckListServiceImpl implements CheckListService {
             return checkListRepository.createChecklist(checklist);
         } catch (Exception e) {
             System.out.println("Lỗi khi tạo checklist: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -57,7 +56,6 @@ public class CheckListServiceImpl implements CheckListService {
             return checkListRepository.findAll();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy danh sách checklists: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -73,7 +71,6 @@ public class CheckListServiceImpl implements CheckListService {
             return checkListRepository.findByChecklistId(checklistId);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy checklist theo ID: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -91,7 +88,6 @@ public class CheckListServiceImpl implements CheckListService {
                     .toList();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy checklists theo task ID: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -110,7 +106,6 @@ public class CheckListServiceImpl implements CheckListService {
                     .orElse(null);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy checklist theo title: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -143,7 +138,6 @@ public class CheckListServiceImpl implements CheckListService {
             return checkListRepository.updateChecklistTitle(checklist.getChecklistId(), checklist.getTitle());
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật checklist: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -183,7 +177,6 @@ public class CheckListServiceImpl implements CheckListService {
             return updateChecklist(checklist);
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật tiêu đề checklist: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -204,7 +197,6 @@ public class CheckListServiceImpl implements CheckListService {
             return checkListRepository.deleteByChecklistId(checklistId);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa checklist: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -230,7 +222,6 @@ public class CheckListServiceImpl implements CheckListService {
             return allDeleted;
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa checklists theo task ID: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

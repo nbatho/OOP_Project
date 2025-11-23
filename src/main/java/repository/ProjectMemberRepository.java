@@ -52,7 +52,6 @@ public class ProjectMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi tạo project member: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -72,7 +71,6 @@ public class ProjectMemberRepository {
             System.out.println("Found " + members.size() + " project members");
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách project members: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return members;
@@ -98,7 +96,6 @@ public class ProjectMemberRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi tìm project member by project_id và user_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return null;
     }
@@ -120,7 +117,6 @@ public class ProjectMemberRepository {
             System.out.println("Found " + members.size() + " members in project " + project_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy members by project_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return members;
@@ -143,7 +139,6 @@ public class ProjectMemberRepository {
             System.out.println("Found " + members.size() + " projects for user " + user_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy members by user_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return members;
@@ -166,7 +161,6 @@ public class ProjectMemberRepository {
             System.out.println("Found " + members.size() + " members with role " + role_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy members by role_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return members;
@@ -193,7 +187,6 @@ public class ProjectMemberRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi update project member role: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -219,7 +212,6 @@ public class ProjectMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa project member: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -243,7 +235,6 @@ public class ProjectMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa members by project_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -267,7 +258,6 @@ public class ProjectMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa members by user_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }

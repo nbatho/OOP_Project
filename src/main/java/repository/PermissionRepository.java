@@ -25,7 +25,6 @@ public class PermissionRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -43,7 +42,6 @@ public class PermissionRepository {
                 return mapResultSetToPermission(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -61,7 +59,6 @@ public class PermissionRepository {
                 return mapResultSetToPermission(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -78,7 +75,6 @@ public class PermissionRepository {
                 permissions.add(mapResultSetToPermission(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return permissions;
     }
@@ -95,7 +91,6 @@ public class PermissionRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -109,7 +104,6 @@ public class PermissionRepository {
             pstmt.setString(1, permissionId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -132,7 +126,6 @@ public class PermissionRepository {
                 permissions.add(mapResultSetToPermission(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return permissions;
     }

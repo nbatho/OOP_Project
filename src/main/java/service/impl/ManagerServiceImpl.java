@@ -51,7 +51,6 @@ public class ManagerServiceImpl implements ManagerService {
             return true;
         } catch (Exception e) {
             System.out.println("Lỗi khi tạo manager: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -64,7 +63,6 @@ public class ManagerServiceImpl implements ManagerService {
             return List.of(); // Placeholder
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy danh sách managers: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -82,7 +80,6 @@ public class ManagerServiceImpl implements ManagerService {
             return null; // Placeholder
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy manager theo ID: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -100,7 +97,6 @@ public class ManagerServiceImpl implements ManagerService {
             return null; // Placeholder
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy manager theo user ID: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -127,7 +123,6 @@ public class ManagerServiceImpl implements ManagerService {
             return true;
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật manager: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -150,7 +145,6 @@ public class ManagerServiceImpl implements ManagerService {
             return true;
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa manager: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -201,7 +195,6 @@ public class ManagerServiceImpl implements ManagerService {
             return createManager(manager);
         } catch (Exception e) {
             System.out.println("Lỗi khi thăng cấp user lên manager: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -212,7 +205,6 @@ public class ManagerServiceImpl implements ManagerService {
             return deleteManager(managerId);
         } catch (Exception e) {
             System.out.println("Lỗi khi hạ cấp manager: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -229,7 +221,6 @@ public class ManagerServiceImpl implements ManagerService {
             return List.of();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy projects của manager: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -246,7 +237,6 @@ public class ManagerServiceImpl implements ManagerService {
             return List.of();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy teams của manager: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -269,7 +259,6 @@ public class ManagerServiceImpl implements ManagerService {
             return true;
         } catch (Exception e) {
             System.out.println("Lỗi khi gán manager cho project: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -292,7 +281,6 @@ public class ManagerServiceImpl implements ManagerService {
             return true;
         } catch (Exception e) {
             System.out.println("Lỗi khi gán manager cho team: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

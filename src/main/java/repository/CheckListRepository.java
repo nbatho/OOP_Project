@@ -48,7 +48,6 @@ public class CheckListRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi tạo checklist: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -68,7 +67,6 @@ public class CheckListRepository {
             System.out.println("Found " + checklists.size() + " checklists");
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách checklists: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return checklists;
@@ -92,7 +90,6 @@ public class CheckListRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi tìm checklist by id: " + e.getMessage());
-            e.printStackTrace();
         }
         return null;
     }
@@ -114,7 +111,6 @@ public class CheckListRepository {
             System.out.println("Found " + checklists.size() + " checklists for task " + taskId);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy checklists by task_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return checklists;
@@ -138,7 +134,6 @@ public class CheckListRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi tìm checklist by title: " + e.getMessage());
-            e.printStackTrace();
         }
         return null;
     }
@@ -162,7 +157,6 @@ public class CheckListRepository {
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi update checklist: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -186,7 +180,6 @@ public class CheckListRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa checklist: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -210,7 +203,6 @@ public class CheckListRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa checklists by task_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }

@@ -3,15 +3,12 @@ package main.java.service.impl;
 import java.util.List;
 import main.java.model.TaskAsigness;
 import main.java.service.TaskAssignessService;
-import main.java.service.TaskService;
 import main.java.service.UserService;
 
 public class TaskAssignessServiceImpl implements TaskAssignessService {
-    private final TaskService taskService;
     private final UserService userService;
 
     public TaskAssignessServiceImpl() {
-        this.taskService = new TaskServiceImpl();
         this.userService = new UserServiceImpl();
     }
 

@@ -52,7 +52,6 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.createTask(task);
         } catch (Exception e) {
             System.out.println("Lỗi khi tạo task: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -68,7 +67,6 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.findAll(projectId);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy tasks theo project ID: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -89,7 +87,6 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.findByTaskId(taskId, projectId);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy task theo ID: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -123,7 +120,6 @@ public class TaskServiceImpl implements TaskService {
             );
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật task: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -144,7 +140,6 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.updateTaskStatus(taskId, projectId, status);
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật status task: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -165,7 +160,6 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.updateTaskPriority(taskId, projectId, priority);
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật priority task: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -181,7 +175,6 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.updateTaskDueDate(taskId, projectId, dueDate);
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật due date task: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -197,7 +190,6 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.deleteByTaskId(taskId, projectId);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa task: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

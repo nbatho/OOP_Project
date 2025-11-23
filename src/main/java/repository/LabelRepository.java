@@ -27,7 +27,6 @@ public class LabelRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -45,14 +44,13 @@ public class LabelRepository {
                 return mapResultSetToLabel(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
 
     public List<Label> getAllLabels() {
+        String sql = "SELECT * FROM labels";
         List<Label> labels = new ArrayList<>();
-        String sql = "SELECT * FROM labels ORDER BY name";
         
         try (Connection conn = DatabaseConnection.getConnection();
              Statement stmt = conn.createStatement();
@@ -62,14 +60,13 @@ public class LabelRepository {
                 labels.add(mapResultSetToLabel(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return labels;
     }
 
     public List<Label> getLabelsByTeamId(String teamId) {
+        String sql = "SELECT * FROM labels WHERE team_id = ?";
         List<Label> labels = new ArrayList<>();
-        String sql = "SELECT * FROM labels WHERE team_id = ? ORDER BY name";
         
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -81,31 +78,6 @@ public class LabelRepository {
                 labels.add(mapResultSetToLabel(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return labels;
-    }
-
-    public List<Label> getLabelsByTaskId(String taskId) {
-        List<Label> labels = new ArrayList<>();
-        String sql = """
-            SELECT l.* FROM labels l
-            INNER JOIN task_labels tl ON l.label_id = tl.label_id
-            WHERE tl.task_id = ?
-            ORDER BY l.name
-            """;
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, taskId);
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {
-                labels.add(mapResultSetToLabel(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
         return labels;
     }
@@ -123,7 +95,6 @@ public class LabelRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -137,17 +108,16 @@ public class LabelRepository {
             pstmt.setString(1, labelId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
 
     private Label mapResultSetToLabel(ResultSet rs) throws SQLException {
-        Label label = new Label();
-        label.setLabelId(rs.getString("label_id"));
-        label.setTeamId(rs.getString("team_id"));
-        label.setName(rs.getString("name"));
-        label.setColor(rs.getString("color"));
-        return label;
+        return new Label(
+            rs.getString("label_id"),
+            rs.getString("team_id"),
+            rs.getString("name"),
+            rs.getString("color")
+        );
     }
 }

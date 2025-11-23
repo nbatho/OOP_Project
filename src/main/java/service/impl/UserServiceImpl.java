@@ -10,7 +10,7 @@ import main.java.service.UserService;
 
 public class UserServiceImpl implements UserService {
     
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     
     public UserServiceImpl() {
         this.userRepository = new UserRepository();
@@ -180,13 +180,13 @@ public class UserServiceImpl implements UserService {
     }
     
     /**
-     * Hash password bằng SHA-256
+     * Hash password bằng MD5
      * @param password password gốc
      * @return password đã hash
      */
     private String hashPassword(String password) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] hashedBytes = md.digest(password.getBytes());
             
             // Convert byte array thành hex string

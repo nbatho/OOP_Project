@@ -50,7 +50,6 @@ public class AdminServiceImpl implements AdminService {
             return adminRepository.createAdmin(admin);
         } catch (Exception e) {
             System.out.println("Lỗi khi tạo admin: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -61,7 +60,6 @@ public class AdminServiceImpl implements AdminService {
             return adminRepository.getAllAdmins();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy danh sách admins: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -77,7 +75,6 @@ public class AdminServiceImpl implements AdminService {
             return adminRepository.getAdminById(adminId);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy admin theo ID: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -96,7 +93,6 @@ public class AdminServiceImpl implements AdminService {
                     .orElse(null);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy admin theo user ID: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -136,7 +132,6 @@ public class AdminServiceImpl implements AdminService {
             return adminRepository.updateAdmin(admin);
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật admin: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -157,7 +152,6 @@ public class AdminServiceImpl implements AdminService {
             return adminRepository.deleteAdmin(adminId);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa admin: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -211,7 +205,6 @@ public class AdminServiceImpl implements AdminService {
             return createAdmin(admin);
         } catch (Exception e) {
             System.out.println("Lỗi khi thăng cấp user lên admin: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -232,7 +225,6 @@ public class AdminServiceImpl implements AdminService {
             return deleteAdmin(adminId);
         } catch (Exception e) {
             System.out.println("Lỗi khi hạ cấp admin: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -243,7 +235,6 @@ public class AdminServiceImpl implements AdminService {
             return userService.getAllUsers();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy danh sách users cho quản lý: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -268,7 +259,6 @@ public class AdminServiceImpl implements AdminService {
             return userService.updateUser(user);
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật trạng thái user: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

@@ -38,7 +38,6 @@ public class DataInitializer {
             
         } catch (Exception e) {
             System.err.println("Error initializing data: " + e.getMessage());
-            e.printStackTrace();
         }
     }
     

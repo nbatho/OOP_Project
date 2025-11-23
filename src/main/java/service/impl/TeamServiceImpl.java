@@ -8,7 +8,7 @@ import main.java.service.TeamService;
 
 public class TeamServiceImpl implements TeamService {
     
-    private TeamRepository teamRepository;
+    private final TeamRepository teamRepository;
     
     public TeamServiceImpl() {
         this.teamRepository = new TeamRepository();
