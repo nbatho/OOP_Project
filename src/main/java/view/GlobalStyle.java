@@ -4,15 +4,16 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GlobalStyle {
-    private  Color COLOR_BACKGROUND = new Color(0xF4F5F7);
+    private  Color COLOR_BACKGROUND = new Color(0xF4F6F6);
     private  Color COLOR_CARD = new Color(0xFFFFFF);
-    private  Color COLOR_BORDER = new Color(0xE0E0E0);
-    private  Color COLOR_TEXT_PRIMARY = new Color(0x333333);
-    private  Color COLOR_TEXT_MUTED = new Color(0x666666);
-    private  Color COLOR_PRIMARY = new Color(0x3B82F6);
-    private  Color COLOR_SUCCESS      = new Color(0x22C55E);
+    private  Color COLOR_BORDER = new Color(0xE6ECEB);
+    private  Color COLOR_TEXT_PRIMARY = new Color(0x1F3B3A);
+    private  Color COLOR_TEXT_MUTED = new Color(0x6C7C7B);
+    private  Color COLOR_PRIMARY = new Color(0x2F7D7A); // teal primary used in UI
+    private  Color COLOR_SUCCESS = new Color(0x22C55E);
     private  Font FONT_BOLD = new Font("Segoe UI", Font.BOLD, 14);
     private  Font FONT_NORMAL = new Font("Segoe UI", Font.PLAIN, 12);
+    private  Font FONT_SMALL = new Font("Segoe UI", Font.PLAIN, 11);
     private  Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 24);
     private  Font FONT_INPUT = new Font("Segoe UI", Font.PLAIN, 14);
     private static  int BASE_WIDTH = 1920;
@@ -66,6 +67,10 @@ public class GlobalStyle {
 
         UIManager.put("Button.margin", new Insets(scale(5), scale(10), scale(5), scale(10)));
         UIManager.put("Panel.background", new Color(0xF7F7F7));
+    }
+
+    public Font getFONT_SMALL() {
+        return FONT_SMALL;
     }
 
     public Color getCOLOR_SUCCESS() {
