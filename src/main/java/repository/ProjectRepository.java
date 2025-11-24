@@ -29,6 +29,25 @@ public class ProjectRepository {
             return false;
         }
     }
+    public boolean createProjectEmpty(Project project) {
+        String sql = "INSERT INTO projects (project_id, name, description) VALUES (?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            if (project.getProjectId() == null || project.getProjectId().isEmpty()) {
+                project.setProjectId(UUID.randomUUID().toString());
+            }
+
+            pstmt.setString(1, project.getProjectId());
+            pstmt.setString(2, project.getName());
+            pstmt.setString(3, project.getDescription());
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 
     public Project getProjectById(String projectId) {
         String sql = "SELECT * FROM projects WHERE project_id = ?";

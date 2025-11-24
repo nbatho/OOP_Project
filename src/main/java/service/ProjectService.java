@@ -12,6 +12,12 @@ public interface ProjectService {
     boolean createProject(Project project);
 
     /**
+     * Tạo một project mới rỗng
+     * @param project đối tượng Project cần tạo
+     * @return true nếu tạo thành công, false nếu thất bại
+     */
+    String createProjectEmpty(Project project);
+    /**
      * Lấy danh sách tất cả các project
      * @return List<Project> danh sách project, có thể rỗng
      */

@@ -19,12 +19,10 @@ public class Project {
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
 
-    public Project(String projectId, String teamId, String name, String description, Timestamp createdAt) {
+    public Project(String projectId, String name, String description) {
         this.projectId = projectId;
-        this.teamId = teamId;
         this.name = name;
         this.description = description;
-        this.createdAt = createdAt;
     }
 
     // Getters

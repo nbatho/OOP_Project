@@ -48,9 +48,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return false;
             }
 
-            // return projectMemberRepository.createProjectMember(projectMember);
             System.out.println("Thêm project member thành công: " + projectMember.getUserId());
-            return true;
+             return projectMemberRepository.createProjectMember(projectMember);
         } catch (Exception e) {
             System.out.println("Lỗi khi tạo project member: " + e.getMessage());
             return false;

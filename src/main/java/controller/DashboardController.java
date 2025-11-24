@@ -174,49 +174,46 @@ public class DashboardController {
      * Xử lý tạo dự án mới
      */
     private void handleCreateProject() {
-//        ProjectCard projectCardView = new ProjectCard();
-//        projectCardView.getBtnSave().addActionListener(e -> {
-//            String title = projectCardView.getTxtTitle().getText();
-//            String description = projectCardView.getTxtDescription().getText();
-//
-//            if (title.isEmpty()) {
-//                JOptionPane.showMessageDialog(projectCardView,
-//                        "Vui lòng nhập tên dự án!",
-//                        "Lỗi",
-//                        JOptionPane.ERROR_MESSAGE);
-//                return;
-//            }
-//
-//            try {
+        ProjectCard projectCardView = new ProjectCard();
+        projectCardView.getBtnSave().addActionListener(e -> {
+            String title = projectCardView.getTxtTitle().getText();
+            String description = projectCardView.getTxtDescription().getText();
+
+            if (title.isEmpty()) {
+                JOptionPane.showMessageDialog(projectCardView,
+                        "Vui lòng nhập tên dự án!",
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            try {
 //                // Tạo project mới
-//                Project newProject = new Project();
-//                newProject.setName(title);
-//                newProject.setDescription(description);
-//                newProject.setCreatedBy(userService.getCurrentUser().getId());
+                Project newProject = new Project();
+                newProject.setName(title);
+                newProject.setDescription(description);
 //
-//                // Lưu vào database
-//                projectService.create(newProject);
+                String projectId = projectService.createProjectEmpty(newProject);
 //
+                projectMemberService.create(new ProjectMember(projectId,userService.getCurrentUser().getUserId(),"R2"));
 //                // Reload danh sách dự án
-//                loadProjectList();
-//
+                loadProjectList();
 //                // Tự động chọn dự án mới tạo
-//                handleProjectSelected(title);
-//
-//                JOptionPane.showMessageDialog(projectCardView,
-//                        "Tạo dự án thành công!",
-//                        "Thành công",
-//                        JOptionPane.INFORMATION_MESSAGE);
-//
-//                projectCardView.dispose();
-//
-//            } catch (Exception ex) {
-//                JOptionPane.showMessageDialog(projectCardView,
-//                        "Lỗi khi tạo dự án: " + ex.getMessage(),
-//                        "Lỗi",
-//                        JOptionPane.ERROR_MESSAGE);
-//            }
-//        });
+                handleProjectSelected(title);
+                JOptionPane.showMessageDialog(projectCardView,
+                        "Tạo dự án thành công!",
+                        "Thành công",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                projectCardView.dispose();
+
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(projectCardView,
+                        "Lỗi khi tạo dự án: " + ex.getMessage(),
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 
     private void handleSearch() {

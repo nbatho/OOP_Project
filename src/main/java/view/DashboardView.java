@@ -332,18 +332,13 @@ public class DashboardView extends JFrame {
     public void updateProjectList(String[] projects) {
         projectMenu.removeAll();
 
-        // Header
         JLabel headerLabel = new JLabel("  Dự án của bạn");
         headerLabel.setFont(style.getFONT_BOLD());
-        headerLabel.setForeground(style.getCOLOR_TEXT_MUTED());
-        headerLabel.setBorder(new EmptyBorder(8, 5, 5, 5));
         projectMenu.add(headerLabel);
         projectMenu.addSeparator();
 
-        // Add project items
         for (String projectName : projects) {
             JMenuItem projectItem = new JMenuItem(projectName);
-            projectItem.setFont(style.getFONT_NORMAL());
             projectItem.addActionListener(e -> {
                 setCurrentProjectName(projectName);
                 if (projectSelectionListener != null) {
@@ -355,10 +350,6 @@ public class DashboardView extends JFrame {
 
         projectMenu.addSeparator();
 
-        // Create project button
-        createProjectMenuItem = new JMenuItem("+ Tạo dự án mới");
-        createProjectMenuItem.setFont(style.getFONT_BOLD());
-        createProjectMenuItem.setForeground(style.getCOLOR_PRIMARY());
         projectMenu.add(createProjectMenuItem);
     }
 

@@ -11,7 +11,7 @@ public class ProjectServiceImpl implements ProjectService {
     
     private final ProjectRepository projectRepository;
     private final TeamService teamService;
-    
+
     public ProjectServiceImpl() {
         this.projectRepository = new ProjectRepository();
         this.teamService = new main.java.service.impl.TeamServiceImpl();
@@ -54,7 +54,22 @@ public class ProjectServiceImpl implements ProjectService {
         
         return projectRepository.createProject(project);
     }
-    
+
+    @Override
+    public String createProjectEmpty(Project project) {
+        if (project == null) return null;
+        if (project.getName() == null || project.getName().trim().isEmpty()) return null;
+
+        if (isProjectNameExists(project.getName())) return null;
+
+        if (project.getProjectId() == null || project.getProjectId().isEmpty()) {
+            project.setProjectId(UUID.randomUUID().toString());
+        }
+
+        boolean created = projectRepository.createProject(project);
+        return created ? project.getProjectId() : null;
+    }
+
     @Override
     public List<Project> getAllProjects() {
         return projectRepository.getAllProjects();
