@@ -108,18 +108,9 @@ public class DashboardController {
 
             System.out.println("DashboardController: loaded tasks for projectId=" + projectId + " count=" + (listTasks == null ? 0 : listTasks.size()));
 
-            // If DB returned no tasks, provide demo tasks so we can verify rendering locally.
-            if (listTasks == null || listTasks.isEmpty()) {
-                System.out.println("DashboardController: no tasks found, injecting demo tasks for visual verification.");
-                listTasks = new java.util.ArrayList<>();
-                Task t1 = new Task("t-demo-1", projectId, "Demo Task 1", "Mô tả task demo 1", "TODO", "HIGH", null, "system");
-                Task t2 = new Task("t-demo-2", projectId, "Demo Task 2", "Mô tả task demo 2", "IN_PROGRESS", "MEDIUM", null, "system");
-                Task t3 = new Task("t-demo-3", projectId, "Demo Task 3", "Mô tả task demo 3", "REVIEW", "LOW", null, "system");
-                listTasks.add(t1);
-                listTasks.add(t2);
-                listTasks.add(t3);
+            for (Task task : listTasks) {
+                System.out.println(task);
             }
-
             // 3. Cập nhật TẤT CẢ các view
             kanbanView.updateTasks(listTasks);
 
@@ -228,7 +219,7 @@ public class DashboardController {
                 newProject.setName(title);
                 newProject.setDescription(description);
 //
-                String projectId = projectService.createProjectEmpty(newProject);
+                String projectId = projectService.createProject(newProject);
 //
                 projectMemberService.create(new ProjectMember(projectId,userService.getCurrentUser().getUserId(),"R2"));
 //                // Reload danh sách dự án

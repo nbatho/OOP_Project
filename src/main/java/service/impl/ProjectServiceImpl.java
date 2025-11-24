@@ -5,58 +5,17 @@ import java.util.UUID;
 import main.java.model.Project;
 import main.java.repository.ProjectRepository;
 import main.java.service.ProjectService;
-import main.java.service.TeamService;
 
 public class ProjectServiceImpl implements ProjectService {
     
     private final ProjectRepository projectRepository;
-    private final TeamService teamService;
 
     public ProjectServiceImpl() {
         this.projectRepository = new ProjectRepository();
-        this.teamService = new main.java.service.impl.TeamServiceImpl();
-    }
-    
-    @Override
-    public boolean createProject(Project project) {
-        if (project == null) {
-            System.err.println("Project object không được null");
-            return false;
-        }
-        
-        // Validate dữ liệu
-        if (project.getName() == null || project.getName().trim().isEmpty()) {
-            System.err.println("Tên project không được để trống");
-            return false;
-        }
-        
-        if (project.getTeamId() == null || project.getTeamId().trim().isEmpty()) {
-            System.err.println("Team ID không được để trống");
-            return false;
-        }
-        
-        // Kiểm tra team có tồn tại không
-        if (teamService.getTeamById(project.getTeamId()) == null) {
-            System.err.println("Team không tồn tại với ID: " + project.getTeamId());
-            return false;
-        }
-        
-        // Kiểm tra tên project đã tồn tại chưa
-        if (isProjectNameExists(project.getName())) {
-            System.err.println("Tên project đã tồn tại: " + project.getName());
-            return false;
-        }
-        
-        // Tự động tạo ID nếu chưa có
-        if (project.getProjectId() == null || project.getProjectId().trim().isEmpty()) {
-            project.setProjectId(UUID.randomUUID().toString());
-        }
-        
-        return projectRepository.createProject(project);
     }
 
     @Override
-    public String createProjectEmpty(Project project) {
+    public String createProject(Project project) {
         if (project == null) return null;
         if (project.getName() == null || project.getName().trim().isEmpty()) return null;
 
@@ -115,12 +74,7 @@ public class ProjectServiceImpl implements ProjectService {
             System.err.println("Project không tồn tại với ID: " + project.getProjectId());
             return false;
         }
-        
-        // Kiểm tra team có tồn tại không
-        if (project.getTeamId() != null && teamService.getTeamById(project.getTeamId()) == null) {
-            System.err.println("Team không tồn tại với ID: " + project.getTeamId());
-            return false;
-        }
+
         
         // Nếu tên thay đổi, kiểm tra tên mới có trùng không
         if (!existingProject.getName().equals(project.getName()) && isProjectNameExists(project.getName())) {

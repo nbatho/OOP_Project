@@ -39,23 +39,6 @@ public class TableView extends JPanel {
         add(header, BorderLayout.NORTH);
 
 
-        JPanel chipsRow = new JPanel(new GridLayout(1, 4, 0, 0));
-        chipsRow.setOpaque(true);
-        chipsRow.setBackground(new Color(0xEEF2F5));
-        chipsRow.setBorder(new CompoundBorder(new LineBorder(style.getCOLOR_BORDER()),
-                new EmptyBorder(10, 12, 10, 12)));
-
-        ButtonGroup chipsGroup = new ButtonGroup();
-        btnFrontend = chipTab("Frontend", true, chipsGroup);
-        btnBackend  = chipTab("Backend",  false, chipsGroup);
-        btnDevOps   = chipTab("DevOps",   false, chipsGroup);
-        btnTesting  = chipTab("Testing",  false, chipsGroup);
-
-        chipsRow.add(btnFrontend);
-        chipsRow.add(btnBackend);
-        chipsRow.add(btnDevOps);
-        chipsRow.add(btnTesting);
-
         // Section card
         JPanel sectionCard = new JPanel(new BorderLayout());
         sectionCard.setBackground(style.getCOLOR_CARD());
@@ -65,30 +48,14 @@ public class TableView extends JPanel {
         JPanel left = new JPanel();
         left.setOpaque(false);
         left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
-        catTitleLabel = new JLabel("Frontend");
-        catTitleLabel.setFont(style.getFONT_BOLD().deriveFont(16f));
-        catTitleLabel.setForeground(style.getCOLOR_TEXT_PRIMARY());
-        catStatsLabel = new JLabel("—");
-        catStatsLabel.setFont(style.getFONT_NORMAL());
-        catStatsLabel.setForeground(style.getCOLOR_TEXT_MUTED());
-        left.add(catTitleLabel);
-        left.add(Box.createVerticalStrut(4));
-        left.add(catStatsLabel);
 
-        JPanel pill = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 4));
-        pill.setBackground(new Color(0xE6F9F0));
-        donePillLabel = new JLabel("—");
-        donePillLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
-        donePillLabel.setForeground(style.getCOLOR_SUCCESS());
-        pill.add(donePillLabel);
 
         sectionCard.add(left, BorderLayout.WEST);
-        sectionCard.add(pill, BorderLayout.EAST);
+
 
         JPanel topStack = new JPanel();
         topStack.setOpaque(false);
         topStack.setLayout(new BoxLayout(topStack, BoxLayout.Y_AXIS));
-        topStack.add(chipsRow);
         topStack.add(Box.createVerticalStrut(8));
         topStack.add(sectionCard);
 

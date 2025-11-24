@@ -66,16 +66,16 @@ public class KanbanView extends JPanel {
     private void addKanbanColumn(String title, String statusKey) {
         JPanel columnPanel = new JPanel(new BorderLayout(10, 10));
         columnPanel.setBackground(style.getCOLOR_CARD());
-        // Use a compound border: visible outer line and inner empty border to inset content
+
         columnPanel.setBorder(BorderFactory.createCompoundBorder(
             new LineBorder(style.getCOLOR_BORDER()),
             new EmptyBorder(GlobalStyle.scale(8), GlobalStyle.scale(8), GlobalStyle.scale(8), GlobalStyle.scale(8))
         ));
-        // Give each column a comfortable preferred width so they don't appear cramped
+
         columnPanel.setPreferredSize(new Dimension(columnWidth, 700));
         columnPanel.setMaximumSize(new Dimension(columnWidth, Integer.MAX_VALUE));
 
-        // Header với số lượng task
+
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setOpaque(true);
         headerPanel.setBackground(getColumnTint(statusKey));
@@ -97,24 +97,19 @@ public class KanbanView extends JPanel {
 
         columnPanel.add(headerPanel, BorderLayout.NORTH);
 
-        // Create a cards container that will actually hold the task cards (vertical BoxLayout)
+
         JPanel cardsPanel = new JPanel();
         cardsPanel.setOpaque(false);
         cardsPanel.setLayout(new BoxLayout(cardsPanel, BoxLayout.Y_AXIS));
         cardsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        // Add a slightly larger top padding so cards don't overlap the column frame/header
+
         int columnTopPadding = GlobalStyle.scale(32);
-        // Use an inner empty border on the cards panel so padding remains even when scrolling
         cardsPanel.setBorder(new EmptyBorder(columnTopPadding, 0, GlobalStyle.scale(12), 0));
 
-        // Simpler centering strategy: use a vertical BoxLayout wrapper with glue above/below
-        // the cardsPanel. Glue will consume extra space and keep cardsPanel centered when
-        // content is smaller than the viewport; if content is larger, the scroll pane will
-        // allow scrolling normally.
         JPanel centerPanel = new JPanel();
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setOpaque(false);
-        // Add cardsPanel first so cards stick to the top; add glue below to consume remaining space.
+
         centerPanel.add(cardsPanel);
         centerPanel.add(Box.createVerticalGlue());
 
@@ -126,7 +121,7 @@ public class KanbanView extends JPanel {
 
         columnPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Footer with create button for this column
+
         JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER));
         footer.setOpaque(false);
         JButton createBtn = new JButton("Tạo mới");
@@ -137,13 +132,13 @@ public class KanbanView extends JPanel {
         footer.add(createBtn);
         columnPanel.add(footer, BorderLayout.SOUTH);
 
-        // Store the create button so controller can attach listeners
+
         columnCreateButtons.put(statusKey, createBtn);
 
         add(columnPanel);
-        // Store the cardsPanel (not the wrapper) so addTaskToBoard/clearAllTasks operate on the actual container
+
         kanbanColumns.put(statusKey, cardsPanel);
-        // Store the count label so we can update counts easily
+
         columnCountLabels.put(statusKey, countLabel);
     }
 
