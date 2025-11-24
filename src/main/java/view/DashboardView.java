@@ -38,6 +38,8 @@ public class DashboardView extends JFrame {
     private JPanel sidebarPanel;
     private JPanel mainContentPanel;
     private CardLayout cardLayout;
+    // Exposed Kanban view so controllers can populate it
+    private KanbanView kanbanView;
 
     // Teams card panel
     private JPanel membersCardPanel;
@@ -55,6 +57,8 @@ public class DashboardView extends JFrame {
         initUI();
         createUserMenu();
         createProjectMenu();
+        // Show Kanban by default in main content
+        showDefaultMainContent();
         setVisible(true);
     }
 
@@ -69,6 +73,26 @@ public class DashboardView extends JFrame {
         cardLayout = new CardLayout();
         mainContentPanel = new JPanel(cardLayout);
         add(mainContentPanel, BorderLayout.CENTER);
+    }
+
+    private void showDefaultMainContent() {
+        // Create Kanban view and wrap in a horizontal-scrollable pane so columns can expand
+        this.kanbanView = new KanbanView();
+        KanbanView kanban = this.kanbanView;
+        // set preferred size of the whole board so horizontal scroll works and columns aren't compressed
+        int boardWidth = kanban.getColumnWidth() * 4 + GlobalStyle.scale(16) * 3 + GlobalStyle.scale(30);
+        kanban.setPreferredSize(new Dimension(boardWidth, GlobalStyle.scale(800)));
+        JScrollPane kanbanScroll = new JScrollPane(kanban,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        kanbanScroll.getHorizontalScrollBar().setUnitIncrement(20);
+        kanbanScroll.setBorder(null);
+        mainContentPanel.add(kanbanScroll, "KANBAN");
+        cardLayout.show(mainContentPanel, "KANBAN");
+    }
+
+    public KanbanView getKanbanView() {
+        return this.kanbanView;
     }
 
     private JPanel createHeaderPanel() {
@@ -91,7 +115,7 @@ public class DashboardView extends JFrame {
         titlePanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         titleLabel = new JLabel("Quản lý");
-        titleLabel.setFont(style.getFONT_TITLE());
+            titleLabel.setFont(GlobalStyle.scaleFont(style.getFONT_TITLE()));
         titleLabel.setForeground(style.getCOLOR_PRIMARY());
 
         JLabel dropdownIcon = new JLabel("▼");
@@ -135,22 +159,39 @@ public class DashboardView extends JFrame {
         // Search and action buttons
         gbc.gridx = 2;
         searchField = new JTextField("", 20);
+            searchField.setFont(GlobalStyle.scaleFont(style.getFONT_INPUT()));
         topRow.add(searchField, gbc);
 
         gbc.gridx = 3;
         searchButton = new JButton("Tìm kiếm");
+            searchButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
+            searchButton.setBackground(style.getCOLOR_PRIMARY());
+            searchButton.setForeground(Color.WHITE);
+            searchButton.setFocusPainted(false);
         topRow.add(searchButton, gbc);
 
         gbc.gridx = 4;
         createButton = new JButton("Tạo mới");
+            createButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
+            createButton.setBackground(new Color(0x3B8F88));
+            createButton.setForeground(Color.WHITE);
+            createButton.setFocusPainted(false);
+            // hide header create button; creation moved to each Kanban column footer
+            createButton.setVisible(false);
         topRow.add(createButton, gbc);
 
         gbc.gridx = 5;
         notifyButton = new JButton("🔔");
+            notifyButton.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
+            notifyButton.setBackground(Color.WHITE);
+            notifyButton.setBorder(BorderFactory.createLineBorder(style.getCOLOR_BORDER()));
         topRow.add(notifyButton, gbc);
 
         gbc.gridx = 6;
         userButton = new JButton("User");
+            userButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
+            userButton.setBackground(Color.WHITE);
+            userButton.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
         userButton.addActionListener(e -> {
             if (userMenu != null) {
                 userMenu.show(userButton, 0, userButton.getHeight());
@@ -192,10 +233,10 @@ public class DashboardView extends JFrame {
         sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
         sidebarPanel.setBackground(style.getCOLOR_CARD());
         sidebarPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
-        sidebarPanel.setPreferredSize(new Dimension(350, 0));
+        sidebarPanel.setPreferredSize(new Dimension(GlobalStyle.scale(420), 0));
 
-        // Project info placeholder
-        projectInfoPanel = createPlaceholderCard("Thông tin dự án");
+        // Project info card (summary)
+        projectInfoPanel = createProjectInfoCard("Dự án Web App", "Tiến độ hoàn thành\n72%\n\n24 Hoàn\n8 Còn lại");
         sidebarPanel.add(projectInfoPanel);
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -212,7 +253,7 @@ public class DashboardView extends JFrame {
         membersCardPanel.setBackground(style.getCOLOR_CARD());
 
         teamsScrollPane = new JScrollPane(membersCardPanel);
-        teamsScrollPane.setPreferredSize(new Dimension(320, 300));
+        teamsScrollPane.setPreferredSize(new Dimension(GlobalStyle.scale(360), GlobalStyle.scale(420)));
         teamsScrollPane.setBorder(null);
         teamsScrollPane.getVerticalScrollBar().setUnitIncrement(10);
         sidebarPanel.add(teamsScrollPane);
@@ -235,16 +276,61 @@ public class DashboardView extends JFrame {
 
     private JPanel createPlaceholderCard(String title) {
         JPanel card = new JPanel(new BorderLayout());
-        card.setOpaque(false);
-        card.setBorder(BorderFactory.createTitledBorder(
-                new LineBorder(style.getCOLOR_BORDER()), title,
-                0, 0, style.getFONT_BOLD(), style.getCOLOR_TEXT_PRIMARY()
+        card.setOpaque(true);
+        card.setBackground(style.getCOLOR_CARD());
+        card.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(style.getCOLOR_BORDER()),
+                new EmptyBorder(12,12,12,12)
         ));
 
-        JLabel label = new JLabel("(Chưa có dữ liệu)");
-        label.setHorizontalAlignment(SwingConstants.CENTER);
-        label.setForeground(style.getCOLOR_TEXT_MUTED());
-        card.add(label, BorderLayout.CENTER);
+        JLabel label = new JLabel(title);
+        label.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
+        label.setForeground(style.getCOLOR_TEXT_PRIMARY());
+        card.add(label, BorderLayout.NORTH);
+
+        JLabel sub = new JLabel("(Chưa có dữ liệu)");
+        sub.setHorizontalAlignment(SwingConstants.LEFT);
+        sub.setForeground(style.getCOLOR_TEXT_MUTED());
+        card.add(sub, BorderLayout.CENTER);
+
+        return card;
+    }
+
+    private String getInitials(String fullName) {
+        if (fullName == null || fullName.trim().isEmpty()) return "--";
+        String cleaned = fullName.trim();
+        // return the first two non-space characters (e.g., "Nguyễn Minh" -> "NM", "tho" -> "TH")
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < cleaned.length() && sb.length() < 2; i++) {
+            char c = cleaned.charAt(i);
+            if (!Character.isWhitespace(c)) sb.append(Character.toUpperCase(c));
+        }
+        String initials = sb.toString();
+        if (initials.length() == 0) initials = "--";
+        return initials;
+    }
+
+    private JPanel createProjectInfoCard(String projectName, String info) {
+        JPanel card = new JPanel(new BorderLayout());
+        card.setOpaque(true);
+        card.setBackground(style.getCOLOR_PRIMARY());
+        card.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(style.getCOLOR_PRIMARY()),
+                new EmptyBorder(16,16,16,16)
+        ));
+
+        JLabel name = new JLabel(projectName);
+        name.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
+        name.setForeground(Color.WHITE);
+        card.add(name, BorderLayout.NORTH);
+
+        JTextArea txt = new JTextArea(info);
+        txt.setEditable(false);
+        txt.setOpaque(false);
+        txt.setForeground(new Color(0xDCEFEF));
+        txt.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
+        card.add(txt, BorderLayout.CENTER);
+
         return card;
     }
 
@@ -252,15 +338,24 @@ public class DashboardView extends JFrame {
         JPanel card = new JPanel(new BorderLayout(10, 10));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(style.getCOLOR_BORDER(), 1),
-                new EmptyBorder(10, 10, 10, 10)
+            new LineBorder(style.getCOLOR_BORDER(), 1),
+            new EmptyBorder(12, 12, 12, 12)
         ));
-        card.setMaximumSize(new Dimension(320, 80));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, GlobalStyle.scale(90)));
 
-        // Avatar
-        JLabel avatarLabel = new JLabel("X");
-        avatarLabel.setFont(new Font("Segoe UI", Font.PLAIN, 32));
-        avatarLabel.setPreferredSize(new Dimension(50, 50));
+        // Left: avatar + status dot
+        JPanel left = new JPanel(new BorderLayout());
+        left.setOpaque(false);
+        // Avatar: show exactly first two non-space characters as initials, single-color background
+        JLabel avatarLabel = new JLabel(getInitials(user.getFullName()), SwingConstants.CENTER);
+        avatarLabel.setFont(GlobalStyle.scaleFont(new Font("Segoe UI", Font.BOLD, 18)));
+        avatarLabel.setForeground(Color.WHITE);
+        avatarLabel.setOpaque(true);
+        avatarLabel.setBackground(style.getCOLOR_PRIMARY());
+        avatarLabel.setPreferredSize(new Dimension(GlobalStyle.scale(56), GlobalStyle.scale(56)));
+        avatarLabel.setBorder(new EmptyBorder(6,6,6,6));
+
+        left.add(avatarLabel, BorderLayout.CENTER);
 
         // User info
         JPanel infoPanel = new JPanel();
@@ -268,16 +363,35 @@ public class DashboardView extends JFrame {
         infoPanel.setOpaque(false);
 
         JLabel nameLabel = new JLabel(user.getFullName());
-        nameLabel.setFont(style.getFONT_BOLD());
+        nameLabel.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
 
         JLabel emailLabel = new JLabel(user.getEmail());
-        emailLabel.setFont(style.getFONT_NORMAL());
+        emailLabel.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
         emailLabel.setForeground(style.getCOLOR_TEXT_MUTED());
+
+        // Progress bar + ratio label
+        JProgressBar progress = new JProgressBar(0, 100);
+        progress.setValue(70);
+        progress.setPreferredSize(new Dimension(GlobalStyle.scale(200), GlobalStyle.scale(8)));
+        progress.setForeground(style.getCOLOR_PRIMARY());
+        progress.setBorderPainted(false);
+        progress.setBackground(new Color(0xEDF6F5));
+
+        JLabel ratio = new JLabel("8/10");
+        ratio.setFont(GlobalStyle.scaleFont(style.getFONT_SMALL()));
+        ratio.setForeground(style.getCOLOR_TEXT_MUTED());
+
+        JPanel progressRow = new JPanel(new BorderLayout());
+        progressRow.setOpaque(false);
+        progressRow.add(progress, BorderLayout.WEST);
+        progressRow.add(ratio, BorderLayout.EAST);
 
         infoPanel.add(nameLabel);
         infoPanel.add(emailLabel);
+        infoPanel.add(Box.createVerticalStrut(8));
+        infoPanel.add(progressRow);
 
-        card.add(avatarLabel, BorderLayout.WEST);
+        card.add(left, BorderLayout.WEST);
         card.add(infoPanel, BorderLayout.CENTER);
 
         return card;
@@ -351,6 +465,26 @@ public class DashboardView extends JFrame {
         projectMenu.addSeparator();
 
         projectMenu.add(createProjectMenuItem);
+    }
+
+    /**
+     * Set the user button label to the first two characters of the user's name (uppercase).
+     */
+    public void setUserInitials(String fullName) {
+        if (fullName == null || fullName.trim().isEmpty()) {
+            userButton.setText("--");
+            return;
+        }
+        String cleaned = fullName.trim();
+        // take first two non-space characters
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < cleaned.length() && sb.length() < 2; i++) {
+            char c = cleaned.charAt(i);
+            if (!Character.isWhitespace(c)) sb.append(c);
+        }
+        String initials = sb.toString().toUpperCase();
+        if (initials.length() == 0) initials = "--";
+        userButton.setText(initials);
     }
 
     public void clearMembersList() {

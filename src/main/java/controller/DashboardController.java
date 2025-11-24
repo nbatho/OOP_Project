@@ -16,6 +16,7 @@ import main.java.view.*;
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DashboardController {
     private final DashboardView view;
@@ -28,12 +29,32 @@ public class DashboardController {
     private final TaskServiceImpl taskService = new TaskServiceImpl();
     public DashboardController(DashboardView view) {
         this.view = view;
-        this.kanbanView = new KanbanView();
+        // Set user initials on the header button
+        try {
+            if (userService.getCurrentUser() != null) {
+                view.setUserInitials(userService.getCurrentUser().getFullName());
+            }
+        } catch (Exception ex) {
+            // ignore if current user not available yet
+        }
+        // Use the KanbanView instance created by the DashboardView so controller
+        // updates affect the visible Kanban (DashboardView wraps it in a JScrollPane).
+        this.kanbanView = view.getKanbanView();
         this.tableView = new TableView();
         this.calendarView = new CalendarView();
 
-        // Gắn các view vào mainContentPanel
-        view.getMainContentPanel().add(kanbanView, "KANBAN");
+        // Attach create listeners for each Kanban column's create button
+        try {
+            Map<String, JButton> createButtons = kanbanView.getColumnCreateButtons();
+            for (Map.Entry<String, JButton> e : createButtons.entrySet()) {
+                JButton btn = e.getValue();
+                btn.addActionListener(ae -> handleShowCard());
+            }
+        } catch (Exception ex) {
+            // safe-ignore if KanbanView not initialized yet
+        }
+
+        // Attach other views (table/calendar) into the same mainContentPanel
         view.getMainContentPanel().add(tableView, "TABLE");
         view.getMainContentPanel().add(calendarView, "CALENDAR");
 
@@ -43,7 +64,7 @@ public class DashboardController {
         view.getCalendarButton().addActionListener(e -> showView("CALENDAR"));
 
         view.getSearchButton().addActionListener(e -> handleSearch());
-        view.getCreateButton().addActionListener(e -> handleShowCard());
+        // header create button hidden; per-column create buttons are used instead
 
         // Menu items
         view.getInfoMenuItem().addActionListener(e -> handleShowInfo());
@@ -83,9 +104,23 @@ public class DashboardController {
     }
     private void loadProjectTasks(String projectId) {
         try {
-          List<Task> listTasks = taskService.getTasksByProjectId(projectId);
+            List<Task> listTasks = taskService.getTasksByProjectId(projectId);
 
-//            // 3. Cập nhật TẤT CẢ các view
+            System.out.println("DashboardController: loaded tasks for projectId=" + projectId + " count=" + (listTasks == null ? 0 : listTasks.size()));
+
+            // If DB returned no tasks, provide demo tasks so we can verify rendering locally.
+            if (listTasks == null || listTasks.isEmpty()) {
+                System.out.println("DashboardController: no tasks found, injecting demo tasks for visual verification.");
+                listTasks = new java.util.ArrayList<>();
+                Task t1 = new Task("t-demo-1", projectId, "Demo Task 1", "Mô tả task demo 1", "TODO", "HIGH", null, "system");
+                Task t2 = new Task("t-demo-2", projectId, "Demo Task 2", "Mô tả task demo 2", "IN_PROGRESS", "MEDIUM", null, "system");
+                Task t3 = new Task("t-demo-3", projectId, "Demo Task 3", "Mô tả task demo 3", "REVIEW", "LOW", null, "system");
+                listTasks.add(t1);
+                listTasks.add(t2);
+                listTasks.add(t3);
+            }
+
+            // 3. Cập nhật TẤT CẢ các view
             kanbanView.updateTasks(listTasks);
 
 

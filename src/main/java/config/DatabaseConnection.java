@@ -9,7 +9,7 @@ public class DatabaseConnection {
     
     private static final String URL = "jdbc:mysql://127.0.0.1:3306/task_manager_db?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Ho_Chi_Minh";
     private static final String USER = "root";
-    private static final String PASSWORD = "123456";
+    private static final String PASSWORD = "andz123456";
     
     static {
         initializeDatabase();
