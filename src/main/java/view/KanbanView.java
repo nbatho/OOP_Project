@@ -103,8 +103,9 @@ public class KanbanView extends JPanel {
         cardsPanel.setLayout(new BoxLayout(cardsPanel, BoxLayout.Y_AXIS));
         cardsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
         // Add a slightly larger top padding so cards don't overlap the column frame/header
-        int columnTopPadding = GlobalStyle.scale(20);
-        cardsPanel.add(Box.createVerticalStrut(columnTopPadding));
+        int columnTopPadding = GlobalStyle.scale(32);
+        // Use an inner empty border on the cards panel so padding remains even when scrolling
+        cardsPanel.setBorder(new EmptyBorder(columnTopPadding, 0, GlobalStyle.scale(12), 0));
 
         // Simpler centering strategy: use a vertical BoxLayout wrapper with glue above/below
         // the cardsPanel. Glue will consume extra space and keep cardsPanel centered when
