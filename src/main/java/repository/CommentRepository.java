@@ -23,7 +23,7 @@ public class CommentRepository {
         SQL(String q) { this.query = q; }
     }
 
-    /* ======================== PUBLIC METHODS ========================== */
+
 
     public boolean createComment(Comments comment) {
         return executeUpdate(
@@ -75,7 +75,7 @@ public class CommentRepository {
         return executeUpdate(SQL.DELETE_BY_USER.query, userId);
     }
 
-    /* ======================== PRIVATE HELPERS ========================== */
+
 
     private Comments map(ResultSet rs) throws SQLException {
         return new Comments(

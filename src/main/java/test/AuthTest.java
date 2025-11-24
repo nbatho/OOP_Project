@@ -11,9 +11,9 @@ public class AuthTest {
         // Test database connection
         try {
             DatabaseConnection.getConnection();
-            System.out.println("✅ Database connected successfully!");
+            System.out.println(" Database connected successfully!");
         } catch (Exception e) {
-            System.out.println("❌ Database connection failed: " + e.getMessage());
+            System.out.println("Database connection failed: " + e.getMessage());
             return;
         }
         
@@ -46,7 +46,7 @@ public class AuthTest {
             // Clean up
             if (authUser != null) {
                 userService.deleteUser(authUser.getUserId());
-                System.out.println("\n✅ Test user cleaned up");
+                System.out.println("\n Test user cleaned up");
             }
         }
         

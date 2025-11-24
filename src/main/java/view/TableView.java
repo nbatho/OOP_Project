@@ -7,13 +7,13 @@ import java.awt.*;
 import java.util.*;
 
 public class TableView extends JPanel {
-    // ====== UI components public để controller truy cập ======
+
     public JTable table;
     public DefaultTableModel model;
     public JLabel catTitleLabel, catStatsLabel, donePillLabel;
     public JToggleButton btnFrontend, btnBackend, btnDevOps, btnTesting;
 
-    // ===== Theme =====
+
     GlobalStyle style = new GlobalStyle();
 
 
@@ -38,7 +38,7 @@ public class TableView extends JPanel {
         header.add(sub);
         add(header, BorderLayout.NORTH);
 
-        // Tabs (chips)
+
         JPanel chipsRow = new JPanel(new GridLayout(1, 4, 0, 0));
         chipsRow.setOpaque(true);
         chipsRow.setBackground(new Color(0xEEF2F5));
@@ -92,7 +92,7 @@ public class TableView extends JPanel {
         topStack.add(Box.createVerticalStrut(8));
         topStack.add(sectionCard);
 
-        // Table
+
         String[] cols = {"Công việc", "Người thực hiện", "Trạng thái", "Độ ưu tiên", "Tiến độ"};
         model = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }

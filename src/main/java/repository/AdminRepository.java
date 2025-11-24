@@ -19,7 +19,6 @@ public class AdminRepository {
         SQL(String q) { this.query = q; }
     }
 
-    /* ---------------------- PUBLIC METHODS ---------------------- */
 
     public boolean createAdmin(Admin admin) {
         return executeUpdate(SQL.INSERT.query, admin.getUserId());
@@ -37,14 +36,13 @@ public class AdminRepository {
      * Bảng admin chỉ có user_id → không có gì để update.
      */
     public boolean updateAdmin(Admin admin) {
-        return true; // giữ lại để phù hợp interface/logic tổng thể
+        return true;
     }
 
     public boolean deleteAdmin(String userId) {
         return executeUpdate(SQL.DELETE.query, userId);
     }
 
-    /* ---------------------- PRIVATE HELPERS ---------------------- */
 
     private Admin map(ResultSet rs) throws SQLException {
         return new Admin(

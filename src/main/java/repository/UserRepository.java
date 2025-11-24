@@ -27,7 +27,7 @@ public class UserRepository {
         SQL(String q) { this.query = q; }
     }
 
-    /* =========================== PUBLIC METHODS =========================== */
+
 
     public boolean createUser(User user) {
         if (user.getUserId() == null || user.getUserId().isEmpty()) {
@@ -86,7 +86,7 @@ public class UserRepository {
         return queryList(SQL.SELECT_BY_TEAM.query, teamId);
     }
 
-    /* =========================== PRIVATE HELPERS =========================== */
+
 
     private User map(ResultSet rs) throws SQLException {
         return new User(

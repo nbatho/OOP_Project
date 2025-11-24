@@ -122,7 +122,6 @@ public class LoginView extends JFrame {
         add(content, BorderLayout.CENTER);
     }
 
-    // ===== Getter cho Controller =====
     public JButton getBtnLogin() { return btnLogin; }
     public JLabel getLblRegister() { return lblRegister; }
     public JTextField getTxtUsername() { return txtUsername; }

@@ -90,15 +90,14 @@ public class KanbanView extends JPanel {
      * Cập nhật tất cả tasks vào Kanban board
      */
     public void updateTasks(List<Task> tasks) {
-        // 1. Xóa tất cả tasks cũ
+
         clearAllTasks();
 
-        // 2. Thêm tasks mới vào các cột tương ứng
+
         for (Task task : tasks) {
             addTaskToBoard(task);
         }
 
-        // 3. Cập nhật số lượng task cho mỗi cột
         updateTaskCounts();
     }
 

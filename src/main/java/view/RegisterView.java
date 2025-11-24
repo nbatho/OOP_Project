@@ -10,7 +10,7 @@ public class RegisterView extends JFrame {
     private JPasswordField txtRePassword;
     private JCheckBox chkAgree;
     private JButton btnRegister;
-    private JLabel lblLoginLink; // label thật sự dùng cho "Đăng nhập"
+    private JLabel lblLoginLink;
 
     public RegisterView() {
         setTitle("Đăng ký");
