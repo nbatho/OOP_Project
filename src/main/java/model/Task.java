@@ -2,6 +2,7 @@ package main.java.model;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 public class Task {
     private String taskId;
@@ -13,7 +14,7 @@ public class Task {
     private Date dueDate;
     private String createdBy;
     private Timestamp createdAt;
-
+    private List<User> assignedUsers;
     public Task() {}
 
     public Task(String taskId, String projectId, String title, String description, 
@@ -79,6 +80,12 @@ public class Task {
         return createdAt;
     }
 
+    public List<User> getAssignedUsers() {
+        return assignedUsers;
+    }
+
+
+
     // Setters
     public void setTaskId(String taskId) {
         this.taskId = taskId;
@@ -116,6 +123,9 @@ public class Task {
         this.createdAt = createdAt;
     }
 
+    public void setAssignedUsers(List<User> assignedUsers) {
+        this.assignedUsers = assignedUsers;
+    }
     @Override
     public String toString() {
         return "Task{" +

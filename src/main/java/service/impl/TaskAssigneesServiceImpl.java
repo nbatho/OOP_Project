@@ -1,19 +1,21 @@
 package main.java.service.impl;
 
 import java.util.List;
-import main.java.model.TaskAsigness;
-import main.java.service.TaskAssignessService;
+import main.java.model.TaskAssignees;
+import main.java.repository.TaskAssigneesRepository;
+import main.java.service.TaskAssigneesService;
 import main.java.service.UserService;
 
-public class TaskAssignessServiceImpl implements TaskAssignessService {
+public class TaskAssigneesServiceImpl implements TaskAssigneesService {
     private final UserService userService;
-
-    public TaskAssignessServiceImpl() {
+    private final TaskAssigneesRepository taskAssignessRepository;
+    public TaskAssigneesServiceImpl() {
         this.userService = new UserServiceImpl();
+        this.taskAssignessRepository = new TaskAssigneesRepository();
     }
 
     @Override
-    public boolean create(TaskAsigness taskAsigness) {
+    public boolean create(TaskAssignees taskAsigness) {
         try {
             if (taskAsigness == null) {
                 System.out.println("TaskAsigness không được null");
@@ -35,7 +37,7 @@ public class TaskAssignessServiceImpl implements TaskAssignessService {
             }
 
             // Kiểm tra user đã được assign task chưa
-            TaskAsigness existing = getByTaskIdAndUserId(taskAsigness.getTaskId(), taskAsigness.getUserId());
+            TaskAssignees existing = getByTaskIdAndUserId(taskAsigness.getTaskId(), taskAsigness.getUserId());
             if (existing != null) {
                 System.out.println("User đã được assign task này");
                 return false;
@@ -51,7 +53,7 @@ public class TaskAssignessServiceImpl implements TaskAssignessService {
     }
 
     @Override
-    public List<TaskAsigness> getAll() {
+    public List<TaskAssignees> getAll() {
         try {
             // return taskAssignmentRepository.getAllTaskAssignments();
             System.out.println("Lấy danh sách tất cả task assignments");
@@ -63,7 +65,7 @@ public class TaskAssignessServiceImpl implements TaskAssignessService {
     }
 
     @Override
-    public TaskAsigness getByTaskIdAndUserId(String task_id, String user_id) {
+    public TaskAssignees getByTaskIdAndUserId(String task_id, String user_id) {
         try {
             if (task_id == null || task_id.trim().isEmpty()) {
                 System.out.println("Task ID không được null hoặc rỗng");
@@ -85,16 +87,15 @@ public class TaskAssignessServiceImpl implements TaskAssignessService {
     }
 
     @Override
-    public List<TaskAsigness> getByTaskId(String task_id) {
+    public List<TaskAssignees> getByTaskId(String task_id) {
         try {
             if (task_id == null || task_id.trim().isEmpty()) {
                 System.out.println("Task ID không được null hoặc rỗng");
                 return List.of();
             }
 
-            // return taskAssignmentRepository.getAssignmentsByTask(task_id);
             System.out.println("Lấy assignments theo task: " + task_id);
-            return List.of(); // Placeholder
+             return taskAssignessRepository.findByTaskId(task_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy assignments của task: " + e.getMessage());
             return List.of();
@@ -102,7 +103,7 @@ public class TaskAssignessServiceImpl implements TaskAssignessService {
     }
 
     @Override
-    public List<TaskAsigness> getByUserId(String user_id) {
+    public List<TaskAssignees> getByUserId(String user_id) {
         try {
             if (user_id == null || user_id.trim().isEmpty()) {
                 System.out.println("User ID không được null hoặc rỗng");
@@ -170,7 +171,7 @@ public class TaskAssignessServiceImpl implements TaskAssignessService {
     /**
      * Validate dữ liệu task assignment
      */
-    private boolean isValidTaskAssignmentData(TaskAsigness assignment) {
+    private boolean isValidTaskAssignmentData(TaskAssignees assignment) {
         if (assignment.getTaskId() == null || assignment.getTaskId().trim().isEmpty()) {
             System.out.println("Task ID không được null hoặc rỗng");
             return false;

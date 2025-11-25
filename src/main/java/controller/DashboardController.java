@@ -2,15 +2,8 @@ package main.java.controller;
 
 import main.java.component.ProjectCard;
 import main.java.component.TaskCard;
-import main.java.model.Project;
-import main.java.model.ProjectMember;
-import main.java.model.Task;
-import main.java.model.User;
-import main.java.service.ProjectMemberService;
-import main.java.service.impl.ProjectMemberServiceImpl;
-import main.java.service.impl.ProjectServiceImpl;
-import main.java.service.impl.TaskServiceImpl;
-import main.java.service.impl.UserServiceImpl;
+import main.java.model.*;
+import main.java.service.impl.*;
 import main.java.view.*;
 
 import javax.swing.*;
@@ -27,23 +20,21 @@ public class DashboardController {
     private final ProjectServiceImpl projectService = new ProjectServiceImpl();
     private final ProjectMemberServiceImpl projectMemberService = new ProjectMemberServiceImpl();
     private final TaskServiceImpl taskService = new TaskServiceImpl();
+    private final TaskAssigneesServiceImpl taskAssignessService = new TaskAssigneesServiceImpl();
     public DashboardController(DashboardView view) {
         this.view = view;
-        // Set user initials on the header button
         try {
             if (userService.getCurrentUser() != null) {
                 view.setUserInitials(userService.getCurrentUser().getFullName());
             }
         } catch (Exception ex) {
-            // ignore if current user not available yet
+
         }
-        // Use the KanbanView instance created by the DashboardView so controller
-        // updates affect the visible Kanban (DashboardView wraps it in a JScrollPane).
+
         this.kanbanView = view.getKanbanView();
         this.tableView = new TableView();
         this.calendarView = new CalendarView();
 
-        // Attach create listeners for each Kanban column's create button
         try {
             Map<String, JButton> createButtons = kanbanView.getColumnCreateButtons();
             for (Map.Entry<String, JButton> e : createButtons.entrySet()) {
@@ -51,7 +42,7 @@ public class DashboardController {
                 btn.addActionListener(ae -> handleShowCard());
             }
         } catch (Exception ex) {
-            // safe-ignore if KanbanView not initialized yet
+
         }
 
         // Attach other views (table/calendar) into the same mainContentPanel
@@ -105,17 +96,20 @@ public class DashboardController {
     private void loadProjectTasks(String projectId) {
         try {
             List<Task> listTasks = taskService.getTasksByProjectId(projectId);
-
-            System.out.println("DashboardController: loaded tasks for projectId=" + projectId + " count=" + (listTasks == null ? 0 : listTasks.size()));
-
             for (Task task : listTasks) {
-                System.out.println(task);
+                List<TaskAssignees> taskAsignesses = taskAssignessService.getByTaskId(task.getTaskId());
+                List <User> listAssignees = new ArrayList<>();
+                for (TaskAssignees taskAsigness : taskAsignesses) {
+                    User users = userService.getUserById(taskAsigness.getUserId());
+                    listAssignees.add(users);
+                }
+                task.setAssignedUsers(listAssignees);
             }
             // 3. Cập nhật TẤT CẢ các view
             kanbanView.updateTasks(listTasks);
 
 
-//            tableView.updateTasks(tasks);
+            tableView.updateTasks(listTasks);
 //            calendarView.updateTasks(tasks);
 //
 

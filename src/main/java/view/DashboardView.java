@@ -17,8 +17,6 @@ public class DashboardView extends JFrame {
     private JToggleButton calendarButton;
     private JTextField searchField;
     private JButton searchButton;
-    private JButton createButton;
-    private JButton notifyButton;
     private JButton userButton;
 
     // Project menu components
@@ -170,24 +168,8 @@ public class DashboardView extends JFrame {
             searchButton.setFocusPainted(false);
         topRow.add(searchButton, gbc);
 
+
         gbc.gridx = 4;
-        createButton = new JButton("Tạo mới");
-            createButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
-            createButton.setBackground(new Color(0x3B8F88));
-            createButton.setForeground(Color.WHITE);
-            createButton.setFocusPainted(false);
-            // hide header create button; creation moved to each Kanban column footer
-            createButton.setVisible(false);
-        topRow.add(createButton, gbc);
-
-        gbc.gridx = 5;
-        notifyButton = new JButton("🔔");
-            notifyButton.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
-            notifyButton.setBackground(Color.WHITE);
-            notifyButton.setBorder(BorderFactory.createLineBorder(style.getCOLOR_BORDER()));
-        topRow.add(notifyButton, gbc);
-
-        gbc.gridx = 6;
         userButton = new JButton("User");
             userButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
             userButton.setBackground(Color.WHITE);
@@ -467,16 +449,12 @@ public class DashboardView extends JFrame {
         projectMenu.add(createProjectMenuItem);
     }
 
-    /**
-     * Set the user button label to the first two characters of the user's name (uppercase).
-     */
     public void setUserInitials(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
             userButton.setText("--");
             return;
         }
         String cleaned = fullName.trim();
-        // take first two non-space characters
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < cleaned.length() && sb.length() < 2; i++) {
             char c = cleaned.charAt(i);
@@ -508,8 +486,6 @@ public class DashboardView extends JFrame {
     public JToggleButton getCalendarButton() { return calendarButton; }
     public JTextField getSearchField() { return searchField; }
     public JButton getSearchButton() { return searchButton; }
-    public JButton getCreateButton() { return createButton; }
-    public JButton getNotifyButton() { return notifyButton; }
     public JButton getUserButton() { return userButton; }
     public JButton getaddMemberButton() { return addMemberButton; }
     public JPanel getMainContentPanel() { return mainContentPanel; }

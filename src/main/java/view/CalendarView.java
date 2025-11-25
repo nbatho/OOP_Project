@@ -6,11 +6,8 @@ package main.java.view;
 import java.awt.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
-import main.java.controller.CalendarController;
-import main.java.model.Task;
 
 public class CalendarView extends JPanel {
     private JList<String> taskList;
@@ -86,18 +83,5 @@ public class CalendarView extends JPanel {
         panel.add(scroll, BorderLayout.CENTER);
 
         return panel;
-    }
-
-    public void setController(CalendarController controller) {
-        // Controller đã được xóa, method này để tương thích
-    }
-
-    public void updateTaskList(List<Task> tasks, LocalDate date) {
-        // Cập nhật task list - có thể implement sau
-        dateLabel.setText("Công việc ngày " + date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-    }
-
-    public void updateUpcomingList(List<Task> tasks) {
-        // Cập nhật upcoming list - có thể implement sau
     }
 }

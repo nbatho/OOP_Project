@@ -1,27 +1,26 @@
 package main.java.view;
 
+import main.java.model.Task;
+import main.java.model.User;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class TableView extends JPanel {
 
-    public JTable table;
-    public DefaultTableModel model;
-    public JLabel catTitleLabel, catStatsLabel, donePillLabel;
-    public JToggleButton btnFrontend, btnBackend, btnDevOps, btnTesting;
-
-
+    private final JTable table;
+    private final DefaultTableModel model;
     GlobalStyle style = new GlobalStyle();
-
 
     public TableView() {
         setLayout(new BorderLayout(8, 8));
         setOpaque(true);
         setBackground(style.getCOLOR_BACKGROUND());
-        setBorder(new EmptyBorder(10, 10, 10, 10));
+        setBorder(new EmptyBorder(0, 10, 10, 10));
 
         // Header
         JPanel header = new JPanel();
@@ -38,33 +37,17 @@ public class TableView extends JPanel {
         header.add(sub);
         add(header, BorderLayout.NORTH);
 
-
-        // Section card
-        JPanel sectionCard = new JPanel(new BorderLayout());
-        sectionCard.setBackground(style.getCOLOR_CARD());
-        sectionCard.setBorder(new CompoundBorder(new LineBorder(style.getCOLOR_BORDER()),
-                new EmptyBorder(16, 16, 16, 16)));
-
-        JPanel left = new JPanel();
-        left.setOpaque(false);
-        left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
-
-
-        sectionCard.add(left, BorderLayout.WEST);
-
-
-        JPanel topStack = new JPanel();
-        topStack.setOpaque(false);
-        topStack.setLayout(new BoxLayout(topStack, BoxLayout.Y_AXIS));
-        topStack.add(Box.createVerticalStrut(8));
-        topStack.add(sectionCard);
-
-
         String[] cols = {"Công việc", "Người thực hiện", "Trạng thái", "Độ ưu tiên", "Tiến độ"};
         model = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
-            @Override public Class<?> getColumnClass(int c) { return c == 4 ? Integer.class : Object.class; }
+            @Override
+            public Class<?> getColumnClass(int c) {
+                if (c == 1) return List.class;
+                if (c == 4) return Integer.class;
+                return Object.class;
+            }
         };
+
         table = new JTable(model);
         table.setRowHeight(44);
         table.setFont(style.getFONT_NORMAL());
@@ -72,6 +55,22 @@ public class TableView extends JPanel {
         table.setGridColor(new Color(0xF1F3F5));
         table.setBackground(style.getCOLOR_CARD());
 
+        table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                if (value instanceof List<?> list) {
+                    List<String> names = new ArrayList<>();
+                    for (Object o : list) {
+                        if (o instanceof User u) {
+                            names.add(u.getFullName());
+                        }
+                    }
+                    setText(String.join(", ", names));
+                } else {
+                    super.setValue(value);
+                }
+            }
+        });
         JTableHeader h = table.getTableHeader();
         h.setBackground(new Color(0xEEF2F5));
         h.setFont(style.getFONT_BOLD());
@@ -83,28 +82,34 @@ public class TableView extends JPanel {
 
         JPanel middle = new JPanel(new BorderLayout());
         middle.setBackground(style.getCOLOR_CARD());
-        middle.add(topStack, BorderLayout.NORTH);
         middle.add(sp, BorderLayout.CENTER);
 
         add(middle, BorderLayout.CENTER);
     }
 
-    private JToggleButton chipTab(String text, boolean selected, ButtonGroup group) {
-        JToggleButton b = new JToggleButton(text, selected);
-        b.setFocusPainted(false);
-        b.setContentAreaFilled(false);
-        b.setFont(style.getFONT_BOLD());
-        b.setForeground(new Color(0x6B7280));
-        b.addChangeListener(e -> {
-            if (b.isSelected()) {
-                b.setForeground(style.getCOLOR_TEXT_PRIMARY());
-                b.setBorder(new MatteBorder(0, 0, 3, 0, style.getCOLOR_PRIMARY()));
-            } else {
-                b.setForeground(new Color(0x6B7280));
-                b.setBorder(new EmptyBorder(6, 0, 6, 0));
-            }
-        });
-        group.add(b);
-        return b;
+    public void updateTasks(List<Task> tasks) {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(() -> updateTasks(tasks));
+            return;
+        }
+
+        // clearAllTasks();
+
+        for (Task task : tasks) {
+            addTaskTable(
+                    task.getTitle(),
+                    task.getAssignedUsers(),
+                    task.getStatus(),
+                    task.getPriority()
+            );
+        }
+    }
+    public void addTaskTable(String title, List<User> users, String status, String priority) {
+        model.addRow(new Object[]{title, users, status, priority, 0});
+    }
+
+
+    public DefaultTableModel getModel() {
+        return model;
     }
 }

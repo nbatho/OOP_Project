@@ -1,12 +1,12 @@
 package main.java.model;
 
-public class TaskAsigness {
+public class TaskAssignees {
     private String taskId;
     private String userId;
 
-    public TaskAsigness() {}
+    public TaskAssignees() {}
 
-    public TaskAsigness(String taskId, String userId) {
+    public TaskAssignees(String taskId, String userId) {
         this.taskId = taskId;
         this.userId = userId;
     }

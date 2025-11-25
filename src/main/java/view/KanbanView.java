@@ -1,6 +1,8 @@
 package main.java.view;
 
 import main.java.model.Task;
+import main.java.model.User;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
@@ -67,9 +69,11 @@ public class KanbanView extends JPanel {
         JPanel columnPanel = new JPanel(new BorderLayout(10, 10));
         columnPanel.setBackground(style.getCOLOR_CARD());
 
-        columnPanel.setBorder(BorderFactory.createCompoundBorder(
-            new LineBorder(style.getCOLOR_BORDER()),
-            new EmptyBorder(GlobalStyle.scale(8), GlobalStyle.scale(8), GlobalStyle.scale(8), GlobalStyle.scale(8))
+        columnPanel.setBorder(new EmptyBorder(
+                GlobalStyle.scale(8),
+                GlobalStyle.scale(8),
+                GlobalStyle.scale(8),
+                GlobalStyle.scale(8)
         ));
 
         columnPanel.setPreferredSize(new Dimension(columnWidth, 700));
@@ -146,8 +150,6 @@ public class KanbanView extends JPanel {
      * Cập nhật tất cả tasks vào Kanban board
      */
     public void updateTasks(List<Task> tasks) {
-        // 1. Xóa tất cả tasks cũ
-        // Ensure Swing UI updates happen on EDT
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> updateTasks(tasks));
             return;
@@ -168,7 +170,6 @@ public class KanbanView extends JPanel {
      * Thêm một task vào board
      */
     public void addTaskToBoard(Task task) {
-        // Ensure Swing UI updates happen on EDT
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> addTaskToBoard(task));
             return;
@@ -192,9 +193,9 @@ public class KanbanView extends JPanel {
             targetColumn.add(Box.createVerticalStrut(10));
             targetColumn.revalidate();
             targetColumn.repaint();
-            System.out.println("Kanban: added task '" + task.getTitle() + "' to column " + columnKey + ". total comps=" + targetColumn.getComponentCount());
+//            System.out.println("Kanban: added task '" + task.getTitle() + "' to column " + columnKey + ". total comps=" + targetColumn.getComponentCount());
         } else {
-            System.err.println("⚠️ Không tìm thấy cột cho status: " + status);
+            System.err.println(" Không tìm thấy cột cho status: " + status);
         }
     }
 
@@ -224,7 +225,7 @@ public class KanbanView extends JPanel {
             case "FINISHED":
                 return "DONE";
             default:
-                System.err.println("⚠️ Unknown status: " + status + ", defaulting to TODO");
+                System.err.println(" Unknown status: " + status + ", defaulting to TODO");
                 return "TODO";
         }
     }
@@ -235,77 +236,61 @@ public class KanbanView extends JPanel {
     private JPanel createTaskCard(Task task) {
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setBackground(Color.WHITE);
+        card.setOpaque(true);
+        card.setBackground(style.getCOLOR_CARD());
         card.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(style.getCOLOR_BORDER(), 1),
-                new EmptyBorder(12, 12, 12, 12)
+                new LineBorder(new Color(0xE0E0E0), 1, true),
+                new EmptyBorder(10, 10, 10, 10)
         ));
-        // center card horizontally inside the task list panel and leave side padding
-        card.setAlignmentX(Component.CENTER_ALIGNMENT);
-        int cardWidth = Math.max(GlobalStyle.scale(300), columnWidth - GlobalStyle.scale(80));
-        // Increase default card height so single cards remain visible and not clipped
-        int cardHeight = GlobalStyle.scale(220);
-        // Prevent card from stretching vertically when there are few cards by capping max height
-        card.setPreferredSize(new Dimension(cardWidth, cardHeight));
-        card.setMaximumSize(new Dimension(cardWidth, cardHeight));
-        card.setMinimumSize(new Dimension(cardWidth, cardHeight));
-        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        card.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // We'll center the visible content vertically inside the card by using an inner
-        // content panel with vertical glue above and below the actual components.
-        JPanel contentPanel = new JPanel();
-        contentPanel.setOpaque(false);
-        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.Y_AXIS));
-        contentPanel.add(Box.createVerticalGlue());
+
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        card.setPreferredSize(new Dimension(240, card.getPreferredSize().height));
 
         // Title
         JLabel titleLabel = new JLabel(task.getTitle());
-        titleLabel.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
+        titleLabel.setFont(style.getFONT_BOLD());
         titleLabel.setForeground(style.getCOLOR_TEXT_PRIMARY());
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        contentPanel.add(titleLabel);
+        card.add(titleLabel);
 
-        contentPanel.add(Box.createVerticalStrut(8));
+        card.add(Box.createVerticalStrut(8));
 
-        // Description (nếu có)
+        // Description
         if (task.getDescription() != null && !task.getDescription().isEmpty()) {
-            // Truncate long descriptions to keep card height reasonable
-            String descText = task.getDescription();
-            int maxChars = 240; // conservative limit
-            if (descText.length() > maxChars) {
-                descText = descText.substring(0, maxChars).trim() + "...";
-            }
-            JTextArea descArea = new JTextArea(descText);
-            descArea.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
-            descArea.setForeground(style.getCOLOR_TEXT_MUTED());
-            descArea.setLineWrap(true);
-            descArea.setWrapStyleWord(true);
-            descArea.setEditable(false);
-            descArea.setOpaque(false);
-            descArea.setBorder(null);
-            descArea.setMaximumSize(new Dimension(columnWidth - 40, GlobalStyle.scale(140)));
-            descArea.setPreferredSize(new Dimension(columnWidth - 40, GlobalStyle.scale(100)));
-            descArea.setAlignmentX(Component.LEFT_ALIGNMENT);
-            contentPanel.add(descArea);
-            contentPanel.add(Box.createVerticalStrut(8));
+            JLabel descLabel = new JLabel("<html><body style='width:240px'>" + task.getDescription() + "</body></html>");
+            descLabel.setFont(GlobalStyle.scaleFont(style.getFONT_SMALL()));
+            descLabel.setForeground(style.getCOLOR_TEXT_MUTED());
+            descLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            card.add(descLabel);
+
+            card.add(Box.createVerticalStrut(8));
         }
 
-        // Footer panel (assignee, due date, priority, etc.)
+        // Footer
         JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
         footerPanel.setOpaque(false);
         footerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-//        // Assignee
-//        if (task.getAssigneeName() != null && !task.getAssigneeName().isEmpty()) {
-//            JLabel assigneeLabel = new JLabel("👤 " + task.getAssigneeName());
-//            assigneeLabel.setFont(style.getFONT_SMALL());
-//            assigneeLabel.setForeground(style.getCOLOR_TEXT_MUTED());
-//            footerPanel.add(assigneeLabel);
-//        }
+        // Assigned users
+        if (task.getAssignedUsers() != null && !task.getAssignedUsers().isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            List<User> users = task.getAssignedUsers();
+            for (int i = 0; i < users.size(); i++) {
+                sb.append(users.get(i).getFullName());
+                if (i < users.size() - 1) sb.append(", ");
+            }
+
+            JLabel assigneeLabel = new JLabel("👤 " + sb.toString());
+            assigneeLabel.setFont(GlobalStyle.scaleFont(style.getFONT_SMALL()));
+            assigneeLabel.setForeground(style.getCOLOR_TEXT_MUTED());
+            footerPanel.add(assigneeLabel);
+        }
 
         // Due date
         if (task.getDueDate() != null) {
-            JLabel dueDateLabel = new JLabel("📅 " + task.getDueDate().toString());
+            JLabel dueDateLabel = new JLabel("📅 " + task.getDueDate());
             dueDateLabel.setFont(GlobalStyle.scaleFont(style.getFONT_SMALL()));
             dueDateLabel.setForeground(style.getCOLOR_TEXT_MUTED());
             footerPanel.add(dueDateLabel);
@@ -317,31 +302,11 @@ public class KanbanView extends JPanel {
             footerPanel.add(priorityBadge);
         }
 
-        contentPanel.add(footerPanel);
-        contentPanel.add(Box.createVerticalGlue());
-
-        card.add(contentPanel);
-
-        // Thêm click listener để xem chi tiết
-        card.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseClicked(java.awt.event.MouseEvent e) {
-                onTaskClicked(task);
-            }
-
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent e) {
-                card.setBackground(new Color(245, 247, 250));
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent e) {
-                card.setBackground(Color.WHITE);
-            }
-        });
+        card.add(footerPanel);
 
         return card;
     }
+
 
     /**
      * Tạo priority badge
@@ -398,7 +363,7 @@ public class KanbanView extends JPanel {
                 int comps = cardsPanel.getComponentCount();
                 int taskCount = (comps + 1) / 2; // safe even if no struts
                 countLabel.setText(String.valueOf(taskCount));
-                System.out.println("Kanban: column=" + key + " comps=" + comps + " tasks=" + taskCount);
+
             }
         }
     }
