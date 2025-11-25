@@ -28,7 +28,7 @@ public class TaskAssigneesServiceImpl implements TaskAssigneesService {
 
             // Kiểm tra task có tồn tại không (cần cả taskId và projectId)
             // Placeholder: cần lấy projectId từ task
-            System.out.println("Kiểm tra task tồn tại: " + taskAsigness.getTaskId());
+//            System.out.println("Kiểm tra task tồn tại: " + taskAsigness.getTaskId());
 
             // Kiểm tra user có tồn tại không
             if (!userService.userExists(taskAsigness.getUserId())) {
@@ -43,9 +43,8 @@ public class TaskAssigneesServiceImpl implements TaskAssigneesService {
                 return false;
             }
 
-            // return taskAssignmentRepository.createTaskAssignment(taskAsigness);
             System.out.println("Assign task thành công: " + taskAsigness.getTaskId() + " -> " + taskAsigness.getUserId());
-            return true;
+             return taskAssignessRepository.createTaskAssignees(taskAsigness);
         } catch (Exception e) {
             System.out.println("Lỗi khi assign task: " + e.getMessage());
             return false;

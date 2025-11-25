@@ -71,7 +71,7 @@ public class UserServiceImpl implements UserService {
             System.err.println("User ID không được để trống");
             return null;
         }
-        return userRepository.getUserById(userId);
+        return userRepository.findUserById(userId);
     }
     
     @Override
@@ -214,6 +214,7 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         User user = getUserById(userId);
+        System.out.println(user);
         return user != null;
     }
 

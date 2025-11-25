@@ -234,6 +234,7 @@ public class KanbanView extends JPanel {
      * Tạo task card component
      */
     private JPanel createTaskCard(Task task) {
+        // Card chính
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setOpaque(true);
@@ -242,69 +243,98 @@ public class KanbanView extends JPanel {
                 new LineBorder(new Color(0xE0E0E0), 1, true),
                 new EmptyBorder(10, 10, 10, 10)
         ));
-        card.setAlignmentX(Component.LEFT_ALIGNMENT);
+        card.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        int cardWidth = Math.max(GlobalStyle.scale(300), columnWidth - GlobalStyle.scale(80));
+        int cardHeight = GlobalStyle.scale(150);
+        card.setPreferredSize(new Dimension(cardWidth, cardHeight));
+        card.setMaximumSize(new Dimension(cardWidth, cardHeight));
+        card.setMinimumSize(new Dimension(cardWidth, cardHeight));
+        card.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
-        card.setPreferredSize(new Dimension(240, card.getPreferredSize().height));
+        JPanel headerPanel = new JPanel();
+        headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
+        headerPanel.setOpaque(false); // thừa hưởng background từ card
+        headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Title
         JLabel titleLabel = new JLabel(task.getTitle());
         titleLabel.setFont(style.getFONT_BOLD());
         titleLabel.setForeground(style.getCOLOR_TEXT_PRIMARY());
-        titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        card.add(titleLabel);
+        headerPanel.add(titleLabel);
 
+
+        headerPanel.add(Box.createHorizontalGlue());
+
+        if (task.getPriority() != null && !task.getPriority().isEmpty()) {
+            JLabel priorityBadge = createPriorityBadge(task.getPriority());
+            headerPanel.add(priorityBadge);
+        }
+
+        card.add(headerPanel);
         card.add(Box.createVerticalStrut(8));
 
-        // Description
+
         if (task.getDescription() != null && !task.getDescription().isEmpty()) {
-            JLabel descLabel = new JLabel("<html><body style='width:240px'>" + task.getDescription() + "</body></html>");
+            JLabel descLabel = new JLabel("<html><body style='width:" + (cardWidth - 20) + "px'>" + task.getDescription() + "</body></html>");
             descLabel.setFont(GlobalStyle.scaleFont(style.getFONT_SMALL()));
             descLabel.setForeground(style.getCOLOR_TEXT_MUTED());
             descLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
             card.add(descLabel);
-
             card.add(Box.createVerticalStrut(8));
         }
 
-        // Footer
-        JPanel footerPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
+
+        JPanel footerPanel = new JPanel();
+        footerPanel.setLayout(new BoxLayout(footerPanel, BoxLayout.X_AXIS));
         footerPanel.setOpaque(false);
         footerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Assigned users
-        if (task.getAssignedUsers() != null && !task.getAssignedUsers().isEmpty()) {
-            StringBuilder sb = new StringBuilder();
-            List<User> users = task.getAssignedUsers();
-            for (int i = 0; i < users.size(); i++) {
-                sb.append(users.get(i).getFullName());
-                if (i < users.size() - 1) sb.append(", ");
-            }
-
-            JLabel assigneeLabel = new JLabel("👤 " + sb.toString());
-            assigneeLabel.setFont(GlobalStyle.scaleFont(style.getFONT_SMALL()));
-            assigneeLabel.setForeground(style.getCOLOR_TEXT_MUTED());
-            footerPanel.add(assigneeLabel);
-        }
-
-        // Due date
         if (task.getDueDate() != null) {
-            JLabel dueDateLabel = new JLabel("📅 " + task.getDueDate());
+            JLabel dueDateLabel = new JLabel(task.getDueDate().toString());
             dueDateLabel.setFont(GlobalStyle.scaleFont(style.getFONT_SMALL()));
             dueDateLabel.setForeground(style.getCOLOR_TEXT_MUTED());
             footerPanel.add(dueDateLabel);
         }
 
-        // Priority badge
-        if (task.getPriority() != null && !task.getPriority().isEmpty()) {
-            JLabel priorityBadge = createPriorityBadge(task.getPriority());
-            footerPanel.add(priorityBadge);
+        footerPanel.add(Box.createHorizontalGlue());
+
+        if (task.getAssignedUsers() != null && !task.getAssignedUsers().isEmpty()) {
+            List<User> users = task.getAssignedUsers();
+            for (User user : users) {
+                JLabel avatarLabel = new JLabel(getInitials(user.getFullName()), SwingConstants.CENTER);
+                avatarLabel.setFont(GlobalStyle.scaleFont(new Font("Segoe UI", Font.BOLD, 18)));
+                avatarLabel.setForeground(Color.WHITE);
+                avatarLabel.setOpaque(true);
+                avatarLabel.setBackground(style.getCOLOR_PRIMARY());
+                avatarLabel.setPreferredSize(new Dimension(GlobalStyle.scale(32), GlobalStyle.scale(32)));
+                avatarLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
+                avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                avatarLabel.setVerticalAlignment(SwingConstants.CENTER);
+
+                footerPanel.add(avatarLabel);
+                footerPanel.add(Box.createHorizontalStrut(4)); // khoảng cách giữa các avatar
+            }
         }
 
         card.add(footerPanel);
-
         return card;
+    }
+    private String getInitials(String fullName) {
+        if (fullName == null || fullName.trim().isEmpty()) return "--";
+        String[] parts = fullName.trim().split("\\s+");
+        StringBuilder sb = new StringBuilder();
+
+        for (String part : parts) {
+            if (!part.isEmpty() && sb.length() < 2) {
+                sb.append(Character.toUpperCase(part.charAt(0)));
+            }
+        }
+
+        if (sb.length() < 2 && parts[0].length() > 1) {
+            sb.append(Character.toUpperCase(parts[0].charAt(1)));
+        }
+
+        return sb.length() > 0 ? sb.toString() : "--";
     }
 
 

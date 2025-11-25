@@ -1,6 +1,7 @@
 package main.java.service.impl;
 
 import main.java.model.Task;
+import main.java.model.TaskAssignees;
 import main.java.repository.TaskRepository;
 import main.java.service.TaskService;
 
@@ -10,47 +11,66 @@ import java.util.UUID;
 
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
+    private final TaskAssigneesServiceImpl taskAssigneesService;
     private final String[] VALID_STATUSES = {"TODO", "IN_PROGRESS", "DONE", "CANCELLED"};
     private final String[] VALID_PRIORITIES = {"HIGH", "MEDIUM", "LOW"};
 
     public TaskServiceImpl() {
         this.taskRepository = new TaskRepository();
+        this.taskAssigneesService = new TaskAssigneesServiceImpl();
     }
 
     @Override
-    public boolean createTask(Task task) {
+    public boolean createTask(Task task, String userId) {
         try {
             if (task == null) {
                 System.out.println("Task không được null");
                 return false;
             }
-
-            // Validate thông tin task
+            if (userId == null || userId.isEmpty()) {
+                System.out.println("UserId không được rỗng");
+                return false;
+            }
             if (!isValidTaskData(task)) {
                 return false;
             }
-
-            // Tạo ID mới nếu chưa có
             if (task.getTaskId() == null || task.getTaskId().trim().isEmpty()) {
                 task.setTaskId(UUID.randomUUID().toString());
             }
-
-            // Kiểm tra task đã tồn tại chưa
+            if (task.getProjectId() == null) {
+                System.out.println("ProjectId không được null");
+                return false;
+            }
             if (taskRepository.findByTaskId(task.getTaskId(), task.getProjectId()) != null) {
                 System.out.println("Task ID đã tồn tại: " + task.getTaskId());
                 return false;
             }
 
             // Set default values
-            if (task.getStatus() == null) {
-                task.setStatus("TODO");
-            }
-            if (task.getPriority() == null) {
-                task.setPriority("MEDIUM");
+            if (task.getStatus() == null) task.setStatus("Todo");
+            if (task.getPriority() == null) task.setPriority("Normal");
+
+            // 1. Tạo task
+            boolean created = taskRepository.createTask(task);
+            if (!created) {
+                System.out.println("Không thể tạo task");
+                return false;
             }
 
-            return taskRepository.createTask(task);
+            // 2. Tạo assignee
+            boolean assigned = taskAssigneesService.create(new TaskAssignees(task.getTaskId(), userId));
+            if (!assigned) {
+                // Rollback task nếu assignee tạo thất bại
+                taskRepository.deleteByTaskId(task.getTaskId(), task.getProjectId());
+                System.out.println("Không thể lưu assignee, task đã rollback");
+                return false;
+            }
+
+            // 3. Nếu cả hai đều thành công
+            return true;
+
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("Lỗi khi tạo task: " + e.getMessage());
             return false;
         }

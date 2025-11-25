@@ -43,7 +43,7 @@ public class UserRepository {
         );
     }
 
-    public User getUserById(String userId) {
+    public User findUserById(String userId) {
         return querySingle(SQL.SELECT_BY_ID.query, userId);
     }
 

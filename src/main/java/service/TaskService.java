@@ -10,7 +10,7 @@ public interface TaskService {
      * @param task đối tượng Task cần tạo
      * @return true nếu tạo thành công, false nếu thất bại
      */
-    boolean createTask(Task task);
+    boolean createTask(Task task, String userId);
 
     /**
      * Lấy danh sách tất cả các task theo projectId
