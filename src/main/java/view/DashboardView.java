@@ -345,33 +345,16 @@ public class DashboardView extends JFrame {
         infoPanel.setOpaque(false);
 
         JLabel nameLabel = new JLabel(user.getFullName());
-        nameLabel.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
+        nameLabel.setFont(GlobalStyle.scaleFont(style.getFONT_TITLE()));
 
         JLabel emailLabel = new JLabel(user.getEmail());
         emailLabel.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
         emailLabel.setForeground(style.getCOLOR_TEXT_MUTED());
 
-        // Progress bar + ratio label
-        JProgressBar progress = new JProgressBar(0, 100);
-        progress.setValue(70);
-        progress.setPreferredSize(new Dimension(GlobalStyle.scale(200), GlobalStyle.scale(8)));
-        progress.setForeground(style.getCOLOR_PRIMARY());
-        progress.setBorderPainted(false);
-        progress.setBackground(new Color(0xEDF6F5));
-
-        JLabel ratio = new JLabel("8/10");
-        ratio.setFont(GlobalStyle.scaleFont(style.getFONT_SMALL()));
-        ratio.setForeground(style.getCOLOR_TEXT_MUTED());
-
-        JPanel progressRow = new JPanel(new BorderLayout());
-        progressRow.setOpaque(false);
-        progressRow.add(progress, BorderLayout.WEST);
-        progressRow.add(ratio, BorderLayout.EAST);
 
         infoPanel.add(nameLabel);
         infoPanel.add(emailLabel);
         infoPanel.add(Box.createVerticalStrut(8));
-        infoPanel.add(progressRow);
 
         card.add(left, BorderLayout.WEST);
         card.add(infoPanel, BorderLayout.CENTER);

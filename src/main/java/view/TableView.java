@@ -1,7 +1,12 @@
 package main.java.view;
 
+import main.java.component.TaskCard;
+import main.java.model.ProjectMember;
 import main.java.model.Task;
 import main.java.model.User;
+import main.java.service.impl.ProjectMemberServiceImpl;
+import main.java.service.impl.TaskServiceImpl;
+import main.java.service.impl.UserServiceImpl;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -15,8 +20,12 @@ public class TableView extends JPanel {
     private final JTable table;
     private final DefaultTableModel model;
     GlobalStyle style = new GlobalStyle();
-
+    private ProjectMemberServiceImpl projectMemberService;
+    private UserServiceImpl userService = new UserServiceImpl();
+    private TaskServiceImpl taskService = new TaskServiceImpl();
     public TableView() {
+        this.projectMemberService = new ProjectMemberServiceImpl();
+        this.userService = new UserServiceImpl();
         setLayout(new BorderLayout(8, 8));
         setOpaque(true);
         setBackground(style.getCOLOR_BACKGROUND());
@@ -37,7 +46,7 @@ public class TableView extends JPanel {
         header.add(sub);
         add(header, BorderLayout.NORTH);
 
-        String[] cols = {"Công việc", "Người thực hiện", "Trạng thái", "Độ ưu tiên", "Tiến độ"};
+        String[] cols = {"ID","Công việc", "Người thực hiện", "Trạng thái", "Độ ưu tiên", "Tiến độ"};
         model = new DefaultTableModel(cols, 0) {
             @Override public boolean isCellEditable(int r, int c) { return false; }
             @Override
@@ -54,8 +63,15 @@ public class TableView extends JPanel {
         table.setShowVerticalLines(false);
         table.setGridColor(new Color(0xF1F3F5));
         table.setBackground(style.getCOLOR_CARD());
+        table.getColumnModel().getColumn(0).setMinWidth(0);
+        table.getColumnModel().getColumn(0).setMaxWidth(0);
+        table.getColumnModel().getColumn(0).setWidth(0);
 
-        table.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+        table.getColumnModel().getColumn(1).setMinWidth(0);
+        table.getColumnModel().getColumn(1).setMaxWidth(0);
+        table.getColumnModel().getColumn(1).setWidth(0);
+
+        table.getColumnModel().getColumn(3).setCellRenderer(new DefaultTableCellRenderer() {
             @Override
             protected void setValue(Object value) {
                 if (value instanceof List<?> list) {
@@ -85,8 +101,37 @@ public class TableView extends JPanel {
         middle.add(sp, BorderLayout.CENTER);
 
         add(middle, BorderLayout.CENTER);
-    }
 
+        table.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int row = table.getSelectedRow();
+                    if (row >= 0) {
+                        onTaskRowClicked(row);
+                    }
+                }
+            }
+        });
+    }
+    private void onTaskRowClicked(int row) {
+        String taskId = (String) model.getValueAt(row, 1);
+        String projectId = (String) model.getValueAt(row, 0);
+
+        if (projectId == null) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy Task ID!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        List<ProjectMember> listUsers = projectMemberService.getByProjectId(projectId);
+        List <User> users = new ArrayList<>();
+        for (ProjectMember p : listUsers) {
+            users.add(userService.getUserById(p.getUserId()));
+        }
+        Task task = taskService.getTaskById(taskId,projectId);
+        TaskCard card = new TaskCard(projectId, users);
+        card.setTaskData(task);
+    }
     public void updateTasks(List<Task> tasks) {
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> updateTasks(tasks));
@@ -97,6 +142,8 @@ public class TableView extends JPanel {
 
         for (Task task : tasks) {
             addTaskTable(
+                    task.getProjectId(),
+                    task.getTaskId(),
                     task.getTitle(),
                     task.getAssignedUsers(),
                     task.getStatus(),
@@ -104,8 +151,8 @@ public class TableView extends JPanel {
             );
         }
     }
-    public void addTaskTable(String title, List<User> users, String status, String priority) {
-        model.addRow(new Object[]{title, users, status, priority, 0});
+    public void addTaskTable(String projectId,String taskId ,String title, List<User> users, String status, String priority) {
+        model.addRow(new Object[]{projectId,taskId ,title, users, status, priority, 0});
     }
 
 

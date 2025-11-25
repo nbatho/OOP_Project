@@ -1,11 +1,20 @@
 package main.java.view;
 
+import main.java.component.TaskCard;
+import main.java.model.ProjectMember;
 import main.java.model.Task;
+import main.java.model.TaskAssignees;
 import main.java.model.User;
+import main.java.service.impl.ProjectMemberServiceImpl;
+import main.java.service.impl.TaskAssigneesServiceImpl;
+import main.java.service.impl.UserServiceImpl;
 
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +35,8 @@ public class KanbanView extends JPanel {
     // Mapping status từ database sang tên cột hiển thị
     private Map<String, String> statusMapping = new HashMap<>();
 
+    private ProjectMemberServiceImpl projectMemberService;
+    private UserServiceImpl userService = new UserServiceImpl();
     public KanbanView() {
         // Use horizontal BoxLayout so columns can have fixed preferred widths
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -33,7 +44,8 @@ public class KanbanView extends JPanel {
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
         this.columnWidth = GlobalStyle.scale(420);
-
+        this.projectMemberService = new ProjectMemberServiceImpl();
+        this.userService = new UserServiceImpl();
         // Khởi tạo mapping
         initStatusMapping();
 
@@ -42,9 +54,9 @@ public class KanbanView extends JPanel {
         addRigidArea();
         addKanbanColumn("Đang làm", "IN_PROGRESS");
         addRigidArea();
-        addKanbanColumn("Đang review", "REVIEW");
-        addRigidArea();
         addKanbanColumn("Hoàn thành", "DONE");
+        addRigidArea();
+        addKanbanColumn("Hủy", "CANCELLED");
     }
 
     private void addRigidArea() {
@@ -58,11 +70,12 @@ public class KanbanView extends JPanel {
         statusMapping.put("IN_PROGRESS", "Đang làm");
         statusMapping.put("In Progress", "Đang làm");
 
-        statusMapping.put("REVIEW", "Đang review");
-        statusMapping.put("Review", "Đang review");
-
         statusMapping.put("DONE", "Hoàn thành");
         statusMapping.put("Done", "Hoàn thành");
+
+        statusMapping.put("CANCELLED", "Hủy");
+        statusMapping.put("Cancelled", "Hủy");
+
     }
 
     private void addKanbanColumn(String title, String statusKey) {
@@ -217,9 +230,7 @@ public class KanbanView extends JPanel {
             case "INPROGRESS":
             case "IN-PROGRESS":
                 return "IN_PROGRESS";
-            case "REVIEW":
-            case "IN_REVIEW":
-                return "REVIEW";
+            case "CANCELLED":
             case "DONE":
             case "COMPLETED":
             case "FINISHED":
@@ -302,14 +313,12 @@ public class KanbanView extends JPanel {
             List<User> users = task.getAssignedUsers();
             for (User user : users) {
                 JLabel avatarLabel = new JLabel(getInitials(user.getFullName()), SwingConstants.CENTER);
-                avatarLabel.setFont(GlobalStyle.scaleFont(new Font("Segoe UI", Font.BOLD, 18)));
+                avatarLabel.setFont(GlobalStyle.scaleFont(new Font("Segoe UI", Font.BOLD, 14)));
                 avatarLabel.setForeground(Color.WHITE);
                 avatarLabel.setOpaque(true);
                 avatarLabel.setBackground(style.getCOLOR_PRIMARY());
-                avatarLabel.setPreferredSize(new Dimension(GlobalStyle.scale(32), GlobalStyle.scale(32)));
-                avatarLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
-                avatarLabel.setHorizontalAlignment(SwingConstants.CENTER);
-                avatarLabel.setVerticalAlignment(SwingConstants.CENTER);
+                avatarLabel.setPreferredSize(new Dimension(GlobalStyle.scale(40), GlobalStyle.scale(40)));
+                avatarLabel.setBorder(new EmptyBorder(4,4,4,4));
 
                 footerPanel.add(avatarLabel);
                 footerPanel.add(Box.createHorizontalStrut(4)); // khoảng cách giữa các avatar
@@ -317,24 +326,39 @@ public class KanbanView extends JPanel {
         }
 
         card.add(footerPanel);
+
+        card.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                onTaskClicked(task);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                card.setBackground(new Color(0xF5F5F5)); // Hover effect
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                card.setBackground(style.getCOLOR_CARD()); // Reset
+            }
+        });
+
+
         return card;
     }
     private String getInitials(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) return "--";
-        String[] parts = fullName.trim().split("\\s+");
+        String cleaned = fullName.trim();
+        // return the first two non-space characters (e.g., "Nguyễn Minh" -> "NM", "tho" -> "TH")
         StringBuilder sb = new StringBuilder();
-
-        for (String part : parts) {
-            if (!part.isEmpty() && sb.length() < 2) {
-                sb.append(Character.toUpperCase(part.charAt(0)));
-            }
+        for (int i = 0; i < cleaned.length() && sb.length() < 2; i++) {
+            char c = cleaned.charAt(i);
+            if (!Character.isWhitespace(c)) sb.append(Character.toUpperCase(c));
         }
-
-        if (sb.length() < 2 && parts[0].length() > 1) {
-            sb.append(Character.toUpperCase(parts[0].charAt(1)));
-        }
-
-        return sb.length() > 0 ? sb.toString() : "--";
+        String initials = sb.toString();
+        if (initials.length() == 0) initials = "--";
+        return initials;
     }
 
 
@@ -389,9 +413,9 @@ public class KanbanView extends JPanel {
             JLabel countLabel = e.getValue();
             JPanel cardsPanel = kanbanColumns.get(key);
             if (cardsPanel != null) {
-                // Each card is followed by a vertical strut in addTaskToBoard, so compute accordingly
+
                 int comps = cardsPanel.getComponentCount();
-                int taskCount = (comps + 1) / 2; // safe even if no struts
+                int taskCount = (comps + 1) / 2;
                 countLabel.setText(String.valueOf(taskCount));
 
             }
@@ -402,13 +426,14 @@ public class KanbanView extends JPanel {
      * Xử lý khi click vào task
      */
     private void onTaskClicked(Task task) {
-        // TODO: Mở dialog xem/chỉnh sửa chi tiết task
-        System.out.println("Clicked task: " + task.getTitle());
+        List<ProjectMember> listUsers = projectMemberService.getByProjectId(task.getProjectId());
+        List <User> users = new ArrayList<>();
+       for (ProjectMember p : listUsers) {
+           users.add(userService.getUserById(p.getUserId()));
+       }
+        TaskCard taskCard = new TaskCard(task.getProjectId(), users);
+        taskCard.setTaskData(task);
 
-        // Có thể trigger event để Controller xử lý
-        // if (taskClickListener != null) {
-        //     taskClickListener.onTaskClicked(task);
-        // }
     }
 
     /**
