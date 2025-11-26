@@ -23,6 +23,7 @@ public class TableView extends JPanel {
     private ProjectMemberServiceImpl projectMemberService;
     private UserServiceImpl userService = new UserServiceImpl();
     private TaskServiceImpl taskService = new TaskServiceImpl();
+    private TaskRowClickListener taskRowClickListener;
     public TableView() {
         this.projectMemberService = new ProjectMemberServiceImpl();
         this.userService = new UserServiceImpl();
@@ -108,29 +109,23 @@ public class TableView extends JPanel {
                 if (e.getClickCount() == 2) {
                     int row = table.getSelectedRow();
                     if (row >= 0) {
-                        onTaskRowClicked(row);
+                        if (taskRowClickListener != null) {
+                            String projectId = (String) model.getValueAt(row, 0);
+                            String taskId = (String) model.getValueAt(row, 1);
+                            taskRowClickListener.onTaskRowClicked(projectId, taskId);
+                        }
                     }
                 }
             }
         });
     }
-    private void onTaskRowClicked(int row) {
-        String taskId = (String) model.getValueAt(row, 1);
-        String projectId = (String) model.getValueAt(row, 0);
 
-        if (projectId == null) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy Task ID!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    public interface TaskRowClickListener {
+        void onTaskRowClicked(String projectId, String taskId);
+    }
 
-        List<ProjectMember> listUsers = projectMemberService.getByProjectId(projectId);
-        List <User> users = new ArrayList<>();
-        for (ProjectMember p : listUsers) {
-            users.add(userService.getUserById(p.getUserId()));
-        }
-        Task task = taskService.getTaskById(taskId,projectId);
-        TaskCard card = new TaskCard(projectId, users);
-        card.setTaskData(task);
+    public void setTaskRowClickListener(TaskRowClickListener listener) {
+        this.taskRowClickListener = listener;
     }
     public void updateTasks(List<Task> tasks) {
         if (!SwingUtilities.isEventDispatchThread()) {

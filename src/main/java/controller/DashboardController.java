@@ -73,6 +73,10 @@ public class DashboardController {
         // Load danh sách dự án ban đầu
         loadProjectList();
 
+        kanbanView.setTaskClickListener(task -> onTaskClicked(task));
+        tableView.setTaskRowClickListener((projectId, taskId) -> {
+            onTaskClickedFromTable(projectId, taskId);
+        });
 
     }
     private void loadProjectMembers(String projectId) {
@@ -256,7 +260,7 @@ public class DashboardController {
         }
 
         // Mở TaskCard
-        TaskCard card = new TaskCard(currentProjectId, currentProjectMembers);
+        TaskCard card = new TaskCard(currentProjectId, currentProjectMembers,false);
 
         card.getBtnSave().addActionListener(e -> {
 
@@ -341,7 +345,97 @@ public class DashboardController {
             new LoginView();
         }
     }
+    private void onTaskClickedFromTable(String projectId, String taskId) {
 
+        Task task = taskService.getTaskById(taskId, projectId);
+
+        List<ProjectMember> memberList = projectMemberService.getByProjectId(projectId);
+        List<User> users = new ArrayList<>();
+
+        for (ProjectMember pm : memberList) {
+            users.add(userService.getUserById(pm.getUserId()));
+        }
+
+        TaskCard card = new TaskCard(projectId, users, true);
+        card.setTaskData(task);
+
+        // Handle update
+        card.getBtnSave().addActionListener(e -> handleUpdateTask(card, task));
+    }
+    private void onTaskClicked(Task task) {
+        try {
+            // Load user list for this project
+            List<ProjectMember> members = projectMemberService.getByProjectId(task.getProjectId());
+            List<User> users = new ArrayList<>();
+
+            for (ProjectMember m : members) {
+                users.add(userService.getUserById(m.getUserId()));
+            }
+
+            // Open taskCard edit form
+            TaskCard taskCard = new TaskCard(task.getProjectId(), users, true);
+            taskCard.setTaskData(task);
+
+            // handle update
+            taskCard.getBtnSave().addActionListener(e -> handleUpdateTask(taskCard, task));
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(view, "Không thể mở task: " + ex.getMessage());
+        }
+    }
+    private void handleUpdateTask(TaskCard card, Task oldTask) {
+        try {
+            System.out.println("Updated");
+//            String title = card.getTxtTitle().getText().trim();
+//            String description = card.getTxtDescription().getText().trim();
+//            User assignee = (User) card.getCmbUser().getSelectedItem();
+//            String priority = (String) card.getCmbPriority().getSelectedItem();
+//            String status = (String) card.getCmbStatus().getSelectedItem();
+//            Date endDate = card.getEndDateChooser().getDate();
+//
+//            if (title.isEmpty()) {
+//                JOptionPane.showMessageDialog(card,
+//                        "Tiêu đề không được để trống!",
+//                        "Lỗi",
+//                        JOptionPane.ERROR_MESSAGE);
+//                return;
+//            }
+//
+//            // Tạo task đã chỉnh sửa
+//            Task updatedTask = new Task();
+//            updatedTask.setTaskId(oldTask.getTaskId());
+//            updatedTask.setProjectId(oldTask.getProjectId());
+//            updatedTask.setTitle(title);
+//            updatedTask.setDescription(description);
+//            updatedTask.setPriority(priority);
+//            updatedTask.setStatus(status);
+//
+//            if (endDate != null) {
+//                updatedTask.setDueDate(new java.sql.Date(endDate.getTime()));
+//            }
+//
+//            // Update vào DB
+//            taskService.updateTask(updatedTask,
+//                    assignee != null ? assignee.getUserId() : null);
+
+            JOptionPane.showMessageDialog(card,
+                    "Cập nhật task thành công!",
+                    "Thành công",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            // Reload UI
+//            loadProjectTasks(updatedTask.getProjectId());
+
+            card.dispose();
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(card,
+                    "Không thể cập nhật task: " + ex.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
     public KanbanView getKanbanView() {
         return kanbanView;
     }

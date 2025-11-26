@@ -31,11 +31,12 @@ public class TaskCard extends JFrame {
     private JButton btnSave;
 
     private JPanel assignedUserPanel;
-
-    public TaskCard(String projectId, List<User> users) {
+    private boolean edited;
+    public TaskCard(String projectId, List<User> users,boolean edited) {
         this.projectId = projectId;
         if (users != null) this.users = users;
 
+        this.edited = edited;
         setTitle("Tạo công việc mới");
         setSize(680, 750);
         setLocationRelativeTo(null);
@@ -209,7 +210,12 @@ public class TaskCard extends JFrame {
         btnCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnCancel.addActionListener(e -> dispose());
 
-        btnSave = new JButton("Lưu công việc");
+        if (edited) {
+            btnSave = new JButton("Lưu công việc");
+        }
+        else {
+            btnSave = new JButton("Lưu chỉnh sửa");
+        }
         btnSave.setFont(new Font("Segoe UI", Font.BOLD, 14));
         btnSave.setForeground(Color.WHITE);
         btnSave.setBackground(style.getCOLOR_PRIMARY());
@@ -336,6 +342,10 @@ public class TaskCard extends JFrame {
     public JComboBox<String> getCmbStatus() { return cmbStatus; }
     public JDateChooser getStartDateChooser() { return startDateChooser; }
     public JDateChooser getEndDateChooser() { return endDateChooser; }
+
+    public boolean isEdited() {
+        return edited;
+    }
 
     public String getProjectId() { return projectId; }
 }

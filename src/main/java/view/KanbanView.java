@@ -37,6 +37,7 @@ public class KanbanView extends JPanel {
 
     private ProjectMemberServiceImpl projectMemberService;
     private UserServiceImpl userService = new UserServiceImpl();
+    private TaskClickListener taskClickListener;
     public KanbanView() {
         // Use horizontal BoxLayout so columns can have fixed preferred widths
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -159,6 +160,13 @@ public class KanbanView extends JPanel {
         columnCountLabels.put(statusKey, countLabel);
     }
 
+    public interface TaskClickListener {
+        void onTaskClicked(Task task);
+    }
+
+    public void setTaskClickListener(TaskClickListener listener) {
+        this.taskClickListener = listener;
+    }
     /**
      * Cập nhật tất cả tasks vào Kanban board
      */
@@ -330,7 +338,9 @@ public class KanbanView extends JPanel {
         card.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                onTaskClicked(task);
+                if (taskClickListener != null) {
+                    taskClickListener.onTaskClicked(task);
+                }
             }
 
             @Override
@@ -425,16 +435,7 @@ public class KanbanView extends JPanel {
     /**
      * Xử lý khi click vào task
      */
-    private void onTaskClicked(Task task) {
-        List<ProjectMember> listUsers = projectMemberService.getByProjectId(task.getProjectId());
-        List <User> users = new ArrayList<>();
-       for (ProjectMember p : listUsers) {
-           users.add(userService.getUserById(p.getUserId()));
-       }
-        TaskCard taskCard = new TaskCard(task.getProjectId(), users);
-        taskCard.setTaskData(task);
 
-    }
 
     /**
      * Xóa tất cả tasks
