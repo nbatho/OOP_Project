@@ -460,7 +460,7 @@ public class DashboardController {
             return;
         }
         try {
-
+            taskAssigneesService.deleteByTaskId(task.getTaskId());
             taskService.deleteTask(task.getTaskId(),currentProjectId);
             loadProjectTasks(currentProjectId);
 

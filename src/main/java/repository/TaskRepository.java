@@ -31,7 +31,6 @@ public class TaskRepository {
         SQL(String q) { this.query = q; }
     }
 
-    /* ============================== PUBLIC METHODS ============================== */
 
     public boolean createTask(Task task) {
         return executeUpdate(

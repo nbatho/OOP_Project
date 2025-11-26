@@ -92,7 +92,7 @@ public class TaskAssigneesServiceImpl implements TaskAssigneesService {
                 return List.of();
             }
 
-            System.out.println("Lấy assignments theo task: " + task_id);
+//            System.out.println("Lấy assignments theo task: " + task_id);
              return taskAssignessRepository.findByTaskId(task_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy assignments của task: " + e.getMessage());
@@ -141,9 +141,8 @@ public class TaskAssigneesServiceImpl implements TaskAssigneesService {
                 return false;
             }
 
-            // return taskAssignmentRepository.deleteByTask(task_id);
-            System.out.println("Xóa tất cả assignments của task: " + task_id);
-            return true;
+//            System.out.println("Xóa tất cả assignments của task: " + task_id);
+             return taskAssignessRepository.deleteByTaskId(task_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa assignments của task: " + e.getMessage());
             return false;
