@@ -81,9 +81,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return null;
             }
 
-            // return projectMemberRepository.getByProjectAndUser(project_id, user_id);
             System.out.println("Lấy project member theo project và user: " + project_id + ", " + user_id);
-            return null; // Placeholder
+             return projectMemberRepository.findByProjectIdAndUserId(project_id, user_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy project member: " + e.getMessage());
             return null;
@@ -166,9 +165,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return false;
             }
 
-            // return projectMemberRepository.deleteByProjectAndUser(project_id, user_id);
             System.out.println("Xóa project member thành công");
-            return true;
+             return projectMemberRepository.deleteByProjectIdAndUserId(project_id, user_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa project member: " + e.getMessage());
             return false;

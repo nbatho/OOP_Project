@@ -24,28 +24,23 @@ public class CalendarView extends JPanel {
     private final JLabel selectedDateLabel;
 
     private TaskClickListener taskClickListener;
-    private List<Task> allTasks = new java.util.ArrayList<>(); // Lưu tất cả tasks để lọc khi đổi ngày
+    private List<Task> allTasks = new java.util.ArrayList<>();
 
     public CalendarView() {
         setLayout(new BorderLayout(10, 10));
 
-        // HEADER
         add(createHeader(), BorderLayout.NORTH);
 
-        // MAIN BODY (calendar + task of day)
         JPanel mainPanel = new JPanel(new GridLayout(1, 2, 10, 10));
 
-        // LEFT — JCalendar
         calendar = new JCalendar();
         calendar.setBorder(new TitledBorder("Lịch"));
         calendar.getDayChooser().setAlwaysFireDayProperty(true);
         mainPanel.add(calendar);
 
-        // RIGHT — TaskCard of selected day
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBorder(new TitledBorder("Công việc trong ngày"));
 
-        // Label hiển thị ngày được chọn
         selectedDateLabel = new JLabel();
         selectedDateLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         selectedDateLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -63,18 +58,18 @@ public class CalendarView extends JPanel {
         JScrollPane taskScrollPane = new JScrollPane(taskListPanel);
         taskScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         taskScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        taskScrollPane.getVerticalScrollBar().setUnitIncrement(16); // Smooth scrolling
-        taskScrollPane.setBorder(null); // Bỏ border của scroll pane
+        taskScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        taskScrollPane.setBorder(null);
 
         rightPanel.add(taskScrollPane, BorderLayout.CENTER);
         mainPanel.add(rightPanel);
 
         add(mainPanel, BorderLayout.CENTER);
 
-        // Upcoming section (bottom) - GIỚI HẠN CHIỀU CAO
+
         JPanel upcomingPanel = new JPanel(new BorderLayout());
         upcomingPanel.setBorder(new TitledBorder("Công việc sắp đến hạn"));
-        upcomingPanel.setPreferredSize(new Dimension(0, 250)); // Giới hạn chiều cao 250px
+        upcomingPanel.setPreferredSize(new Dimension(0, 250));
         upcomingPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
 
         upcomingListPanel = new JPanel();
@@ -84,17 +79,16 @@ public class CalendarView extends JPanel {
         JScrollPane upcomingScrollPane = new JScrollPane(upcomingListPanel);
         upcomingScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         upcomingScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        upcomingScrollPane.getVerticalScrollBar().setUnitIncrement(16); // Smooth scrolling
+        upcomingScrollPane.getVerticalScrollBar().setUnitIncrement(16);
 
         upcomingPanel.add(upcomingScrollPane, BorderLayout.CENTER);
         add(upcomingPanel, BorderLayout.SOUTH);
 
-        // EVENT — pick date
         calendar.addPropertyChangeListener("calendar", evt -> {
             LocalDate selected = convertToLocalDate(calendar.getDate());
             updateSelectedDateLabel(selected);
 
-            // Tự động cập nhật lại tasks khi chọn ngày mới
+
             if (!allTasks.isEmpty()) {
                 updateTasksForSelectedDate(selected);
             }
@@ -109,7 +103,7 @@ public class CalendarView extends JPanel {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy");
         String formattedDate = date.format(formatter);
         formattedDate = formattedDate.substring(0, 1).toUpperCase() + formattedDate.substring(1);
-        selectedDateLabel.setText("📅 " + formattedDate);
+        selectedDateLabel.setText(formattedDate);
     }
 
     public void updateTasks(List<Task> tasks) {
@@ -118,16 +112,13 @@ public class CalendarView extends JPanel {
             return;
         }
 
-        // Lưu lại để dùng khi user chọn ngày khác
         this.allTasks = new java.util.ArrayList<>(tasks);
 
-        // Lấy ngày hiện tại đang được chọn trên calendar
         LocalDate selectedDate = convertToLocalDate(calendar.getDate());
         updateTasksForSelectedDate(selectedDate);
     }
 
     private void updateTasksForSelectedDate(LocalDate selectedDate) {
-        // Lọc tasks của ngày được chọn
         List<Task> tasksOfDay = allTasks.stream()
                 .filter(task -> task.getDueDate() != null)
                 .filter(task -> {
@@ -136,7 +127,6 @@ public class CalendarView extends JPanel {
                 })
                 .toList();
 
-        // Lọc tasks sắp đến hạn (7 ngày tới, không tính ngày đã chọn)
         LocalDate weekLater = selectedDate.plusDays(7);
 
         List<Task> upcomingTasks = allTasks.stream()
@@ -148,7 +138,7 @@ public class CalendarView extends JPanel {
                 .sorted((t1, t2) -> t1.getDueDate().compareTo(t2.getDueDate()))
                 .toList();
 
-        // Cập nhật UI
+
         setTasksOfDay(tasksOfDay, null);
         setUpcomingTasks(upcomingTasks, null);
     }
@@ -209,12 +199,11 @@ public class CalendarView extends JPanel {
         card.setAlignmentX(Component.CENTER_ALIGNMENT);
         card.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        int cardHeight = 120; // Chiều cao cố định
+        int cardHeight = 120;
         card.setPreferredSize(new Dimension(Integer.MAX_VALUE, cardHeight));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, cardHeight));
         card.setMinimumSize(new Dimension(0, cardHeight));
 
-        // Header: Title + Priority
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
         headerPanel.setOpaque(false);
@@ -234,7 +223,6 @@ public class CalendarView extends JPanel {
         card.add(headerPanel);
         card.add(Box.createVerticalStrut(8));
 
-        // Description
         if (task.getDescription() != null && !task.getDescription().isEmpty()) {
             String desc = task.getDescription();
             if (desc.length() > 100) {
@@ -255,7 +243,7 @@ public class CalendarView extends JPanel {
         footerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         if (task.getDueDate() != null) {
-            JLabel dueDateLabel = new JLabel("📅 " + task.getDueDate().toString());
+            JLabel dueDateLabel = new JLabel(task.getDueDate().toString());
             dueDateLabel.setFont(style.getFONT_SMALL());
             dueDateLabel.setForeground(style.getCOLOR_TEXT_MUTED());
             footerPanel.add(dueDateLabel);
@@ -263,7 +251,6 @@ public class CalendarView extends JPanel {
 
         footerPanel.add(Box.createHorizontalGlue());
 
-        // Avatar người được assign
         if (task.getAssignedUsers() != null && !task.getAssignedUsers().isEmpty()) {
             List<User> users = task.getAssignedUsers();
             for (User user : users) {
@@ -282,11 +269,9 @@ public class CalendarView extends JPanel {
 
         card.add(footerPanel);
 
-        // Mouse events
         card.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Gọi cả 2 listeners để tương thích
                 if (taskClickListener != null) {
                     taskClickListener.onTaskClicked(task);
                 }
@@ -356,7 +341,7 @@ public class CalendarView extends JPanel {
             if (!Character.isWhitespace(c)) sb.append(Character.toUpperCase(c));
         }
         String initials = sb.toString();
-        if (initials.length() == 0) initials = "--";
+        if (initials.isEmpty()) initials = "--";
         return initials;
     }
 

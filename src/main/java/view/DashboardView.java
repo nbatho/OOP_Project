@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class DashboardView extends JFrame {
     GlobalStyle style = new GlobalStyle();
@@ -44,7 +45,7 @@ public class DashboardView extends JFrame {
 
     // Lưu reference đến projectInfoPanel để update sau
     private JPanel projectInfoPanel;
-
+    private OnMemberDeleteListener memberDeleteListener;
     public DashboardView() {
         setTitle("Quản lý Công việc Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -154,10 +155,10 @@ public class DashboardView extends JFrame {
 
         gbc.gridx = 2;
         createTaskButton = new JButton("Tạo mới");
-            createTaskButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
-            createTaskButton.setBackground(style.getCOLOR_PRIMARY());
-            createTaskButton.setForeground(Color.WHITE);
-            createTaskButton.setFocusPainted(false);
+        createTaskButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
+        createTaskButton.setBackground(style.getCOLOR_PRIMARY());
+        createTaskButton.setForeground(Color.WHITE);
+        createTaskButton.setFocusPainted(false);
         topRow.add(createTaskButton, gbc);
 
 
@@ -235,14 +236,9 @@ public class DashboardView extends JFrame {
 
         // Add member button
         addMemberButton = new JButton("+ Thêm thành viên mới");
-        addMemberButton.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        addMemberButton.setForeground(Color.WHITE);
+        addMemberButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
         addMemberButton.setBackground(style.getCOLOR_PRIMARY());
-        addMemberButton.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
-        addMemberButton.setFocusPainted(false);
-        addMemberButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        addMemberButton.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
-        addMemberButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        addMemberButton.setForeground(Color.WHITE);
         sidebarPanel.add(addMemberButton);
 
         return sidebarPanel;
@@ -295,10 +291,9 @@ public class DashboardView extends JFrame {
         ));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, GlobalStyle.scale(90)));
 
-        // Left: avatar + status dot
         JPanel left = new JPanel(new BorderLayout());
         left.setOpaque(false);
-        // Avatar: show exactly first two non-space characters as initials, single-color background
+
         JLabel avatarLabel = new JLabel(getInitials(user.getFullName()), SwingConstants.CENTER);
         avatarLabel.setFont(GlobalStyle.scaleFont(new Font("Segoe UI", Font.BOLD, 18)));
         avatarLabel.setForeground(Color.WHITE);
@@ -308,6 +303,33 @@ public class DashboardView extends JFrame {
         avatarLabel.setBorder(new EmptyBorder(6,6,6,6));
 
         left.add(avatarLabel, BorderLayout.CENTER);
+
+        avatarLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int confirm = JOptionPane.showConfirmDialog(DashboardView.this,
+                        "Bạn có chắc muốn xóa user?",
+                        "Xác nhận xóa",
+                        JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Gọi listener để báo cho Controller biết
+                    if (memberDeleteListener != null) {
+                        memberDeleteListener.onDelete(user);
+                    }
+                }
+            }
+            public void mouseEntered(MouseEvent e) {
+                avatarLabel.setBackground(Color.RED);
+                avatarLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                avatarLabel.setToolTipText("Xóa thành viên này"); // Thêm tooltip
+            }
+
+            public void mouseExited(MouseEvent e) {
+                avatarLabel.setBackground(style.getCOLOR_PRIMARY());
+                avatarLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+        });
+
 
         // User info
         JPanel infoPanel = new JPanel();
@@ -331,7 +353,60 @@ public class DashboardView extends JFrame {
 
         return card;
     }
+    public void showAddMemberPopup(List<User> users, Consumer<User> onUserSelected) {
 
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        DefaultListModel<User> model = new DefaultListModel<>();
+        if (users != null) {
+            for (User u : users) model.addElement(u);
+        }
+
+        JList<User> list = new JList<>(model);
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        list.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+
+                User user = (User) value;
+                String txt = user.getFullName() + " (" + user.getEmail() + ")";
+
+                return super.getListCellRendererComponent(
+                        list, txt, index, isSelected, cellHasFocus
+                );
+            }
+        });
+
+        list.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    User selected = list.getSelectedValue();
+                    if (selected != null && onUserSelected != null) {
+                        onUserSelected.accept(selected);
+                    }
+                    popupMenu.setVisible(false);
+                }
+            }
+        });
+
+        JScrollPane scrollPane = new JScrollPane(list);
+        scrollPane.setPreferredSize(new Dimension(250, 200));
+
+        popupMenu.add(scrollPane);
+
+        popupMenu.show(addMemberButton, 0, addMemberButton.getHeight());
+    }
+    public interface OnMemberDeleteListener {
+        void onDelete(User user);
+    }
+
+    public void setMemberDeleteListener(OnMemberDeleteListener listener) {
+        this.memberDeleteListener = listener;
+    }
     public void setCurrentProjectName(String projectName) {
         titleLabel.setText(projectName);
     }

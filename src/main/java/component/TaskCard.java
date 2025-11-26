@@ -135,7 +135,7 @@ public class TaskCard extends JFrame {
         cmbUser.setRenderer(new UserRenderer());
         cmbUser.setFont(style.getFONT_INPUT());
         cmbUser.setPreferredSize(new Dimension(0, 45));
-        cmbUser.setBackground(style.getCOLOR_CARD()); // Set background cho combo box
+        cmbUser.setBackground(style.getCOLOR_CARD());
         cmbUser.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(style.getCOLOR_BORDER(), 1, true),
                 new EmptyBorder(8, 10, 8, 10)
@@ -229,7 +229,7 @@ public class TaskCard extends JFrame {
 
             commentListPanel = new JPanel();
             commentListPanel.setLayout(new BoxLayout(commentListPanel, BoxLayout.Y_AXIS));
-            commentListPanel.setBackground(style.getCOLOR_CARD()); // [FIX] Nền trắng cho panel chứa list
+            commentListPanel.setBackground(style.getCOLOR_CARD());
 
             JScrollPane commentScroll = new JScrollPane(commentListPanel);
 
@@ -445,9 +445,7 @@ public class TaskCard extends JFrame {
     public String getProjectId() { return projectId; }
     public JPanel getCommentListPanel() { return commentListPanel; }
 
-    /**
-     * Thêm một comment vào danh sách hiển thị
-     */
+
     public void addCommentToList(String userName, String commentText, String timestamp) {
         JPanel commentItem = createCommentItem(userName, commentText, timestamp);
         commentListPanel.add(commentItem);
@@ -456,9 +454,6 @@ public class TaskCard extends JFrame {
         commentListPanel.repaint();
     }
 
-    /**
-     * Xóa tất cả comments trong danh sách
-     */
     public void clearComments() {
         if (commentListPanel != null) {
             commentListPanel.removeAll();
@@ -467,9 +462,6 @@ public class TaskCard extends JFrame {
         }
     }
 
-    /**
-     * Tạo một comment item để hiển thị
-     */
     private JPanel createCommentItem(String userName, String commentText, String timestamp) {
         JPanel item = new JPanel();
         item.setLayout(new BorderLayout(8, 5));

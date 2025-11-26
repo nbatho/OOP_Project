@@ -62,10 +62,10 @@ public class DashboardController {
         view.getLogoutMenuItem().addActionListener(e -> handleLogout());
         view.getCreateProjectMenuItem().addActionListener(e -> handleCreateProject());
 
-
+        view.setMemberDeleteListener(this::handleDeleteUser);
         view.setProjectSelectionListener(this::handleProjectSelected);
 
-
+        view.getaddMemberButton().addActionListener(e -> handleAddMember());
 
         loadProjectList();
 
@@ -108,17 +108,21 @@ public class DashboardController {
                 task.setAssignedUsers(listAssignees);
             }
             kanbanView.updateTasks(listTasks);
-
-
             tableView.updateTasks(listTasks);
             calendarView.updateTasks(listTasks);
-//
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(view,
                     "Không thể tải danh sách task: " + e.getMessage(),
                     "Lỗi",
                     JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private List<User> loadAllMember() {
+        try {
+            return userService.getAllUsers();
+        } catch (Exception e) {
+            System.err.println("Lỗi load user: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
     /**
@@ -189,6 +193,62 @@ public class DashboardController {
                 "Ngày tạo: " + project.getCreatedAt() + "\n";
     }
 
+    private void handleAddMember() {
+        if (currentProjectId == null) {
+            JOptionPane.showMessageDialog(view, "Vui lòng chọn dự án trước!", "Lỗi", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        List<User> allUsers = loadAllMember();
+        List<User> availableUsers = new ArrayList<>();
+
+        for (User user : allUsers) {
+            boolean isAlreadyMember = false;
+
+            for (User member : currentProjectMembers) {
+                if (member.getUserId().equals(user.getUserId())) {
+                    isAlreadyMember = true;
+                    break;
+                }
+            }
+
+            if (!isAlreadyMember) {
+                availableUsers.add(user);
+            }
+        }
+        view.showAddMemberPopup(availableUsers, (selectedUser) -> {
+
+            addMemberToProject(selectedUser);
+        });
+    }
+    private void addMemberToProject(User user) {
+        try {
+
+            ProjectMember newMember = new ProjectMember(currentProjectId, user.getUserId(), "R2");
+            int confirm =  JOptionPane.showConfirmDialog(view,"Xác nhận thêm "+ user.getFullName() + "vào dự án");
+            if (confirm == JOptionPane.YES_OPTION) {
+                projectMemberService.create(newMember);
+
+            }
+
+
+            JOptionPane.showMessageDialog(view,
+                    "Đã thêm " + user.getFullName() + " vào dự án!",
+                    "Thành công",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            // Quan trọng: Load lại danh sách thành viên để cập nhật giao diện bên trái
+            loadProjectMembers(currentProjectId);
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(view,
+                    "Lỗi khi thêm thành viên: " + ex.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+
     /**
      * Xử lý tạo dự án mới
      */
@@ -234,7 +294,26 @@ public class DashboardController {
             }
         });
     }
+    private void handleDeleteUser(User userNeedDelete) {
+        try {
+            if (currentProjectMembers.size() > 2) {
+                boolean isDeleted = projectMemberService.deleteByProjectIdAndUserId(currentProjectId, userNeedDelete.getUserId());
+                if (isDeleted) {
+                    currentProjectMembers.removeIf(u -> u.getUserId().equals(userNeedDelete.getUserId()));
+                    view.updateMembersList(currentProjectMembers);
+                    JOptionPane.showMessageDialog(view, "Xóa thành công!");
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(view, "Không thể xóa người dùng!");
+            }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
 
     private void handleCreateTask() {
 
@@ -284,10 +363,8 @@ public class DashboardController {
                 newTask.setStatus(status);
                 newTask.setPriority(priority);
                 newTask.setCreatedBy(userService.getCurrentUser().getUserId());
-                if (endDate != null) {
-                    java.sql.Date sqlDate = new java.sql.Date(endDate.getTime());
-                    newTask.setDueDate(sqlDate);
-                }
+                java.sql.Date sqlDate = new java.sql.Date(endDate.getTime());
+                newTask.setDueDate(sqlDate);
 
 
                 for (User assignee : assignees) {
