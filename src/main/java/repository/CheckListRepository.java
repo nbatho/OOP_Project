@@ -42,7 +42,7 @@ public class CheckListRepository {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist created: " + checklist.getChecklistId());
+//                System.out.println("Checklist created: " + checklist.getChecklistId());
                 return true;
             }
 
@@ -64,7 +64,7 @@ public class CheckListRepository {
             while (rs.next()) {
                 checklists.add(mapResultSetToChecklist(rs));
             }
-            System.out.println("Found " + checklists.size() + " checklists");
+//            System.out.println("Found " + checklists.size() + " checklists");
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách checklists: " + e.getMessage());
         }
@@ -83,7 +83,7 @@ public class CheckListRepository {
             stmt.setString(1, checklistId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                System.out.println("Checklist found: " + checklistId);
+//                System.out.println("Checklist found: " + checklistId);
                 return mapResultSetToChecklist(rs);
             } else {
                 System.out.println("Checklist not found: " + checklistId);
@@ -108,7 +108,7 @@ public class CheckListRepository {
             while (rs.next()) {
                 checklists.add(mapResultSetToChecklist(rs));
             }
-            System.out.println("Found " + checklists.size() + " checklists for task " + taskId);
+//            System.out.println("Found " + checklists.size() + " checklists for task " + taskId);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy checklists by task_id: " + e.getMessage());
         }
@@ -127,7 +127,7 @@ public class CheckListRepository {
             stmt.setString(1, title);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                System.out.println("Checklist found: " + title);
+//                System.out.println("Checklist found: " + title);
                 return mapResultSetToChecklist(rs);
             } else {
                 System.out.println("Checklist not found: " + title);
@@ -152,7 +152,7 @@ public class CheckListRepository {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist updated: " + checklistId);
+//                System.out.println("Checklist updated: " + checklistId);
                 return true;
             }
         } catch (SQLException e) {
@@ -172,7 +172,7 @@ public class CheckListRepository {
             stmt.setString(1, checklistId);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist deleted: " + checklistId);
+//                System.out.println("Checklist deleted: " + checklistId);
                 return true;
             } else {
                 System.out.println("Checklist not found: " + checklistId);
@@ -195,7 +195,7 @@ public class CheckListRepository {
             stmt.setString(1, taskId);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("All checklists for task " + taskId + " deleted");
+//                System.out.println("All checklists for task " + taskId + " deleted");
                 return true;
             } else {
                 System.out.println("No checklists found for task " + taskId);

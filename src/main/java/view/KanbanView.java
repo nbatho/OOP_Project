@@ -1,42 +1,31 @@
 package main.java.view;
 
-import main.java.component.TaskCard;
-import main.java.model.ProjectMember;
 import main.java.model.Task;
-import main.java.model.TaskAssignees;
 import main.java.model.User;
-import main.java.service.impl.ProjectMemberServiceImpl;
-import main.java.service.impl.TaskAssigneesServiceImpl;
-import main.java.service.impl.UserServiceImpl;
-
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class KanbanView extends JPanel {
     GlobalStyle style = new GlobalStyle();
 
-    // desired column width (scaled)
+
     private final int columnWidth;
 
-    // Lưu cột Kanban
-    private Map<String, JPanel> kanbanColumns = new HashMap<>();
+
+    private final Map<String, JPanel> kanbanColumns = new HashMap<>();
     // Lưu label đếm task cho mỗi cột để cập nhật dễ dàng
-    private Map<String, JLabel> columnCountLabels = new HashMap<>();
+    private final Map<String, JLabel> columnCountLabels = new HashMap<>();
     // Lưu nút Tạo mới cho mỗi cột
-    private Map<String, JButton> columnCreateButtons = new HashMap<>();
+    private final Map<String, JButton> columnCreateButtons = new HashMap<>();
 
     // Mapping status từ database sang tên cột hiển thị
-    private Map<String, String> statusMapping = new HashMap<>();
+    private final Map<String, String> statusMapping = new HashMap<>();
 
-    private ProjectMemberServiceImpl projectMemberService;
-    private UserServiceImpl userService = new UserServiceImpl();
     private TaskClickListener taskClickListener;
     public KanbanView() {
         // Use horizontal BoxLayout so columns can have fixed preferred widths
@@ -45,8 +34,6 @@ public class KanbanView extends JPanel {
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
         this.columnWidth = GlobalStyle.scale(420);
-        this.projectMemberService = new ProjectMemberServiceImpl();
-        this.userService = new UserServiceImpl();
         // Khởi tạo mapping
         initStatusMapping();
 
@@ -249,9 +236,6 @@ public class KanbanView extends JPanel {
         }
     }
 
-    /**
-     * Tạo task card component
-     */
     private JPanel createTaskCard(Task task) {
         // Card chính
         JPanel card = new JPanel();
@@ -273,7 +257,7 @@ public class KanbanView extends JPanel {
 
         JPanel headerPanel = new JPanel();
         headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
-        headerPanel.setOpaque(false); // thừa hưởng background từ card
+        headerPanel.setOpaque(false);
         headerPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel titleLabel = new JLabel(task.getTitle());
@@ -329,7 +313,7 @@ public class KanbanView extends JPanel {
                 avatarLabel.setBorder(new EmptyBorder(4,4,4,4));
 
                 footerPanel.add(avatarLabel);
-                footerPanel.add(Box.createHorizontalStrut(4)); // khoảng cách giữa các avatar
+                footerPanel.add(Box.createHorizontalStrut(4));
             }
         }
 
@@ -360,28 +344,24 @@ public class KanbanView extends JPanel {
     private String getInitials(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) return "--";
         String cleaned = fullName.trim();
-        // return the first two non-space characters (e.g., "Nguyễn Minh" -> "NM", "tho" -> "TH")
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < cleaned.length() && sb.length() < 2; i++) {
             char c = cleaned.charAt(i);
             if (!Character.isWhitespace(c)) sb.append(Character.toUpperCase(c));
         }
         String initials = sb.toString();
-        if (initials.length() == 0) initials = "--";
+        if (initials.isEmpty()) initials = "--";
         return initials;
     }
 
 
-    /**
-     * Tạo priority badge
-     */
     private JLabel createPriorityBadge(String priority) {
         JLabel badge = new JLabel(priority);
         badge.setFont(GlobalStyle.scaleFont(style.getFONT_SMALL()));
         badge.setOpaque(true);
         badge.setBorder(new EmptyBorder(4, 8, 4, 8));
 
-        // Normalize priority (case-insensitive)
+
         String normalizedPriority = priority.toUpperCase().trim();
 
         switch (normalizedPriority) {
@@ -407,17 +387,14 @@ public class KanbanView extends JPanel {
             default:
                 badge.setBackground(new Color(240, 240, 240));
                 badge.setForeground(Color.GRAY);
-                badge.setText(priority); // Giữ nguyên text nếu không match
+                badge.setText(priority);
         }
 
         return badge;
     }
 
-    /**
-     * Cập nhật số lượng task ở header mỗi cột
-     */
     private void updateTaskCounts() {
-        // Use our stored maps to compute counts reliably
+
         for (Map.Entry<String, JLabel> e : columnCountLabels.entrySet()) {
             String key = e.getKey();
             JLabel countLabel = e.getValue();
@@ -432,14 +409,6 @@ public class KanbanView extends JPanel {
         }
     }
 
-    /**
-     * Xử lý khi click vào task
-     */
-
-
-    /**
-     * Xóa tất cả tasks
-     */
     public void clearAllTasks() {
         // Ensure Swing UI updates happen on EDT
         if (!SwingUtilities.isEventDispatchThread()) {
@@ -454,9 +423,6 @@ public class KanbanView extends JPanel {
         }
     }
 
-    /**
-     * Legacy method - giữ để tương thích
-     */
     @Deprecated
     public void addTaskToColumn(String columnName, JComponent taskComponent) {
         JPanel target = kanbanColumns.get(columnName);
@@ -467,7 +433,7 @@ public class KanbanView extends JPanel {
         }
     }
 
-    // Getter để Controller có thể truy cập
+
     public Map<String, JPanel> getKanbanColumns() {
         return kanbanColumns;
     }
@@ -480,7 +446,7 @@ public class KanbanView extends JPanel {
         return columnWidth;
     }
 
-    // Helper: choose a subtle tint for column headers based on status
+
     private Color getColumnTint(String statusKey) {
         switch (statusKey) {
             case "TODO":

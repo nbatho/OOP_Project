@@ -43,7 +43,6 @@ public class TaskAssigneesServiceImpl implements TaskAssigneesService {
                 return false;
             }
 
-            System.out.println("Assign task thành công: " + taskAsigness.getTaskId() + " -> " + taskAsigness.getUserId());
              return taskAssignessRepository.createTaskAssignees(taskAsigness);
         } catch (Exception e) {
             System.out.println("Lỗi khi assign task: " + e.getMessage());

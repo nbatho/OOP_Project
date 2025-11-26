@@ -20,7 +20,6 @@ public class LoginController {
         this.lview = lview;
         this.userService = UserServiceImpl.getInstance();
 
-        // Sự kiện: nhấn "Đăng ký"
         this.lview.getLblRegister().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -29,7 +28,6 @@ public class LoginController {
             }
         });
 
-        // Sự kiện: nhấn "Đăng nhập"
         this.lview.getBtnLogin().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

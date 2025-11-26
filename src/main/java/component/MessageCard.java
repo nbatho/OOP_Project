@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 public class MessageCard extends JFrame {
     GlobalStyle style =  new GlobalStyle();
     private final JLabel lblMessage;
-    private final JButton btnOK;
 
     public enum MessageType {
         ERROR,
@@ -34,7 +33,7 @@ public class MessageCard extends JFrame {
         }
 
 
-        btnOK = new JButton("OK");
+        JButton btnOK = new JButton("OK");
         btnOK.addActionListener((ActionEvent e) -> dispose());
 
         JPanel panelButton = new JPanel();

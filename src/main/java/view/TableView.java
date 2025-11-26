@@ -1,13 +1,7 @@
 package main.java.view;
 
-import main.java.component.TaskCard;
-import main.java.model.ProjectMember;
 import main.java.model.Task;
 import main.java.model.User;
-import main.java.service.impl.ProjectMemberServiceImpl;
-import main.java.service.impl.TaskServiceImpl;
-import main.java.service.impl.UserServiceImpl;
-
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
@@ -20,13 +14,8 @@ public class TableView extends JPanel {
     private final JTable table;
     private final DefaultTableModel model;
     GlobalStyle style = new GlobalStyle();
-    private ProjectMemberServiceImpl projectMemberService;
-    private UserServiceImpl userService = new UserServiceImpl();
-    private TaskServiceImpl taskService = new TaskServiceImpl();
     private TaskRowClickListener taskRowClickListener;
     public TableView() {
-        this.projectMemberService = new ProjectMemberServiceImpl();
-        this.userService = new UserServiceImpl();
         setLayout(new BorderLayout(8, 8));
         setOpaque(true);
         setBackground(style.getCOLOR_BACKGROUND());
@@ -133,7 +122,7 @@ public class TableView extends JPanel {
             return;
         }
 
-        // clearAllTasks();
+         clearAllTasks();
 
         for (Task task : tasks) {
             addTaskTable(
@@ -149,7 +138,9 @@ public class TableView extends JPanel {
     public void addTaskTable(String projectId,String taskId ,String title, List<User> users, String status, String priority) {
         model.addRow(new Object[]{projectId,taskId ,title, users, status, priority, 0});
     }
-
+    public void clearAllTasks() {
+        model.setRowCount(0);
+    }
 
     public DefaultTableModel getModel() {
         return model;

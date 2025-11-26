@@ -15,10 +15,8 @@ public class TaskCard extends JFrame {
 
     private final GlobalStyle style = new GlobalStyle();
 
-
-    private String projectId;
+    private final String projectId;
     private List<User> users = new ArrayList<>();
-
 
     private JTextField txtTitle;
     private JTextArea txtDescription;
@@ -29,16 +27,26 @@ public class TaskCard extends JFrame {
     private JDateChooser endDateChooser;
     private JButton btnCancel;
     private JButton btnSave;
+    private JButton btnDelete;
+
+    // Comment components
+    private JTextArea txtComment;
+    private JButton btnSendComment;
+    private JPanel commentListPanel; // Panel chứa danh sách comments
 
     private JPanel assignedUserPanel;
-    private boolean edited;
-    public TaskCard(String projectId, List<User> users,boolean edited) {
+    private final boolean edited;
+
+    public TaskCard(String projectId, List<User> users, boolean edited) {
         this.projectId = projectId;
         if (users != null) this.users = users;
 
         this.edited = edited;
-        setTitle("Tạo công việc mới");
-        setSize(680, 750);
+        setTitle(edited ? "Cập nhật công việc" : "Tạo công việc mới");
+
+        int height = edited ? 900 : 750;
+        setSize(680, height);
+
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -48,22 +56,22 @@ public class TaskCard extends JFrame {
         setVisible(true);
     }
 
-
     private void initUI() {
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.WHITE);
-        mainPanel.setBorder(BorderFactory.createCompoundBorder(
+
+        JPanel wrapper = new JPanel(new BorderLayout());
+        wrapper.setBackground(style.getCOLOR_CARD());
+        wrapper.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(0xCCCCCC), 1),
-                new EmptyBorder(25, 30, 25, 30)
+                new EmptyBorder(20, 25, 20, 25)
         ));
 
-        // Header Panel
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setOpaque(false);
 
-        JLabel lblTitle = new JLabel("Tạo công việc mới");
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setOpaque(false); // Trong suốt để lấy màu của wrapper
+
+        JLabel lblTitle = new JLabel(edited ? "Cập nhật công việc" : "Tạo công việc mới");
         lblTitle.setFont(style.getFONT_TITLE());
-        lblTitle.setForeground(style.getCOLOR_TEXT_PRIMARY());
+        lblTitle.setForeground(style.getCOLOR_PRIMARY());
 
         JLabel lblSubtitle = new JLabel("Điền thông tin công việc. Nhấn lưu khi hoàn tất.");
         lblSubtitle.setFont(new Font("Segoe UI", Font.PLAIN, 13));
@@ -76,169 +84,236 @@ public class TaskCard extends JFrame {
 
         headerPanel.add(titlePanel, BorderLayout.WEST);
 
-        // Form Panel với GridBagLayout
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setOpaque(false);
-        formPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(0, 0, 5, 0);
+        gbc.weightx = 1;
+        gbc.insets = new Insets(0, 0, 8, 0);
 
         int row = 0;
 
-        // Tiêu đề *
         gbc.gridy = row++;
         formPanel.add(createLabel("Tiêu đề *"), gbc);
 
         gbc.gridy = row++;
-        gbc.insets = new Insets(0, 0, 15, 0);
         txtTitle = createTextField();
         txtTitle.setPreferredSize(new Dimension(0, 45));
         formPanel.add(txtTitle, gbc);
 
-        // Mô tả
+
         gbc.gridy = row++;
-        gbc.insets = new Insets(0, 0, 5, 0);
         formPanel.add(createLabel("Mô tả"), gbc);
 
         gbc.gridy = row++;
-        gbc.insets = new Insets(0, 0, 15, 0);
         txtDescription = createTextArea();
         JScrollPane scrollDesc = new JScrollPane(txtDescription);
+
+
+        scrollDesc.getViewport().setBackground(style.getCOLOR_CARD());
+        scrollDesc.setBackground(style.getCOLOR_CARD());
+
         scrollDesc.setPreferredSize(new Dimension(0, 100));
         scrollDesc.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(style.getCOLOR_BORDER(), 1, true),
-                BorderFactory.createEmptyBorder(8, 10, 8, 10)
+                new EmptyBorder(8, 12, 8, 12)
         ));
         formPanel.add(scrollDesc, gbc);
+
+
+        gbc.gridy = row++;
+        assignedUserPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        assignedUserPanel.setOpaque(false);
+        formPanel.add(assignedUserPanel, gbc);
+
+
+        gbc.gridy = row++;
+        formPanel.add(createLabel("Người thực hiện"), gbc);
+
+        gbc.gridy = row++;
+        cmbUser = new JComboBox<>(users.toArray(new User[0]));
+        cmbUser.setRenderer(new UserRenderer());
+        cmbUser.setFont(style.getFONT_INPUT());
+        cmbUser.setPreferredSize(new Dimension(0, 45));
+        cmbUser.setBackground(style.getCOLOR_CARD()); // Set background cho combo box
+        cmbUser.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(style.getCOLOR_BORDER(), 1, true),
+                new EmptyBorder(8, 10, 8, 10)
+        ));
+
+        formPanel.add(cmbUser, gbc);
+
+        cmbUser.addActionListener(e -> {
+            User u = (User) cmbUser.getSelectedItem();
+            if (u != null) addAssignedUserAvatar(u);
+        });
+
+
+        gbc.gridy = row++;
+        gbc.insets = new Insets(8, 0, 2, 0);
+
+        JPanel dual1 = new JPanel(new GridLayout(1, 2, 10, 0));
+        dual1.setOpaque(false);
+        dual1.add(createLabel("Trạng thái"));
+        dual1.add(createLabel("Độ ưu tiên"));
+
+        formPanel.add(dual1, gbc);
 
         gbc.gridy = row++;
         gbc.insets = new Insets(0, 0, 10, 0);
 
-        assignedUserPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
-        assignedUserPanel.setOpaque(false);
-        assignedUserPanel.setPreferredSize(new Dimension(0, 50));
-        formPanel.add(assignedUserPanel, gbc);
+        JPanel dual2 = new JPanel(new GridLayout(1, 2, 10, 0));
+        dual2.setOpaque(false);
 
-
-        // Người thực hiện
-        gbc.gridy = row++;
-        gbc.insets = new Insets(0, 0, 5, 0);
-        formPanel.add(createLabel("Người thực hiện"), gbc);
-
-        gbc.gridy = row++;
-        gbc.insets = new Insets(0, 0, 15, 0);
-        cmbUser = new JComboBox<>(users.toArray(new User[0]));
-        cmbUser.setRenderer(new UserRenderer());
-        cmbUser.setPreferredSize(new Dimension(0, 45));
-        cmbUser.setFont(style.getFONT_INPUT());
-        formPanel.add(cmbUser, gbc);
-
-        cmbUser.addActionListener(e -> {
-            User selected = (User) cmbUser.getSelectedItem();
-            if (selected != null) {
-                addAssignedUserAvatar(selected);
-            }
-        });
-
-        gbc.gridy = row++;
-        gbc.gridwidth = 1;
-        gbc.weightx = 0.5;
-        gbc.insets = new Insets(0, 0, 5, 8);
-        formPanel.add(createLabel("Trạng thái"), gbc);
-
-        gbc.gridx = 1;
-        gbc.insets = new Insets(0, 8, 5, 0);
-        formPanel.add(createLabel("Độ ưu tiên"), gbc);
-
-        gbc.gridy = row++;
-        gbc.gridx = 0;
-        gbc.insets = new Insets(0, 0, 15, 8);
-        cmbStatus = createComboBox(new String[]{"TODO", "IN_PROGRESS", "DONE", "CANCELLED"});
+        cmbStatus = new JComboBox<>(new String[]{"TODO", "IN_PROGRESS", "DONE", "CANCELLED"});
+        cmbStatus.setFont(style.getFONT_INPUT());
         cmbStatus.setPreferredSize(new Dimension(0, 45));
-        formPanel.add(cmbStatus, gbc);
+        cmbStatus.setBackground(style.getCOLOR_CARD());
+        cmbStatus.setBorder(cmbUser.getBorder());
 
-        gbc.gridx = 1;
-        gbc.insets = new Insets(0, 8, 15, 0);
-        cmbPriority = createComboBox(new String[]{"HIGH", "MEDIUM", "LOW"});
+        cmbPriority = new JComboBox<>(new String[]{"HIGH", "MEDIUM", "LOW"});
+        cmbPriority.setFont(style.getFONT_INPUT());
         cmbPriority.setPreferredSize(new Dimension(0, 45));
-        formPanel.add(cmbPriority, gbc);
+        cmbPriority.setBackground(style.getCOLOR_CARD());
+        cmbPriority.setBorder(cmbUser.getBorder());
 
-        // Row 2: Ngày bắt đầu & Ngày kết thúc (2 cột)
-        gbc.gridy = row++;
-        gbc.gridx = 0;
-        gbc.insets = new Insets(0, 0, 5, 8);
-        formPanel.add(createLabel("Ngày bắt đầu"), gbc);
+        dual2.add(cmbStatus);
+        dual2.add(cmbPriority);
 
-        gbc.gridx = 1;
-        gbc.insets = new Insets(0, 8, 5, 0);
-        formPanel.add(createLabel("Ngày kết thúc"), gbc);
+        formPanel.add(dual2, gbc);
+
 
         gbc.gridy = row++;
-        gbc.gridx = 0;
-        gbc.insets = new Insets(0, 0, 0, 8);
+        JPanel dual3 = new JPanel(new GridLayout(1, 2, 10, 0));
+        dual3.setOpaque(false);
+        dual3.add(createLabel("Ngày bắt đầu"));
+        dual3.add(createLabel("Ngày kết thúc"));
+        formPanel.add(dual3, gbc);
+
+        gbc.gridy = row++;
+        JPanel dual4 = new JPanel(new GridLayout(1, 2, 10, 0));
+        dual4.setOpaque(false);
+
         startDateChooser = new JDateChooser();
-        startDateChooser.setDateFormatString("yyyy/MM/dd");
-        startDateChooser.setPreferredSize(new Dimension(0, 45));
-        formPanel.add(startDateChooser, gbc);
-
-        gbc.gridx = 1;
-        gbc.insets = new Insets(0, 8, 0, 0);
         endDateChooser = new JDateChooser();
+
+        startDateChooser.setDateFormatString("yyyy/MM/dd");
         endDateChooser.setDateFormatString("yyyy/MM/dd");
-        endDateChooser.setPreferredSize(new Dimension(0, 45));
-        formPanel.add(endDateChooser, gbc);
 
-        // Buttons Panel
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttons.setOpaque(false);
-        buttons.setBorder(new EmptyBorder(20, 0, 0, 0));
 
-        btnCancel = new JButton("Hủy");
-        btnCancel.setFont(style.getFONT_NORMAL());
-        btnCancel.setForeground(style.getCOLOR_TEXT_PRIMARY());
-        btnCancel.setBackground(Color.WHITE);
-        btnCancel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(style.getCOLOR_BORDER(), 1, true),
-                BorderFactory.createEmptyBorder(10, 20, 10, 20)
-        ));
-        btnCancel.setFocusPainted(false);
-        btnCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnCancel.addActionListener(e -> dispose());
+        startDateChooser.setBackground(style.getCOLOR_CARD());
+        endDateChooser.setBackground(style.getCOLOR_CARD());
+
+        startDateChooser.setBorder(cmbUser.getBorder());
+        endDateChooser.setBorder(cmbUser.getBorder());
+
+        dual4.add(startDateChooser);
+        dual4.add(endDateChooser);
+
+        formPanel.add(dual4, gbc);
+
 
         if (edited) {
-            btnSave = new JButton("Lưu công việc");
+            gbc.gridy = row++;
+            gbc.insets = new Insets(20, 0, 5, 0);
+            formPanel.add(createLabel("Danh sách bình luận"), gbc);
+
+            gbc.gridy = row++;
+            gbc.weighty = 1;
+            gbc.fill = GridBagConstraints.BOTH;
+
+            commentListPanel = new JPanel();
+            commentListPanel.setLayout(new BoxLayout(commentListPanel, BoxLayout.Y_AXIS));
+            commentListPanel.setBackground(style.getCOLOR_CARD()); // [FIX] Nền trắng cho panel chứa list
+
+            JScrollPane commentScroll = new JScrollPane(commentListPanel);
+
+            commentScroll.getViewport().setBackground(style.getCOLOR_CARD());
+            commentScroll.setBackground(style.getCOLOR_CARD());
+
+            commentScroll.setBorder(BorderFactory.createLineBorder(style.getCOLOR_CARD(), 1, true));
+            commentScroll.getVerticalScrollBar().setUnitIncrement(16);
+
+            formPanel.add(commentScroll, gbc);
+
+            gbc.weighty = 0;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+
+            gbc.gridy = row++;
+            formPanel.add(createLabel("Viết bình luận mới"), gbc);
+
+            gbc.gridy = row++;
+            txtComment = createTextArea();
+            JScrollPane newCommentScroll = new JScrollPane(txtComment);
+
+            newCommentScroll.getViewport().setBackground(style.getCOLOR_CARD());
+            newCommentScroll.setBackground(style.getCOLOR_CARD());
+
+            newCommentScroll.setPreferredSize(new Dimension(0, 80));
+            newCommentScroll.setBorder(cmbUser.getBorder());
+            formPanel.add(newCommentScroll, gbc);
+
+            gbc.gridy = row++;
+            gbc.anchor = GridBagConstraints.EAST;
+            btnSendComment = new JButton("Gửi bình luận");
+            btnSendComment.setFont(style.getFONT_NORMAL());
+            btnSendComment.setBackground(new Color(0x4CAF50));
+            btnSendComment.setForeground(Color.WHITE);
+            btnSendComment.setBorder(new EmptyBorder(8, 16, 8, 16));
+            formPanel.add(btnSendComment, gbc);
+
+            gbc.anchor = GridBagConstraints.WEST;
         }
-        else {
-            btnSave = new JButton("Lưu chỉnh sửa");
-        }
-        btnSave.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        btnSave.setForeground(Color.WHITE);
+
+        JScrollPane contentScroll = new JScrollPane(formPanel);
+        contentScroll.setBorder(null);
+        contentScroll.getVerticalScrollBar().setUnitIncrement(16);
+
+        contentScroll.setBackground(style.getCOLOR_CARD());
+        contentScroll.getViewport().setBackground(style.getCOLOR_CARD());
+
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        footer.setOpaque(false);
+        footer.setBorder(new EmptyBorder(15, 0, 0, 0));
+
+        btnDelete = new JButton("Xóa");
+        btnDelete.setBackground(style.getCOLOR_CARD());
+        btnDelete.setBorder(BorderFactory.createLineBorder(style.getCOLOR_BORDER()));
+        btnDelete.setBorder(new EmptyBorder(10, 20, 10, 20));
+
+        btnCancel = new JButton("Hủy");
+        btnCancel.setBackground(style.getCOLOR_CARD());
+        btnCancel.setBorder(BorderFactory.createLineBorder(style.getCOLOR_BORDER()));
+        btnCancel.setBorder(new EmptyBorder(10, 20, 10, 20));
+        btnCancel.addActionListener(e -> dispose());
+
+        btnSave = new JButton(edited ? "Lưu chỉnh sửa" : "Lưu công việc");
         btnSave.setBackground(style.getCOLOR_PRIMARY());
-        btnSave.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        btnSave.setFocusPainted(false);
-        btnSave.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnSave.setForeground(Color.WHITE);
+        btnSave.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        buttons.add(btnCancel);
-        buttons.add(btnSave);
+        if (isEdited()) {
+            footer.add(btnDelete);
+        }
+        footer.add(btnCancel);
+        footer.add(btnSave);
 
-        // Add to main panel
-        mainPanel.add(headerPanel, BorderLayout.NORTH);
-        mainPanel.add(formPanel, BorderLayout.CENTER);
-        mainPanel.add(buttons, BorderLayout.SOUTH);
+        wrapper.add(headerPanel, BorderLayout.NORTH);
+        wrapper.add(contentScroll, BorderLayout.CENTER);
+        wrapper.add(footer, BorderLayout.SOUTH);
 
-        add(mainPanel);
+        add(wrapper);
     }
+
+
     private void addAssignedUserAvatar(User user) {
         assignedUserPanel.removeAll();
 
         JLabel avatarLabel = new JLabel(getInitials(user.getFullName()), SwingConstants.CENTER);
         avatarLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        avatarLabel.setForeground(Color.WHITE);
+        avatarLabel.setForeground(style.getCOLOR_CARD());
         avatarLabel.setOpaque(true);
         avatarLabel.setBackground(style.getCOLOR_PRIMARY());
         avatarLabel.setPreferredSize(new Dimension(40, 40));
@@ -248,19 +323,20 @@ public class TaskCard extends JFrame {
         assignedUserPanel.revalidate();
         assignedUserPanel.repaint();
     }
+
     private String getInitials(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) return "--";
         String cleaned = fullName.trim();
-        // return the first two non-space characters (e.g., "Nguyễn Minh" -> "NM", "tho" -> "TH")
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < cleaned.length() && sb.length() < 2; i++) {
             char c = cleaned.charAt(i);
             if (!Character.isWhitespace(c)) sb.append(Character.toUpperCase(c));
         }
         String initials = sb.toString();
-        if (initials.length() == 0) initials = "--";
+        if (initials.isEmpty()) initials = "--";
         return initials;
     }
+
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(style.getFONT_NORMAL());
@@ -298,54 +374,120 @@ public class TaskCard extends JFrame {
         return combo;
     }
 
-
     private static class UserRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value,
                                                       int index, boolean isSelected, boolean cellHasFocus) {
-
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
             if (value instanceof User u) {
                 setText(u.getFullName());
             }
             return this;
         }
     }
+
     public void setTaskData(Task task) {
         txtTitle.setText(task.getTitle());
         txtDescription.setText(task.getDescription());
 
-        // Chọn user
         for (int i = 0; i < cmbUser.getItemCount(); i++) {
             addAssignedUserAvatar(cmbUser.getItemAt(i));
-
         }
 
         cmbPriority.setSelectedItem(task.getPriority());
         cmbStatus.setSelectedItem(task.getStatus());
-
-//        startDateChooser.setDate(task.getStartDate());
         endDateChooser.setDate(task.getDueDate());
 
-        // Đổi tiêu đề & nút để người dùng biết đây là update
         setTitle("Cập nhật công việc");
         btnSave.setText("Cập nhật");
     }
+
+    // Getters
     public JButton getBtnSave() { return btnSave; }
     public JButton getBtnCancel() { return btnCancel; }
+    public JButton getBtnDelete() {
+        return btnDelete;
+    }
+    public JButton getBtnSendComment() { return btnSendComment; }
 
     public JTextField getTxtTitle() { return txtTitle; }
     public JTextArea getTxtDescription() { return txtDescription; }
+    public JTextArea getTxtComment() { return txtComment; }
+
     public JComboBox<User> getCmbUser() { return cmbUser; }
     public JComboBox<String> getCmbPriority() { return cmbPriority; }
     public JComboBox<String> getCmbStatus() { return cmbStatus; }
+
     public JDateChooser getStartDateChooser() { return startDateChooser; }
     public JDateChooser getEndDateChooser() { return endDateChooser; }
 
-    public boolean isEdited() {
-        return edited;
+    public boolean isEdited() { return edited; }
+    public String getProjectId() { return projectId; }
+    public JPanel getCommentListPanel() { return commentListPanel; }
+
+    /**
+     * Thêm một comment vào danh sách hiển thị
+     */
+    public void addCommentToList(String userName, String commentText, String timestamp) {
+        JPanel commentItem = createCommentItem(userName, commentText, timestamp);
+        commentListPanel.add(commentItem);
+        commentListPanel.add(Box.createVerticalStrut(8));
+        commentListPanel.revalidate();
+        commentListPanel.repaint();
     }
 
-    public String getProjectId() { return projectId; }
+    /**
+     * Xóa tất cả comments trong danh sách
+     */
+    public void clearComments() {
+        if (commentListPanel != null) {
+            commentListPanel.removeAll();
+            commentListPanel.revalidate();
+            commentListPanel.repaint();
+        }
+    }
+
+    /**
+     * Tạo một comment item để hiển thị
+     */
+    private JPanel createCommentItem(String userName, String commentText, String timestamp) {
+        JPanel item = new JPanel();
+        item.setLayout(new BorderLayout(8, 5));
+        item.setBackground(new Color(0xF8F9FA));
+        item.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(0xE9ECEF), 1, true),
+                new EmptyBorder(10, 12, 10, 12)
+        ));
+        item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
+
+        // Header: Username + Timestamp
+        JPanel header = new JPanel(new BorderLayout());
+        header.setOpaque(false);
+
+        JLabel lblUserName = new JLabel(userName);
+        lblUserName.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        lblUserName.setForeground(style.getCOLOR_PRIMARY());
+
+        JLabel lblTimestamp = new JLabel(timestamp);
+        lblTimestamp.setFont(new Font("Segoe UI", Font.PLAIN, 11));
+        lblTimestamp.setForeground(style.getCOLOR_TEXT_MUTED());
+
+        header.add(lblUserName, BorderLayout.WEST);
+        header.add(lblTimestamp, BorderLayout.EAST);
+
+        // Content
+        JTextArea txtContent = new JTextArea(commentText);
+        txtContent.setFont(style.getFONT_NORMAL());
+        txtContent.setForeground(style.getCOLOR_TEXT_PRIMARY());
+        txtContent.setBackground(new Color(0xF8F9FA));
+        txtContent.setLineWrap(true);
+        txtContent.setWrapStyleWord(true);
+        txtContent.setEditable(false);
+        txtContent.setBorder(null);
+
+        item.add(header, BorderLayout.NORTH);
+        item.add(txtContent, BorderLayout.CENTER);
+
+        return item;
+    }
 }

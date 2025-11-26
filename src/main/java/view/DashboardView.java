@@ -15,8 +15,7 @@ public class DashboardView extends JFrame {
     private JToggleButton kanbanButton;
     private JToggleButton tableButton;
     private JToggleButton calendarButton;
-    private JTextField searchField;
-    private JButton searchButton;
+    private JButton createTaskButton;
     private JButton userButton;
 
     // Project menu components
@@ -41,7 +40,6 @@ public class DashboardView extends JFrame {
 
     // Teams card panel
     private JPanel membersCardPanel;
-    private JScrollPane teamsScrollPane;
     private JButton addMemberButton;
 
     // Lưu reference đến projectInfoPanel để update sau
@@ -136,7 +134,6 @@ public class DashboardView extends JFrame {
         gbc.weightx = 1.0;
         topRow.add(titlePanel, gbc);
 
-        // Toggle view buttons
         kanbanButton = new JToggleButton("Kanban", true);
         tableButton = new JToggleButton("Bảng");
         calendarButton = new JToggleButton("Lịch");
@@ -154,22 +151,17 @@ public class DashboardView extends JFrame {
         gbc.weightx = 0;
         topRow.add(viewTogglePanel, gbc);
 
-        // Search and action buttons
+
         gbc.gridx = 2;
-        searchField = new JTextField("", 20);
-            searchField.setFont(GlobalStyle.scaleFont(style.getFONT_INPUT()));
-        topRow.add(searchField, gbc);
+        createTaskButton = new JButton("Tạo mới");
+            createTaskButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
+            createTaskButton.setBackground(style.getCOLOR_PRIMARY());
+            createTaskButton.setForeground(Color.WHITE);
+            createTaskButton.setFocusPainted(false);
+        topRow.add(createTaskButton, gbc);
+
 
         gbc.gridx = 3;
-        searchButton = new JButton("Tìm kiếm");
-            searchButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
-            searchButton.setBackground(style.getCOLOR_PRIMARY());
-            searchButton.setForeground(Color.WHITE);
-            searchButton.setFocusPainted(false);
-        topRow.add(searchButton, gbc);
-
-
-        gbc.gridx = 4;
         userButton = new JButton("User");
             userButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
             userButton.setBackground(Color.WHITE);
@@ -218,7 +210,7 @@ public class DashboardView extends JFrame {
         sidebarPanel.setPreferredSize(new Dimension(GlobalStyle.scale(420), 0));
 
         // Project info card (summary)
-        projectInfoPanel = createProjectInfoCard("Dự án Web App", "Tiến độ hoàn thành\n72%\n\n24 Hoàn\n8 Còn lại");
+        projectInfoPanel = createProjectInfoCard();
         sidebarPanel.add(projectInfoPanel);
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
@@ -234,7 +226,7 @@ public class DashboardView extends JFrame {
         membersCardPanel.setLayout(new BoxLayout(membersCardPanel, BoxLayout.Y_AXIS));
         membersCardPanel.setBackground(style.getCOLOR_CARD());
 
-        teamsScrollPane = new JScrollPane(membersCardPanel);
+        JScrollPane teamsScrollPane = new JScrollPane(membersCardPanel);
         teamsScrollPane.setPreferredSize(new Dimension(GlobalStyle.scale(360), GlobalStyle.scale(420)));
         teamsScrollPane.setBorder(null);
         teamsScrollPane.getVerticalScrollBar().setUnitIncrement(10);
@@ -256,28 +248,6 @@ public class DashboardView extends JFrame {
         return sidebarPanel;
     }
 
-    private JPanel createPlaceholderCard(String title) {
-        JPanel card = new JPanel(new BorderLayout());
-        card.setOpaque(true);
-        card.setBackground(style.getCOLOR_CARD());
-        card.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(style.getCOLOR_BORDER()),
-                new EmptyBorder(12,12,12,12)
-        ));
-
-        JLabel label = new JLabel(title);
-        label.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
-        label.setForeground(style.getCOLOR_TEXT_PRIMARY());
-        card.add(label, BorderLayout.NORTH);
-
-        JLabel sub = new JLabel("(Chưa có dữ liệu)");
-        sub.setHorizontalAlignment(SwingConstants.LEFT);
-        sub.setForeground(style.getCOLOR_TEXT_MUTED());
-        card.add(sub, BorderLayout.CENTER);
-
-        return card;
-    }
-
     private String getInitials(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) return "--";
         String cleaned = fullName.trim();
@@ -288,11 +258,11 @@ public class DashboardView extends JFrame {
             if (!Character.isWhitespace(c)) sb.append(Character.toUpperCase(c));
         }
         String initials = sb.toString();
-        if (initials.length() == 0) initials = "--";
+        if (initials.isEmpty()) initials = "--";
         return initials;
     }
 
-    private JPanel createProjectInfoCard(String projectName, String info) {
+    private JPanel createProjectInfoCard() {
         JPanel card = new JPanel(new BorderLayout());
         card.setOpaque(true);
         card.setBackground(style.getCOLOR_PRIMARY());
@@ -301,12 +271,12 @@ public class DashboardView extends JFrame {
                 new EmptyBorder(16,16,16,16)
         ));
 
-        JLabel name = new JLabel(projectName);
+        JLabel name = new JLabel("");
         name.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
         name.setForeground(Color.WHITE);
         card.add(name, BorderLayout.NORTH);
 
-        JTextArea txt = new JTextArea(info);
+        JTextArea txt = new JTextArea("");
         txt.setEditable(false);
         txt.setOpaque(false);
         txt.setForeground(new Color(0xDCEFEF));
@@ -444,7 +414,7 @@ public class DashboardView extends JFrame {
             if (!Character.isWhitespace(c)) sb.append(c);
         }
         String initials = sb.toString().toUpperCase();
-        if (initials.length() == 0) initials = "--";
+        if (initials.isEmpty()) initials = "--";
         userButton.setText(initials);
     }
 
@@ -467,8 +437,7 @@ public class DashboardView extends JFrame {
     public JToggleButton getKanbanButton() { return kanbanButton; }
     public JToggleButton getTableButton() { return tableButton; }
     public JToggleButton getCalendarButton() { return calendarButton; }
-    public JTextField getSearchField() { return searchField; }
-    public JButton getSearchButton() { return searchButton; }
+    public JButton getCreateTaskButton() { return createTaskButton; }
     public JButton getUserButton() { return userButton; }
     public JButton getaddMemberButton() { return addMemberButton; }
     public JPanel getMainContentPanel() { return mainContentPanel; }
@@ -476,5 +445,4 @@ public class DashboardView extends JFrame {
     public JMenuItem getInfoMenuItem() { return infoMenuItem; }
     public JMenuItem getLogoutMenuItem() { return logoutMenuItem; }
     public JMenuItem getCreateProjectMenuItem() { return createProjectMenuItem; }
-    public JLabel getTitleLabel() { return titleLabel; }
 }

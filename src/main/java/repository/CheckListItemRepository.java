@@ -45,7 +45,7 @@ public class CheckListItemRepository {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item created: " + checklistItem.getItemId());
+//                System.out.println("Checklist item created: " + checklistItem.getItemId());
                 return true;
             }
 
@@ -67,7 +67,7 @@ public class CheckListItemRepository {
             while (rs.next()) {
                 items.add(mapResultSetToChecklistItem(rs));
             }
-            System.out.println("Found " + items.size() + " checklist items");
+//            System.out.println("Found " + items.size() + " checklist items");
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách checklist items: " + e.getMessage());
         }
@@ -86,7 +86,7 @@ public class CheckListItemRepository {
             stmt.setString(1, itemId);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                System.out.println("Checklist item found: " + itemId);
+//                System.out.println("Checklist item found: " + itemId);
                 return mapResultSetToChecklistItem(rs);
             } else {
                 System.out.println("Checklist item not found: " + itemId);
@@ -111,7 +111,7 @@ public class CheckListItemRepository {
             while (rs.next()) {
                 items.add(mapResultSetToChecklistItem(rs));
             }
-            System.out.println("Found " + items.size() + " items in checklist " + checklistId);
+//            System.out.println("Found " + items.size() + " items in checklist " + checklistId);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy items by checklist_id: " + e.getMessage());
         }
@@ -133,7 +133,7 @@ public class CheckListItemRepository {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item content updated: " + itemId);
+//                System.out.println("Checklist item content updated: " + itemId);
                 return true;
             }
         } catch (SQLException e) {
@@ -156,7 +156,7 @@ public class CheckListItemRepository {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item status updated: " + itemId);
+//                System.out.println("Checklist item status updated: " + itemId);
                 return true;
             }
         } catch (SQLException e) {
@@ -181,7 +181,7 @@ public class CheckListItemRepository {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item updated: " + itemId);
+//                System.out.println("Checklist item updated: " + itemId);
                 return true;
             }
         } catch (SQLException e) {
@@ -201,7 +201,7 @@ public class CheckListItemRepository {
             stmt.setString(1, itemId);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Checklist item deleted: " + itemId);
+//                System.out.println("Checklist item deleted: " + itemId);
                 return true;
             } else {
                 System.out.println("Checklist item not found: " + itemId);
@@ -224,7 +224,7 @@ public class CheckListItemRepository {
             stmt.setString(1, checklistId);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("All items for checklist " + checklistId + " deleted");
+//                System.out.println("All items for checklist " + checklistId + " deleted");
                 return true;
             } else {
                 System.out.println("No items found for checklist " + checklistId);

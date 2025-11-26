@@ -214,7 +214,6 @@ public class UserServiceImpl implements UserService {
             return false;
         }
         User user = getUserById(userId);
-        System.out.println(user);
         return user != null;
     }
 

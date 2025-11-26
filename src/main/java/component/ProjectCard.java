@@ -163,32 +163,6 @@ public class ProjectCard extends JFrame {
         return area;
     }
 
-    private JComboBox<String> createComboBox(String[] items) {
-        JComboBox<String> combo = new JComboBox<>(items);
-        combo.setFont(style.getFONT_INPUT());
-        combo.setBackground(Color.WHITE);
-        combo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(style.getCOLOR_BORDER(), 1, true),
-                BorderFactory.createEmptyBorder(8, 10, 8, 10)
-        ));
-        combo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
-        combo.setAlignmentX(Component.LEFT_ALIGNMENT);
-        return combo;
-    }
-
-    private JTextField createDateField() {
-        JTextField field = new JTextField();
-        field.setFont(style.getFONT_INPUT());
-        field.setForeground(style.getCOLOR_TEXT_MUTED());
-        field.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(style.getCOLOR_BORDER(), 1, true),
-                BorderFactory.createEmptyBorder(10, 12, 10, 12)
-        ));
-        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
-        field.setAlignmentX(Component.LEFT_ALIGNMENT);
-        return field;
-    }
-
     // Getters
     public JTextField getTxtTitle() {
         return txtTitle;

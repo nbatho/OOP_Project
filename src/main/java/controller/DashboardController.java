@@ -1,6 +1,5 @@
 package main.java.controller;
 
-import com.toedter.calendar.JDateChooser;
 import main.java.component.ProjectCard;
 import main.java.component.TaskCard;
 import main.java.model.*;
@@ -21,9 +20,10 @@ public class DashboardController {
     private final ProjectServiceImpl projectService = new ProjectServiceImpl();
     private final ProjectMemberServiceImpl projectMemberService = new ProjectMemberServiceImpl();
     private final TaskServiceImpl taskService = new TaskServiceImpl();
-    private final TaskAssigneesServiceImpl taskAssignessService = new TaskAssigneesServiceImpl();
+    private final TaskAssigneesServiceImpl taskAssigneesService = new TaskAssigneesServiceImpl();
     private String currentProjectId;
     private List<User> currentProjectMembers = new ArrayList<>();
+    private final CommentServiceImpl commentService = new CommentServiceImpl();
     public DashboardController(DashboardView view) {
         this.view = view;
         try {
@@ -31,7 +31,7 @@ public class DashboardController {
                 view.setUserInitials(userService.getCurrentUser().getFullName());
             }
         } catch (Exception ex) {
-
+            System.out.println("Error in getting current user" + ex.getMessage());
         }
 
         this.kanbanView = view.getKanbanView();
@@ -45,38 +45,33 @@ public class DashboardController {
                 btn.addActionListener(ae -> handleShowCard());
             }
         } catch (Exception ex) {
-
+            System.out.println("Error in getting create buttons" + ex.getMessage());
         }
 
-        // Attach other views (table/calendar) into the same mainContentPanel
         view.getMainContentPanel().add(tableView, "TABLE");
         view.getMainContentPanel().add(calendarView, "CALENDAR");
 
-        // Lắng nghe các nút chuyển view
+
         view.getKanbanButton().addActionListener(e -> showView("KANBAN"));
         view.getTableButton().addActionListener(e -> showView("TABLE"));
         view.getCalendarButton().addActionListener(e -> showView("CALENDAR"));
 
-        view.getSearchButton().addActionListener(e -> handleSearch());
-        // header create button hidden; per-column create buttons are used instead
+        view.getCreateTaskButton().addActionListener(e -> handleShowCard());
 
-        // Menu items
         view.getInfoMenuItem().addActionListener(e -> handleShowInfo());
         view.getLogoutMenuItem().addActionListener(e -> handleLogout());
-
-        // Lắng nghe sự kiện chọn dự án
-        view.setProjectSelectionListener(projectName -> handleProjectSelected(projectName));
-
-        // Lắng nghe sự kiện tạo dự án mới
         view.getCreateProjectMenuItem().addActionListener(e -> handleCreateProject());
 
-        // Load danh sách dự án ban đầu
+
+        view.setProjectSelectionListener(this::handleProjectSelected);
+
+
+
         loadProjectList();
 
-        kanbanView.setTaskClickListener(task -> onTaskClicked(task));
-        tableView.setTaskRowClickListener((projectId, taskId) -> {
-            onTaskClickedFromTable(projectId, taskId);
-        });
+        kanbanView.setTaskClickListener(this::onTaskClicked);
+        tableView.setTaskRowClickListener(this::onTaskClickedFromTable);
+        calendarView.setTaskClickListener(this::onTaskClicked);
 
     }
     private void loadProjectMembers(String projectId) {
@@ -98,27 +93,25 @@ public class DashboardController {
                     "Không thể tải danh sách thành viên: " + e.getMessage(),
                     "Lỗi",
                     JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
         }
     }
     private void loadProjectTasks(String projectId) {
         try {
             List<Task> listTasks = taskService.getTasksByProjectId(projectId);
             for (Task task : listTasks) {
-                List<TaskAssignees> taskAsignesses = taskAssignessService.getByTaskId(task.getTaskId());
+                List<TaskAssignees> taskAssignees = taskAssigneesService.getByTaskId(task.getTaskId());
                 List <User> listAssignees = new ArrayList<>();
-                for (TaskAssignees taskAsigness : taskAsignesses) {
-                    User users = userService.getUserById(taskAsigness.getUserId());
+                for (TaskAssignees taskAssigned : taskAssignees) {
+                    User users = userService.getUserById(taskAssigned.getUserId());
                     listAssignees.add(users);
                 }
                 task.setAssignedUsers(listAssignees);
             }
-            // 3. Cập nhật TẤT CẢ các view
             kanbanView.updateTasks(listTasks);
 
 
             tableView.updateTasks(listTasks);
-//            calendarView.updateTasks(tasks);
+            calendarView.updateTasks(listTasks);
 //
 
         } catch (Exception e) {
@@ -191,11 +184,9 @@ public class DashboardController {
      * Lấy thông tin dự án để hiển thị
      */
     private String getProjectInfo(Project project) {
-        StringBuilder info = new StringBuilder();
-        info.append("Tên: ").append(project.getName()).append("\n");
-        info.append("Mô tả: ").append(project.getDescription()).append("\n");
-        info.append("Ngày tạo: ").append(project.getCreatedAt()).append("\n");
-        return info.toString();
+        return "Tên: " + project.getName() + "\n" +
+                "Mô tả: " + project.getDescription() + "\n" +
+                "Ngày tạo: " + project.getCreatedAt() + "\n";
     }
 
     /**
@@ -244,13 +235,9 @@ public class DashboardController {
         });
     }
 
-    private void handleSearch() {
-        System.out.println("Dang Tim kiem");
-    }
 
     private void handleShowCard() {
 
-        // Kiểm tra đã chọn project chưa
         if (currentProjectId == null) {
             JOptionPane.showMessageDialog(view,
                     "Vui lòng chọn dự án trước khi tạo task!",
@@ -259,7 +246,6 @@ public class DashboardController {
             return;
         }
 
-        // Mở TaskCard
         TaskCard card = new TaskCard(currentProjectId, currentProjectMembers,false);
 
         card.getBtnSave().addActionListener(e -> {
@@ -275,7 +261,7 @@ public class DashboardController {
                 Date endDate = card.getEndDateChooser().getDate();
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 
-                // Validate
+
                 if (title.isEmpty()) {
                     JOptionPane.showMessageDialog(card,
                             "Tiêu đề không được để trống!",
@@ -296,12 +282,12 @@ public class DashboardController {
                     newTask.setDueDate(sqlDate);
                 }
 
-//                System.out.println(newTask);
+
 
                 if (assignee != null) {
                     taskService.createTask(newTask,assignee.getUserId());
                 }
-                  // Reload lại danh sách task trên UI
+
                 loadProjectTasks(currentProjectId);
 
                 JOptionPane.showMessageDialog(card,
@@ -312,7 +298,6 @@ public class DashboardController {
                 card.dispose();
 
             } catch (Exception ex) {
-                ex.printStackTrace();
                 JOptionPane.showMessageDialog(card,
                         "Không thể tạo task: " + ex.getMessage(),
                         "Lỗi",
@@ -359,12 +344,11 @@ public class DashboardController {
         TaskCard card = new TaskCard(projectId, users, true);
         card.setTaskData(task);
 
-        // Handle update
+
         card.getBtnSave().addActionListener(e -> handleUpdateTask(card, task));
     }
     private void onTaskClicked(Task task) {
         try {
-            // Load user list for this project
             List<ProjectMember> members = projectMemberService.getByProjectId(task.getProjectId());
             List<User> users = new ArrayList<>();
 
@@ -372,60 +356,164 @@ public class DashboardController {
                 users.add(userService.getUserById(m.getUserId()));
             }
 
-            // Open taskCard edit form
             TaskCard taskCard = new TaskCard(task.getProjectId(), users, true);
             taskCard.setTaskData(task);
 
-            // handle update
+            loadCommentsForTask(taskCard, task.getTaskId());
+
+            taskCard.getBtnSendComment().addActionListener(e -> handleCreateComment(taskCard, task));
             taskCard.getBtnSave().addActionListener(e -> handleUpdateTask(taskCard, task));
+            taskCard.getBtnDelete().addActionListener(e -> handleDeleteTask(taskCard,task));
 
         } catch (Exception ex) {
-            ex.printStackTrace();
             JOptionPane.showMessageDialog(view, "Không thể mở task: " + ex.getMessage());
+        }
+    }
+    private void loadCommentsForTask(TaskCard card, String taskId) {
+        try {
+            List<Comments> comments = commentService.getCommentsByTaskId(taskId);
+
+            card.clearComments();
+
+            for (Comments comment : comments) {
+                User user = userService.getUserById(comment.getUserId());
+                String userName = user != null ? user.getFullName() : "Unknown User";
+                String timestamp = formatTimestamp(comment.getCreatedAt());
+
+                card.addCommentToList(userName, comment.getBody(), timestamp);
+            }
+
+        } catch (Exception ex) {
+            System.err.println("Không thể load comments: " + ex.getMessage());
+        }
+    }
+    private void handleCreateComment(TaskCard card, Task task) {
+        try {
+            // 1. Validate input
+            String commentText = card.getTxtComment().getText().trim();
+
+            if (commentText.isEmpty()) {
+                JOptionPane.showMessageDialog(card,
+                        "Vui lòng nhập nội dung bình luận!",
+                        "Lỗi",
+                        JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+
+            Comments newComment = new Comments(
+                    null,
+                    task.getTaskId(),
+                    userService.getCurrentUser().getUserId(),
+                    commentText
+            );
+            // 3. Lưu vào database
+            boolean success = commentService.createComment(newComment);
+
+            if (!success) {
+                JOptionPane.showMessageDialog(card,
+                        "Không thể gửi bình luận!",
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // 4. Cập nhật UI
+            String userName = userService.getCurrentUser().getFullName();
+            String timestamp = formatTimestamp(new java.sql.Timestamp(System.currentTimeMillis()));
+
+            card.addCommentToList(userName, commentText, timestamp);
+
+            // 5. Clear textarea để người dùng tiếp tục comment
+            card.getTxtComment().setText("");
+
+            // 6. Thông báo thành công
+            JOptionPane.showMessageDialog(card,
+                    "Đã gửi bình luận!",
+                    "Thành công",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(card,
+                    "Lỗi khi gửi bình luận: " + ex.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    /**
+     * Format Timestamp thành chuỗi hiển thị
+     */
+    private String formatTimestamp(java.sql.Timestamp timestamp) {
+        if (timestamp == null) return "";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        return sdf.format(timestamp);
+    }
+    private void handleDeleteTask(TaskCard card, Task task) {
+        if (currentProjectId == null) {
+            JOptionPane.showMessageDialog(view,
+                    "Vui lòng chọn dự án trước khi tạo task!",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+
+            taskService.deleteTask(task.getTaskId(),currentProjectId);
+            loadProjectTasks(currentProjectId);
+
+            JOptionPane.showMessageDialog(card,
+                    "Xóa task thành công!",
+                    "Thành công",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+            card.dispose();
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(card,
+                    "Không thể xóa task: " + ex.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
     private void handleUpdateTask(TaskCard card, Task oldTask) {
         try {
-            System.out.println("Updated");
-//            String title = card.getTxtTitle().getText().trim();
-//            String description = card.getTxtDescription().getText().trim();
-//            User assignee = (User) card.getCmbUser().getSelectedItem();
-//            String priority = (String) card.getCmbPriority().getSelectedItem();
-//            String status = (String) card.getCmbStatus().getSelectedItem();
-//            Date endDate = card.getEndDateChooser().getDate();
-//
-//            if (title.isEmpty()) {
-//                JOptionPane.showMessageDialog(card,
-//                        "Tiêu đề không được để trống!",
-//                        "Lỗi",
-//                        JOptionPane.ERROR_MESSAGE);
-//                return;
-//            }
-//
-//            // Tạo task đã chỉnh sửa
-//            Task updatedTask = new Task();
-//            updatedTask.setTaskId(oldTask.getTaskId());
-//            updatedTask.setProjectId(oldTask.getProjectId());
-//            updatedTask.setTitle(title);
-//            updatedTask.setDescription(description);
-//            updatedTask.setPriority(priority);
-//            updatedTask.setStatus(status);
-//
-//            if (endDate != null) {
-//                updatedTask.setDueDate(new java.sql.Date(endDate.getTime()));
-//            }
-//
-//            // Update vào DB
-//            taskService.updateTask(updatedTask,
-//                    assignee != null ? assignee.getUserId() : null);
+            String title = card.getTxtTitle().getText().trim();
+            String description = card.getTxtDescription().getText().trim();
+            User assignee = (User) card.getCmbUser().getSelectedItem();
+            String priority = (String) card.getCmbPriority().getSelectedItem();
+            String status = (String) card.getCmbStatus().getSelectedItem();
+            Date endDate = card.getEndDateChooser().getDate();
 
+            if (title.isEmpty()) {
+                JOptionPane.showMessageDialog(card,
+                        "Tiêu đề không được để trống!",
+                        "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            Task updatedTask = new Task();
+            updatedTask.setTaskId(oldTask.getTaskId());
+            updatedTask.setProjectId(oldTask.getProjectId());
+            updatedTask.setTitle(title);
+            updatedTask.setDescription(description);
+            updatedTask.setPriority(priority);
+            updatedTask.setStatus(status);
+
+            if (endDate != null) {
+                updatedTask.setDueDate(new java.sql.Date(endDate.getTime()));
+            }
+            System.out.println(updatedTask);
+            taskService.updateTask(updatedTask);
             JOptionPane.showMessageDialog(card,
                     "Cập nhật task thành công!",
                     "Thành công",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            // Reload UI
-//            loadProjectTasks(updatedTask.getProjectId());
+            loadProjectTasks(updatedTask.getProjectId());
 
             card.dispose();
 
@@ -435,8 +523,5 @@ public class DashboardController {
                     "Lỗi",
                     JOptionPane.ERROR_MESSAGE);
         }
-    }
-    public KanbanView getKanbanView() {
-        return kanbanView;
     }
 }

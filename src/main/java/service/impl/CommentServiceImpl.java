@@ -17,6 +17,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public boolean createComment(Comments comment) {
         try {
+
             if (comment == null) {
                 System.out.println("Comment không được null");
                 return false;
