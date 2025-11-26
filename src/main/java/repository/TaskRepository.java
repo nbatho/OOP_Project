@@ -89,7 +89,6 @@ public class TaskRepository {
         return executeUpdate(SQL.DELETE.query, taskId, projectId);
     }
 
-    /* ============================== PRIVATE HELPERS ============================== */
 
     private Task map(ResultSet rs) throws SQLException {
         return new Task(

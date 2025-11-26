@@ -42,7 +42,7 @@ public class DashboardController {
             Map<String, JButton> createButtons = kanbanView.getColumnCreateButtons();
             for (Map.Entry<String, JButton> e : createButtons.entrySet()) {
                 JButton btn = e.getValue();
-                btn.addActionListener(ae -> handleShowCard());
+                btn.addActionListener(ae -> handleCreateTask());
             }
         } catch (Exception ex) {
             System.out.println("Error in getting create buttons" + ex.getMessage());
@@ -56,7 +56,7 @@ public class DashboardController {
         view.getTableButton().addActionListener(e -> showView("TABLE"));
         view.getCalendarButton().addActionListener(e -> showView("CALENDAR"));
 
-        view.getCreateTaskButton().addActionListener(e -> handleShowCard());
+        view.getCreateTaskButton().addActionListener(e -> handleCreateTask());
 
         view.getInfoMenuItem().addActionListener(e -> handleShowInfo());
         view.getLogoutMenuItem().addActionListener(e -> handleLogout());
@@ -236,7 +236,7 @@ public class DashboardController {
     }
 
 
-    private void handleShowCard() {
+    private void handleCreateTask() {
 
         if (currentProjectId == null) {
             JOptionPane.showMessageDialog(view,
@@ -253,7 +253,7 @@ public class DashboardController {
             try {
                 String title = card.getTxtTitle().getText().trim();
                 String description = card.getTxtDescription().getText().trim();
-                User assignee = (User) card.getCmbUser().getSelectedItem();
+                List <User> assignees = card.getAssignees();
                 String status = (String) card.getCmbStatus().getSelectedItem();
                 String priority = (String) card.getCmbPriority().getSelectedItem();
 
@@ -270,6 +270,13 @@ public class DashboardController {
                     return;
                 }
 
+                if (endDate == null) {
+                    JOptionPane.showMessageDialog(card,
+                            "Deadline không được để trống!",
+                            "Lỗi",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 Task newTask = new Task();
                 newTask.setProjectId(currentProjectId);
                 newTask.setTitle(title);
@@ -283,9 +290,12 @@ public class DashboardController {
                 }
 
 
+                for (User assignee : assignees) {
+                    System.out.println(assignee.getUserId());
+                }
 
-                if (assignee != null) {
-                    taskService.createTask(newTask,assignee.getUserId());
+                if (!assignees.isEmpty()) {
+                    taskService.createTask(newTask,assignees);
                 }
 
                 loadProjectTasks(currentProjectId);
@@ -341,11 +351,14 @@ public class DashboardController {
             users.add(userService.getUserById(pm.getUserId()));
         }
 
-        TaskCard card = new TaskCard(projectId, users, true);
-        card.setTaskData(task);
+        TaskCard taskCard = new TaskCard(projectId, users, true);
+        taskCard.setTaskData(task);
 
+        loadCommentsForTask(taskCard, task.getTaskId());
 
-        card.getBtnSave().addActionListener(e -> handleUpdateTask(card, task));
+        taskCard.getBtnSendComment().addActionListener(e -> handleCreateComment(taskCard, task));
+        taskCard.getBtnSave().addActionListener(e -> handleUpdateTask(taskCard, task));
+        taskCard.getBtnDelete().addActionListener(e -> handleDeleteTask(taskCard,task));
     }
     private void onTaskClicked(Task task) {
         try {
@@ -460,7 +473,6 @@ public class DashboardController {
             return;
         }
         try {
-            taskAssigneesService.deleteByTaskId(task.getTaskId());
             taskService.deleteTask(task.getTaskId(),currentProjectId);
             loadProjectTasks(currentProjectId);
 
@@ -482,10 +494,11 @@ public class DashboardController {
         try {
             String title = card.getTxtTitle().getText().trim();
             String description = card.getTxtDescription().getText().trim();
-            User assignee = (User) card.getCmbUser().getSelectedItem();
+            List <User> userAssignees = card.getAssignees();
             String priority = (String) card.getCmbPriority().getSelectedItem();
             String status = (String) card.getCmbStatus().getSelectedItem();
             Date endDate = card.getEndDateChooser().getDate();
+
 
             if (title.isEmpty()) {
                 JOptionPane.showMessageDialog(card,
@@ -506,8 +519,7 @@ public class DashboardController {
             if (endDate != null) {
                 updatedTask.setDueDate(new java.sql.Date(endDate.getTime()));
             }
-            System.out.println(updatedTask);
-            taskService.updateTask(updatedTask);
+            taskService.updateTask(updatedTask,userAssignees);
             JOptionPane.showMessageDialog(card,
                     "Cập nhật task thành công!",
                     "Thành công",

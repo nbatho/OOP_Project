@@ -2,10 +2,12 @@ package main.java.service.impl;
 
 import main.java.model.Task;
 import main.java.model.TaskAssignees;
+import main.java.model.User;
 import main.java.repository.TaskRepository;
 import main.java.service.TaskService;
 
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,14 +23,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public boolean createTask(Task task, String userId) {
+    public boolean createTask(Task task, List<User> assignees) {
         try {
             if (task == null) {
                 System.out.println("Task không được null");
                 return false;
             }
-            if (userId == null || userId.isEmpty()) {
-                System.out.println("UserId không được rỗng");
+            if (assignees.isEmpty()) {
+                System.out.println("assignees không được rỗng");
                 return false;
             }
             if (!isValidTaskData(task)) {
@@ -58,9 +60,13 @@ public class TaskServiceImpl implements TaskService {
             }
 
             // 2. Tạo assignee
-            boolean assigned = taskAssigneesService.create(new TaskAssignees(task.getTaskId(), userId));
+
+            boolean assigned = false;
+            for (User assignee : assignees) {
+                taskAssigneesService.create(new TaskAssignees(task.getTaskId(), assignee.getUserId()));
+                assigned = true;
+            }
             if (!assigned) {
-                // Rollback task nếu assignee tạo thất bại
                 taskRepository.deleteByTaskId(task.getTaskId(), task.getProjectId());
                 System.out.println("Không thể lưu assignee, task đã rollback");
                 return false;
@@ -112,7 +118,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public boolean updateTask(Task task) {
+    public boolean updateTask(Task task,List<User> newAssignees) {
         try {
             if (task == null) {
                 System.out.println("Task không được null");
@@ -127,6 +133,16 @@ public class TaskServiceImpl implements TaskService {
             if (!taskExists(task.getTaskId(), task.getProjectId())) {
                 System.out.println("Task không tồn tại");
                 return false;
+            }
+            taskAssigneesService.deleteByTaskId(task.getTaskId());
+            if (newAssignees != null && !newAssignees.isEmpty()) {
+                for (User user : newAssignees) {
+                    TaskAssignees ta = new TaskAssignees(task.getTaskId(), user.getUserId());
+                    boolean assigned = taskAssigneesService.create(ta);
+                    if (!assigned) {
+                        throw new SQLException("Lỗi khi thêm assignee: " + user.getFullName());
+                    }
+                }
             }
 
             return taskRepository.updateTask(
@@ -206,7 +222,6 @@ public class TaskServiceImpl implements TaskService {
                 System.out.println("Task không tồn tại");
                 return false;
             }
-
             return taskRepository.deleteByTaskId(taskId, projectId);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa task: " + e.getMessage());

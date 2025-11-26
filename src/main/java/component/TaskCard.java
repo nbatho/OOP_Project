@@ -28,7 +28,7 @@ public class TaskCard extends JFrame {
     private JButton btnCancel;
     private JButton btnSave;
     private JButton btnDelete;
-
+    private List<User> assignees = new ArrayList<>();
     // Comment components
     private JTextArea txtComment;
     private JButton btnSendComment;
@@ -124,13 +124,11 @@ public class TaskCard extends JFrame {
 
 
         gbc.gridy = row++;
+        formPanel.add(createLabel("Người thực hiện"), gbc);
+        gbc.gridy = row++;
         assignedUserPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
         assignedUserPanel.setOpaque(false);
         formPanel.add(assignedUserPanel, gbc);
-
-
-        gbc.gridy = row++;
-        formPanel.add(createLabel("Người thực hiện"), gbc);
 
         gbc.gridy = row++;
         cmbUser = new JComboBox<>(users.toArray(new User[0]));
@@ -146,8 +144,13 @@ public class TaskCard extends JFrame {
         formPanel.add(cmbUser, gbc);
 
         cmbUser.addActionListener(e -> {
-            User u = (User) cmbUser.getSelectedItem();
-            if (u != null) addAssignedUserAvatar(u);
+            User selectedUser = (User) cmbUser.getSelectedItem();
+
+            if (selectedUser != null && !assignees.contains(selectedUser)) {
+                assignees.add(selectedUser);
+                refreshAssigneePanel();
+                cmbUser.setSelectedIndex(-1);
+            }
         });
 
 
@@ -308,18 +311,37 @@ public class TaskCard extends JFrame {
     }
 
 
-    private void addAssignedUserAvatar(User user) {
+    private void refreshAssigneePanel() {
         assignedUserPanel.removeAll();
+        for (User user : assignees) {
+            JLabel avatarLabel = new JLabel(getInitials(user.getFullName()), SwingConstants.CENTER);
+            avatarLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
+            avatarLabel.setForeground(style.getCOLOR_CARD());
+            avatarLabel.setOpaque(true);
+            avatarLabel.setBackground(style.getCOLOR_PRIMARY());
+            avatarLabel.setPreferredSize(new Dimension(35, 35));
+            avatarLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
 
-        JLabel avatarLabel = new JLabel(getInitials(user.getFullName()), SwingConstants.CENTER);
-        avatarLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        avatarLabel.setForeground(style.getCOLOR_CARD());
-        avatarLabel.setOpaque(true);
-        avatarLabel.setBackground(style.getCOLOR_PRIMARY());
-        avatarLabel.setPreferredSize(new Dimension(40, 40));
-        avatarLabel.setBorder(new EmptyBorder(4, 4, 4, 4));
+            avatarLabel.setToolTipText(user.getFullName() + " (Click để xóa)");
+            avatarLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    assignees.remove(user);
+                    refreshAssigneePanel();
+                }
+                public void mouseEntered(MouseEvent e) {
+                    avatarLabel.setBackground(Color.RED);
+                    avatarLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                }
+                public void mouseExited(MouseEvent e) {
+                    avatarLabel.setBackground(style.getCOLOR_PRIMARY());
+                    avatarLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+                }
+            });
 
-        assignedUserPanel.add(avatarLabel);
+            assignedUserPanel.add(avatarLabel);
+        }
+
         assignedUserPanel.revalidate();
         assignedUserPanel.repaint();
     }
@@ -390,16 +412,14 @@ public class TaskCard extends JFrame {
         txtTitle.setText(task.getTitle());
         txtDescription.setText(task.getDescription());
 
-        for (int i = 0; i < cmbUser.getItemCount(); i++) {
-            addAssignedUserAvatar(cmbUser.getItemAt(i));
+        if (task.getAssignedUsers() != null) {
+            this.assignees = new ArrayList<>(task.getAssignedUsers());
+            refreshAssigneePanel();
         }
 
         cmbPriority.setSelectedItem(task.getPriority());
         cmbStatus.setSelectedItem(task.getStatus());
-        endDateChooser.setDate(task.getDueDate());
 
-        setTitle("Cập nhật công việc");
-        btnSave.setText("Cập nhật");
     }
 
     // Getters
@@ -489,5 +509,13 @@ public class TaskCard extends JFrame {
         item.add(txtContent, BorderLayout.CENTER);
 
         return item;
+    }
+
+    public List<User> getAssignees() {
+        return assignees;
+    }
+
+    public void setAssignees(List<User> assignees) {
+        this.assignees = assignees;
     }
 }

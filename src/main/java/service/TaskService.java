@@ -3,6 +3,7 @@ package main.java.service;
 import java.sql.Date;
 import java.util.List;
 import main.java.model.Task;
+import main.java.model.User;
 
 public interface TaskService {
     /**
@@ -10,7 +11,7 @@ public interface TaskService {
      * @param task đối tượng Task cần tạo
      * @return true nếu tạo thành công, false nếu thất bại
      */
-    boolean createTask(Task task, String userId);
+    boolean createTask(Task task, List<User> assignees);
 
     /**
      * Lấy danh sách tất cả các task theo projectId
@@ -32,7 +33,7 @@ public interface TaskService {
      * @param task đối tượng Task với thông tin mới
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    boolean updateTask(Task task);
+    boolean updateTask(Task task, List<User> assignees);
 
     /**
      * Cập nhật trạng thái task
