@@ -1,7 +1,12 @@
 package main.java.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import main.java.model.ProjectMember;
+import main.java.model.User;
 import main.java.repository.ProjectMemberRepository;
 import main.java.service.ProjectMemberService;
 import main.java.service.ProjectService;
@@ -86,6 +91,57 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy project member: " + e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public List<User> getProjectMember(String project_id) {
+        try {
+            if (project_id == null || project_id.trim().isEmpty()) {
+                System.out.println("Project ID không được null hoặc rỗng");
+                return List.of();
+            }
+            List<ProjectMember> listProjectMembers = getByProjectId(project_id);
+
+            List<User> listMembers = new ArrayList<>();
+            for (ProjectMember projectMember : listProjectMembers) {
+                User users = userService.getUserById(projectMember.getUserId());
+                if (users != null) {
+
+                    listMembers.add(users);
+                }
+            }
+            return listMembers;
+        }
+        catch (Exception e) {
+            System.out.println("Lỗi khi lấy memeers trong project: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    @Override
+    public List<User> getAvailableUsers(String project_id) {
+        try {
+            List<User> projectMembers = getProjectMember(project_id);
+            List<User> allUsers = userService.getAllUsers();
+            List <User> availableUsers = new ArrayList<>();
+
+            Set<String> memberIds = new HashSet<>();
+            for (User member : projectMembers) {
+                memberIds.add(member.getUserId());
+            }
+
+
+            for (User user : allUsers) {
+                if (!memberIds.contains(user.getUserId())) {
+                    availableUsers.add(user);
+                }
+            }
+
+            return availableUsers;
+        } catch (Exception e) {
+            System.out.println("Lỗi khi add memeers trong project: " + e.getMessage());
+            return List.of();
         }
     }
 

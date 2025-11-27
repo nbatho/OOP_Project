@@ -29,10 +29,9 @@ public class TaskCard extends JFrame {
     private JButton btnSave;
     private JButton btnDelete;
     private List<User> assignees = new ArrayList<>();
-    // Comment components
     private JTextArea txtComment;
     private JButton btnSendComment;
-    private JPanel commentListPanel; // Panel chứa danh sách comments
+    private JPanel commentListPanel;
 
     private JPanel assignedUserPanel;
     private final boolean edited;
@@ -67,7 +66,7 @@ public class TaskCard extends JFrame {
 
 
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setOpaque(false); // Trong suốt để lấy màu của wrapper
+        headerPanel.setOpaque(false);
 
         JLabel lblTitle = new JLabel(edited ? "Cập nhật công việc" : "Tạo công việc mới");
         lblTitle.setFont(style.getFONT_TITLE());
@@ -443,7 +442,6 @@ public class TaskCard extends JFrame {
 
     public boolean isEdited() { return edited; }
     public String getProjectId() { return projectId; }
-    public JPanel getCommentListPanel() { return commentListPanel; }
 
 
     public void addCommentToList(String userName, String commentText, String timestamp) {
@@ -472,7 +470,7 @@ public class TaskCard extends JFrame {
         ));
         item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
 
-        // Header: Username + Timestamp
+
         JPanel header = new JPanel(new BorderLayout());
         header.setOpaque(false);
 
@@ -507,7 +505,4 @@ public class TaskCard extends JFrame {
         return assignees;
     }
 
-    public void setAssignees(List<User> assignees) {
-        this.assignees = assignees;
-    }
 }

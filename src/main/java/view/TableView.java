@@ -21,7 +21,6 @@ public class TableView extends JPanel {
         setBackground(style.getCOLOR_BACKGROUND());
         setBorder(new EmptyBorder(0, 10, 10, 10));
 
-        // Header
         JPanel header = new JPanel();
         header.setOpaque(false);
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));

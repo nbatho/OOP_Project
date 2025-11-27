@@ -1,6 +1,7 @@
 package main.java.service;
 
 import main.java.model.ProjectMember;
+import main.java.model.User;
 
 import java.util.List;
 
@@ -26,6 +27,9 @@ public interface ProjectMemberService {
      */
     ProjectMember getByProjectIdAndUserId(String project_id, String user_id);
 
+    List<User> getProjectMember(String project_id);
+
+    List <User> getAvailableUsers(String project_id);
     /**
      * Lấy danh sách tất cả members của một project
      * @param project_id mã của project

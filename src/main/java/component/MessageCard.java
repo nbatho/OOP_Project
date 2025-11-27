@@ -46,8 +46,4 @@ public class MessageCard extends JFrame {
         setVisible(true);
     }
 
-
-    public String getMessage() {
-        return lblMessage.getText();
-    }
 }

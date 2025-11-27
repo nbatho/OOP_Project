@@ -13,14 +13,12 @@ import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
 
 public class LoginController {
-    private final LoginView lview;
     private final UserService userService;
 
     public LoginController(LoginView lview) {
-        this.lview = lview;
         this.userService = UserServiceImpl.getInstance();
 
-        this.lview.getLblRegister().addMouseListener(new MouseAdapter() {
+        lview.getLblRegister().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 lview.dispose();
@@ -28,7 +26,7 @@ public class LoginController {
             }
         });
 
-        this.lview.getBtnLogin().addMouseListener(new MouseAdapter() {
+        lview.getBtnLogin().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 String email = lview.getTxtUsername().getText();

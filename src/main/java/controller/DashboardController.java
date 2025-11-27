@@ -16,16 +16,22 @@ public class DashboardController {
     private final KanbanView kanbanView;
     private final TableView tableView;
     private final CalendarView calendarView;
+
+
     private final UserServiceImpl userService = UserServiceImpl.getInstance();
     private final ProjectServiceImpl projectService = new ProjectServiceImpl();
     private final ProjectMemberServiceImpl projectMemberService = new ProjectMemberServiceImpl();
     private final TaskServiceImpl taskService = new TaskServiceImpl();
-    private final TaskAssigneesServiceImpl taskAssigneesService = new TaskAssigneesServiceImpl();
+    private final CommentServiceImpl commentService = new CommentServiceImpl();
     private String currentProjectId;
     private List<User> currentProjectMembers = new ArrayList<>();
-    private final CommentServiceImpl commentService = new CommentServiceImpl();
     public DashboardController(DashboardView view) {
         this.view = view;
+        this.kanbanView = view.getKanbanView();
+        this.tableView = new TableView();
+        this.calendarView = new CalendarView();
+
+
         try {
             if (userService.getCurrentUser() != null) {
                 view.setUserInitials(userService.getCurrentUser().getFullName());
@@ -33,10 +39,6 @@ public class DashboardController {
         } catch (Exception ex) {
             System.out.println("Error in getting current user" + ex.getMessage());
         }
-
-        this.kanbanView = view.getKanbanView();
-        this.tableView = new TableView();
-        this.calendarView = new CalendarView();
 
         try {
             Map<String, JButton> createButtons = kanbanView.getColumnCreateButtons();
@@ -50,21 +52,15 @@ public class DashboardController {
 
         view.getMainContentPanel().add(tableView, "TABLE");
         view.getMainContentPanel().add(calendarView, "CALENDAR");
-
-
         view.getKanbanButton().addActionListener(e -> showView("KANBAN"));
         view.getTableButton().addActionListener(e -> showView("TABLE"));
         view.getCalendarButton().addActionListener(e -> showView("CALENDAR"));
-
         view.getCreateTaskButton().addActionListener(e -> handleCreateTask());
-
         view.getInfoMenuItem().addActionListener(e -> handleShowInfo());
         view.getLogoutMenuItem().addActionListener(e -> handleLogout());
         view.getCreateProjectMenuItem().addActionListener(e -> handleCreateProject());
-
         view.setMemberDeleteListener(this::handleDeleteUser);
         view.setProjectSelectionListener(this::handleProjectSelected);
-
         view.getaddMemberButton().addActionListener(e -> handleAddMember());
 
         loadProjectList();
@@ -76,15 +72,7 @@ public class DashboardController {
     }
     private void loadProjectMembers(String projectId) {
         try {
-            List<ProjectMember> listProjectMembers = projectMemberService.getByProjectId(projectId);
-            List<User> listMembers = new ArrayList<>();
-            for (ProjectMember projectMember : listProjectMembers) {
-                User users = userService.getUserById(projectMember.getUserId());
-                if (users != null) {
-
-                listMembers.add(users);
-                }
-            }
+            List<User> listMembers = projectMemberService.getProjectMember(projectId);
             this.currentProjectMembers = listMembers;
             view.updateMembersList(listMembers);
 
@@ -97,16 +85,8 @@ public class DashboardController {
     }
     private void loadProjectTasks(String projectId) {
         try {
-            List<Task> listTasks = taskService.getTasksByProjectId(projectId);
-            for (Task task : listTasks) {
-                List<TaskAssignees> taskAssignees = taskAssigneesService.getByTaskId(task.getTaskId());
-                List <User> listAssignees = new ArrayList<>();
-                for (TaskAssignees taskAssigned : taskAssignees) {
-                    User users = userService.getUserById(taskAssigned.getUserId());
-                    listAssignees.add(users);
-                }
-                task.setAssignedUsers(listAssignees);
-            }
+            List<Task> listTasks = taskService.getTasksWithAssignees(projectId);
+
             kanbanView.updateTasks(listTasks);
             tableView.updateTasks(listTasks);
             calendarView.updateTasks(listTasks);
@@ -117,21 +97,9 @@ public class DashboardController {
                     JOptionPane.ERROR_MESSAGE);
         }
     }
-    private List<User> loadAllMember() {
-        try {
-            return userService.getAllUsers();
-        } catch (Exception e) {
-            System.err.println("Lỗi load user: " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }
-    /**
-     * Load danh sách dự án từ database và cập nhật vào dropdown menu
-     */
     private void loadProjectList() {
         try {
-            List<ProjectMember> listProjectMembers = projectMemberService
-                    .getByUserId(userService.getCurrentUser().getUserId());
+            List<ProjectMember> listProjectMembers = projectMemberService.getByUserId(userService.getCurrentUser().getUserId());
             String[] projectNames = new String[listProjectMembers.size()];
 
             for (int i = 0; i < listProjectMembers.size(); i++) {
@@ -140,7 +108,6 @@ public class DashboardController {
                 );
                 projectNames[i] = project.getName();
             }
-
             view.updateProjectList(projectNames);
 
             if (projectNames.length > 0) {
@@ -155,14 +122,10 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Xử lý khi người dùng chọn một dự án từ dropdown
-     */
     private void handleProjectSelected(String projectName) {
         try {
             view.setCurrentProjectName(projectName);
 
-            // Lấy thông tin chi tiết dự án từ database
             Project project = projectService.getProjectByName(projectName);
 
             if (project != null) {
@@ -184,9 +147,6 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Lấy thông tin dự án để hiển thị
-     */
     private String getProjectInfo(Project project) {
         return "Tên: " + project.getName() + "\n" +
                 "Mô tả: " + project.getDescription() + "\n" +
@@ -198,28 +158,15 @@ public class DashboardController {
             JOptionPane.showMessageDialog(view, "Vui lòng chọn dự án trước!", "Lỗi", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        List<User> allUsers = loadAllMember();
-        List<User> availableUsers = new ArrayList<>();
-
-        for (User user : allUsers) {
-            boolean isAlreadyMember = false;
-
-            for (User member : currentProjectMembers) {
-                if (member.getUserId().equals(user.getUserId())) {
-                    isAlreadyMember = true;
-                    break;
-                }
-            }
-
-            if (!isAlreadyMember) {
-                availableUsers.add(user);
-            }
+        try {
+            List<User> availableUsers = projectMemberService.getAvailableUsers(currentProjectId);
+            view.showAddMemberPopup(availableUsers, this::addMemberToProject);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(view,
+                    "Không thể tải danh sách người dùng: " + e.getMessage(),
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
         }
-        view.showAddMemberPopup(availableUsers, (selectedUser) -> {
-
-            addMemberToProject(selectedUser);
-        });
     }
     private void addMemberToProject(User user) {
         try {
@@ -230,14 +177,11 @@ public class DashboardController {
                 projectMemberService.create(newMember);
 
             }
-
-
             JOptionPane.showMessageDialog(view,
                     "Đã thêm " + user.getFullName() + " vào dự án!",
                     "Thành công",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            // Quan trọng: Load lại danh sách thành viên để cập nhật giao diện bên trái
             loadProjectMembers(currentProjectId);
 
         } catch (Exception ex) {
@@ -249,9 +193,7 @@ public class DashboardController {
     }
 
 
-    /**
-     * Xử lý tạo dự án mới
-     */
+
     private void handleCreateProject() {
         ProjectCard projectCardView = new ProjectCard();
         projectCardView.getBtnSave().addActionListener(e -> {
@@ -267,17 +209,12 @@ public class DashboardController {
             }
 
             try {
-//                // Tạo project mới
                 Project newProject = new Project();
                 newProject.setName(title);
                 newProject.setDescription(description);
-//
                 String projectId = projectService.createProject(newProject);
-//
                 projectMemberService.create(new ProjectMember(projectId,userService.getCurrentUser().getUserId(),"R2"));
-//                // Reload danh sách dự án
                 loadProjectList();
-//                // Tự động chọn dự án mới tạo
                 handleProjectSelected(title);
                 JOptionPane.showMessageDialog(projectCardView,
                         "Tạo dự án thành công!",
@@ -421,14 +358,10 @@ public class DashboardController {
 
         Task task = taskService.getTaskById(taskId, projectId);
 
-        List<ProjectMember> memberList = projectMemberService.getByProjectId(projectId);
-        List<User> users = new ArrayList<>();
+        List<User> memberList = projectMemberService.getProjectMember(projectId);
 
-        for (ProjectMember pm : memberList) {
-            users.add(userService.getUserById(pm.getUserId()));
-        }
 
-        TaskCard taskCard = new TaskCard(projectId, users, true);
+        TaskCard taskCard = new TaskCard(projectId, memberList, true);
         taskCard.setTaskData(task);
 
         loadCommentsForTask(taskCard, task.getTaskId());
@@ -439,14 +372,9 @@ public class DashboardController {
     }
     private void onTaskClicked(Task task) {
         try {
-            List<ProjectMember> members = projectMemberService.getByProjectId(task.getProjectId());
-            List<User> users = new ArrayList<>();
+            List<User> memberList = projectMemberService.getProjectMember(task.getProjectId());
 
-            for (ProjectMember m : members) {
-                users.add(userService.getUserById(m.getUserId()));
-            }
-
-            TaskCard taskCard = new TaskCard(task.getProjectId(), users, true);
+            TaskCard taskCard = new TaskCard(task.getProjectId(), memberList, true);
             taskCard.setTaskData(task);
 
             loadCommentsForTask(taskCard, task.getTaskId());
@@ -479,7 +407,6 @@ public class DashboardController {
     }
     private void handleCreateComment(TaskCard card, Task task) {
         try {
-            // 1. Validate input
             String commentText = card.getTxtComment().getText().trim();
 
             if (commentText.isEmpty()) {
@@ -497,7 +424,6 @@ public class DashboardController {
                     userService.getCurrentUser().getUserId(),
                     commentText
             );
-            // 3. Lưu vào database
             boolean success = commentService.createComment(newComment);
 
             if (!success) {
@@ -508,22 +434,17 @@ public class DashboardController {
                 return;
             }
 
-            // 4. Cập nhật UI
             String userName = userService.getCurrentUser().getFullName();
             String timestamp = formatTimestamp(new java.sql.Timestamp(System.currentTimeMillis()));
 
             card.addCommentToList(userName, commentText, timestamp);
 
-            // 5. Clear textarea để người dùng tiếp tục comment
             card.getTxtComment().setText("");
 
-            // 6. Thông báo thành công
             JOptionPane.showMessageDialog(card,
                     "Đã gửi bình luận!",
                     "Thành công",
                     JOptionPane.INFORMATION_MESSAGE);
-
-
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(card,
@@ -533,9 +454,7 @@ public class DashboardController {
         }
     }
 
-    /**
-     * Format Timestamp thành chuỗi hiển thị
-     */
+
     private String formatTimestamp(java.sql.Timestamp timestamp) {
         if (timestamp == null) return "";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");

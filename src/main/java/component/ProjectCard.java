@@ -11,7 +11,6 @@ import java.awt.event.WindowFocusListener;
 public class ProjectCard extends JFrame {
     GlobalStyle style = new GlobalStyle();
 
-    // Components
     private JTextField txtTitle;
     private JTextArea txtDescription;
     private JButton btnCancel;
@@ -29,12 +28,12 @@ public class ProjectCard extends JFrame {
         addWindowFocusListener(new WindowFocusListener() {
             @Override
             public void windowGainedFocus(WindowEvent e) {
-                // Không làm gì khi được focus
+
             }
 
             @Override
             public void windowLostFocus(WindowEvent e) {
-                // Đóng window khi mất focus (click ra ngoài)
+
                 dispose();
             }
         });
@@ -51,7 +50,6 @@ public class ProjectCard extends JFrame {
                 new EmptyBorder(25, 30, 25, 30)
         ));
 
-        // Header
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setOpaque(false);
 
@@ -125,7 +123,6 @@ public class ProjectCard extends JFrame {
         buttonPanel.add(btnCancel);
         buttonPanel.add(btnSave);
 
-        // Add all to main panel
         mainPanel.add(headerPanel, BorderLayout.NORTH);
         mainPanel.add(formPanel, BorderLayout.CENTER);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
@@ -163,17 +160,12 @@ public class ProjectCard extends JFrame {
         return area;
     }
 
-    // Getters
     public JTextField getTxtTitle() {
         return txtTitle;
     }
 
     public JTextArea getTxtDescription() {
         return txtDescription;
-    }
-
-    public JButton getBtnCancel() {
-        return btnCancel;
     }
 
     public JButton getBtnSave() {

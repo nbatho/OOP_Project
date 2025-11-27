@@ -20,6 +20,7 @@ public interface TaskService {
      */
     List<Task> getTasksByProjectId(String projectId);
 
+    List<Task> getTasksWithAssignees(String projectId);
     /**
      * Lấy task theo taskId
      * @param taskId mã của task cần tìm

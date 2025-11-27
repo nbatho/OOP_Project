@@ -18,7 +18,6 @@ public class RegisterController {
         this.view = view;
         this.userService = new UserServiceImpl();
 
-        // Khi nhấn nút "Đăng ký"
         this.view.getBtnRegister().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -26,7 +25,6 @@ public class RegisterController {
             }
         });
 
-        // Khi nhấn "Đăng nhập"
         this.view.getLblLogin().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -58,19 +56,16 @@ public class RegisterController {
             return;
         }
 
-        // Kiểm tra email đã tồn tại
         if (userService.isEmailExists(email)) {
             new MessageCard("Email đã được sử dụng!", MessageCard.MessageType.ERROR);
             return;
         }
 
-        // Tạo user mới
         User newUser = new User();
         newUser.setFullName(fullName);
         newUser.setEmail(email);
         newUser.setPasswordHash(password);
 
-        // Lưu user vào database
         if (userService.createUser(newUser)) {
             new MessageCard("Tạo tài khoản thành công!", MessageCard.MessageType.INFO);
             handleLoginRedirect();

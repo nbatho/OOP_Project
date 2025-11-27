@@ -8,18 +8,21 @@ import main.java.service.TaskService;
 
 import java.sql.Date;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
     private final TaskAssigneesServiceImpl taskAssigneesService;
+    private final UserServiceImpl  userService;
     private final String[] VALID_STATUSES = {"TODO", "IN_PROGRESS", "DONE", "CANCELLED"};
     private final String[] VALID_PRIORITIES = {"HIGH", "MEDIUM", "LOW"};
 
     public TaskServiceImpl() {
         this.taskRepository = new TaskRepository();
         this.taskAssigneesService = new TaskAssigneesServiceImpl();
+        this.userService = new UserServiceImpl();
     }
 
     @Override
@@ -93,6 +96,37 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.findAll(projectId);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy tasks theo project ID: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    @Override
+    public List<Task> getTasksWithAssignees(String projectId) {
+        try {
+            if (projectId == null || projectId.trim().isEmpty()) {
+                System.out.println("Project ID không được null hoặc rỗng");
+                return List.of();
+            }
+
+            List<Task> listTasks = getTasksByProjectId(projectId);
+
+            for (Task task : listTasks) {
+                List<TaskAssignees> taskAssignees = taskAssigneesService.getByTaskId(task.getTaskId());
+                List<User> listAssignees = new ArrayList<>();
+
+                for (TaskAssignees taskAssigned : taskAssignees) {
+                    User user = userService.getUserById(taskAssigned.getUserId());
+                    if (user != null) {
+                        listAssignees.add(user);
+                    }
+                }
+                task.setAssignedUsers(listAssignees);
+            }
+
+            return listTasks;
+
+        } catch (Exception e) {
+            System.out.println("Lỗi khi lấy tasks với assignees: " + e.getMessage());
             return List.of();
         }
     }

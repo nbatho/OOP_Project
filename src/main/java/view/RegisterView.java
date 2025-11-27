@@ -173,7 +173,6 @@ public class RegisterView extends JFrame {
                 BorderFactory.createEmptyBorder(10, 12, 10, 12)
         ));
     }
-    // --- Getter cho controller ---
     public JTextField getTxtUsername() {
         return txtFullName;
     }
