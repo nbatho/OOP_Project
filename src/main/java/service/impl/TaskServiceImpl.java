@@ -193,62 +193,6 @@ public class TaskServiceImpl implements TaskService {
             return false;
         }
     }
-
-    @Override
-    public boolean updateTaskStatus(String taskId, String projectId, String status) {
-        try {
-            if (!isValidStatus(status)) {
-                System.out.println("Status không hợp lệ: " + status);
-                return false;
-            }
-
-            if (!taskExists(taskId, projectId)) {
-                System.out.println("Task không tồn tại");
-                return false;
-            }
-
-            return taskRepository.updateTaskStatus(taskId, projectId, status);
-        } catch (Exception e) {
-            System.out.println("Lỗi khi cập nhật status task: " + e.getMessage());
-            return false;
-        }
-    }
-
-    @Override
-    public boolean updateTaskPriority(String taskId, String projectId, String priority) {
-        try {
-            if (!isValidPriority(priority)) {
-                System.out.println("Priority không hợp lệ: " + priority);
-                return false;
-            }
-
-            if (!taskExists(taskId, projectId)) {
-                System.out.println("Task không tồn tại");
-                return false;
-            }
-
-            return taskRepository.updateTaskPriority(taskId, projectId, priority);
-        } catch (Exception e) {
-            System.out.println("Lỗi khi cập nhật priority task: " + e.getMessage());
-            return false;
-        }
-    }
-
-    @Override
-    public boolean updateTaskDueDate(String taskId, String projectId, Date dueDate) {
-        try {
-            if (!taskExists(taskId, projectId)) {
-                System.out.println("Task không tồn tại");
-                return false;
-            }
-
-            return taskRepository.updateTaskDueDate(taskId, projectId, dueDate);
-        } catch (Exception e) {
-            System.out.println("Lỗi khi cập nhật due date task: " + e.getMessage());
-            return false;
-        }
-    }
-
     @Override
     public boolean deleteTask(String taskId, String projectId) {
         try {

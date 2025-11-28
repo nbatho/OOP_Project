@@ -18,26 +18,19 @@ public class KanbanView extends JPanel {
 
 
     private final Map<String, JPanel> kanbanColumns = new HashMap<>();
-    // Lưu label đếm task cho mỗi cột để cập nhật dễ dàng
     private final Map<String, JLabel> columnCountLabels = new HashMap<>();
-    // Lưu nút Tạo mới cho mỗi cột
-    private final Map<String, JButton> columnCreateButtons = new HashMap<>();
 
-    // Mapping status từ database sang tên cột hiển thị
     private final Map<String, String> statusMapping = new HashMap<>();
 
     private TaskClickListener taskClickListener;
     public KanbanView() {
-        // Use horizontal BoxLayout so columns can have fixed preferred widths
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
         setBackground(style.getCOLOR_BACKGROUND());
         setBorder(new EmptyBorder(15, 15, 15, 15));
 
         this.columnWidth = GlobalStyle.scale(420);
-        // Khởi tạo mapping
         initStatusMapping();
 
-        // Tạo các cột
         addKanbanColumn("Cần làm", "TODO");
         addRigidArea();
         addKanbanColumn("Đang làm", "IN_PROGRESS");
@@ -52,9 +45,7 @@ public class KanbanView extends JPanel {
     }
 
     private void initStatusMapping() {
-        statusMapping.put("TODO", "Cần làm");
-        statusMapping.put("To Do", "Cần làm");
-
+        statusMapping.put("To do", "Cần làm");
         statusMapping.put("IN_PROGRESS", "Đang làm");
         statusMapping.put("In Progress", "Đang làm");
 
@@ -127,18 +118,8 @@ public class KanbanView extends JPanel {
         columnPanel.add(scrollPane, BorderLayout.CENTER);
 
 
-        JPanel footer = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        footer.setOpaque(false);
-        JButton createBtn = new JButton("Tạo mới");
-        createBtn.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
-        createBtn.setBackground(style.getCOLOR_PRIMARY());
-        createBtn.setForeground(Color.WHITE);
-        createBtn.setFocusPainted(false);
-        footer.add(createBtn);
-        columnPanel.add(footer, BorderLayout.SOUTH);
 
 
-        columnCreateButtons.put(statusKey, createBtn);
 
         add(columnPanel);
 
@@ -154,9 +135,6 @@ public class KanbanView extends JPanel {
     public void setTaskClickListener(TaskClickListener listener) {
         this.taskClickListener = listener;
     }
-    /**
-     * Cập nhật tất cả tasks vào Kanban board
-     */
     public void updateTasks(List<Task> tasks) {
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> updateTasks(tasks));
@@ -165,18 +143,11 @@ public class KanbanView extends JPanel {
 
         clearAllTasks();
 
-        // Thêm tasks mới vào các cột tương ứng
         for (Task task : tasks) {
             addTaskToBoard(task);
         }
-
-        // Cập nhật số lượng task cho mỗi cột
         updateTaskCounts();
     }
-
-    /**
-     * Thêm một task vào board
-     */
     public void addTaskToBoard(Task task) {
         if (!SwingUtilities.isEventDispatchThread()) {
             SwingUtilities.invokeLater(() -> addTaskToBoard(task));
@@ -185,12 +156,10 @@ public class KanbanView extends JPanel {
 
         String status = task.getStatus();
 
-        // Normalize status
         if (status == null || status.isEmpty()) {
             status = "TODO";
         }
 
-        // Map status sang key của column
         String columnKey = normalizeStatus(status);
 
         JPanel taskCard = createTaskCard(task);
@@ -201,22 +170,15 @@ public class KanbanView extends JPanel {
             targetColumn.add(Box.createVerticalStrut(10));
             targetColumn.revalidate();
             targetColumn.repaint();
-//            System.out.println("Kanban: added task '" + task.getTitle() + "' to column " + columnKey + ". total comps=" + targetColumn.getComponentCount());
         } else {
             System.err.println(" Không tìm thấy cột cho status: " + status);
         }
     }
 
-    /**
-     * Chuẩn hóa status về format key của kanbanColumns
-     */
+
     private String normalizeStatus(String status) {
         if (status == null) return "TODO";
-
-        // Convert to uppercase và thay space bằng underscore
         String normalized = status.trim().toUpperCase().replace(" ", "_");
-
-        // Map các format khác nhau về standard format
         switch (normalized) {
             case "TODO":
             case "TO_DO":
@@ -227,7 +189,6 @@ public class KanbanView extends JPanel {
                 return "IN_PROGRESS";
             case "CANCELLED":
             case "DONE":
-            case "COMPLETED":
             case "FINISHED":
                 return "DONE";
             default:
@@ -237,7 +198,6 @@ public class KanbanView extends JPanel {
     }
 
     private JPanel createTaskCard(Task task) {
-        // Card chính
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setOpaque(true);
@@ -432,16 +392,6 @@ public class KanbanView extends JPanel {
             target.repaint();
         }
     }
-
-
-    public Map<String, JPanel> getKanbanColumns() {
-        return kanbanColumns;
-    }
-
-    public Map<String, JButton> getColumnCreateButtons() {
-        return columnCreateButtons;
-    }
-
     public int getColumnWidth() {
         return columnWidth;
     }

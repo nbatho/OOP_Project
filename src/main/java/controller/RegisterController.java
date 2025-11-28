@@ -5,7 +5,6 @@ import main.java.view.LoginView;
 import main.java.model.User;
 import main.java.service.UserService;
 import main.java.service.impl.UserServiceImpl;
-import main.java.component.MessageCard;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -42,22 +41,35 @@ public class RegisterController {
         String email = view.getTxtEmail().getText().trim();
 
         if (fullName.isEmpty() || password.isEmpty() || email.isEmpty()) {
-            new MessageCard("Vui lòng nhập đầy đủ thông tin!", MessageCard.MessageType.ERROR);
+            JOptionPane.showMessageDialog(view,
+                    "Vui lòng nhập đầy đủ thông tin!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+
             return;
         }
 
         if (!password.equals(repassword)) {
-            new MessageCard("Mật khẩu nhập lại không khớp!", MessageCard.MessageType.ERROR);
+            JOptionPane.showMessageDialog(view,
+                    "Mật khẩu nhập lại không khớp!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (!view.getAgree().isSelected()) {
-            new MessageCard("Bạn cần đồng ý với Điều khoản sử dụng và Chính sách bảo mật trước khi đăng ký!", MessageCard.MessageType.ERROR);
+            JOptionPane.showMessageDialog(view,
+                    "Bạn cần đồng ý với Điều khoản sử dụng và Chính sách bảo mật trước khi đăng ký!",
+                    "Lỗi đăng ký",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (userService.isEmailExists(email)) {
-            new MessageCard("Email đã được sử dụng!", MessageCard.MessageType.ERROR);
+            JOptionPane.showMessageDialog(view,
+                    "Email đã được sử dụng!",
+                    "Lỗi đăng ký",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -67,10 +79,16 @@ public class RegisterController {
         newUser.setPasswordHash(password);
 
         if (userService.createUser(newUser)) {
-            new MessageCard("Tạo tài khoản thành công!", MessageCard.MessageType.INFO);
+            JOptionPane.showMessageDialog(view,
+                    "Tạo tài khoản thành công!",
+                    "Đăng ký thành công",
+                    JOptionPane.INFORMATION_MESSAGE);
             handleLoginRedirect();
         } else {
-            new MessageCard("Đăng ký thất bại! Vui lòng thử lại.", MessageCard.MessageType.ERROR);
+            JOptionPane.showMessageDialog(view,
+                    "Đăng ký thất bại! Vui lòng thử lại.",
+                    "Lỗi đăng ký",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 

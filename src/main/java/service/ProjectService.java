@@ -16,6 +16,9 @@ public interface ProjectService {
      */
     List<Project> getAllProjects();
 
+    String[] getProjectNameByUserId(String userId);
+
+
     /**
      * Lấy project theo projectId
      * @param projectId mã của project cần tìm

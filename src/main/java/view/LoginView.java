@@ -113,7 +113,7 @@ public class LoginView extends JFrame {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(new Color(0xF9F9F9));
-        content.setBorder(BorderFactory.createEmptyBorder(0, GlobalStyle.scale(50), 0, GlobalStyle.scale(50))); // Thêm dòng này
+        content.setBorder(BorderFactory.createEmptyBorder(0, GlobalStyle.scale(50), 0, GlobalStyle.scale(50)));
         content.add(Box.createVerticalStrut(GlobalStyle.scale(40)));
         content.add(titlePanel);
         content.add(Box.createVerticalStrut(GlobalStyle.scale(30)));

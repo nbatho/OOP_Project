@@ -13,13 +13,23 @@ import main.java.service.ProjectService;
 import main.java.service.UserService;
 
 public class ProjectMemberServiceImpl implements ProjectMemberService {
-    private final ProjectService projectService;
+    private static ProjectMemberServiceImpl instance;
+    private ProjectService projectService;
     private final UserService userService;
     private final ProjectMemberRepository projectMemberRepository;
-    public ProjectMemberServiceImpl() {
-        this.projectService = new ProjectServiceImpl();
+    private ProjectMemberServiceImpl() {
         this.userService = new UserServiceImpl();
         this.projectMemberRepository = new ProjectMemberRepository();
+    }
+    public static ProjectMemberServiceImpl getInstance() {
+        if (instance == null) {
+            instance = new ProjectMemberServiceImpl();
+        }
+        return instance;
+    }
+
+    public void setProjectService(ProjectService service) {
+        this.projectService = service;
     }
 
     @Override

@@ -32,9 +32,6 @@ public class AdminRepository {
         return querySingle(SQL.SELECT_BY_ID.query, userId);
     }
 
-    /** 
-     * Bảng admin chỉ có user_id → không có gì để update.
-     */
     public boolean updateAdmin(Admin admin) {
         return true;
     }

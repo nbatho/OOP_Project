@@ -5,15 +5,11 @@ import main.java.view.GlobalStyle;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
-
 public class ProjectCard extends JFrame {
     GlobalStyle style = new GlobalStyle();
 
     private JTextField txtTitle;
     private JTextArea txtDescription;
-    private JButton btnCancel;
     private JButton btnSave;
 
     public ProjectCard() {
@@ -23,21 +19,6 @@ public class ProjectCard extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setResizable(false);
         setUndecorated(true);
-
-
-        addWindowFocusListener(new WindowFocusListener() {
-            @Override
-            public void windowGainedFocus(WindowEvent e) {
-
-            }
-
-            @Override
-            public void windowLostFocus(WindowEvent e) {
-
-                dispose();
-            }
-        });
-
         initUI();
         setVisible(true);
     }
@@ -70,19 +51,16 @@ public class ProjectCard extends JFrame {
 
         headerPanel.add(titlePanel, BorderLayout.WEST);
 
-        // Form Panel
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
         formPanel.setOpaque(false);
         formPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
-        // Tiêu đề *
         formPanel.add(createLabel("Tiêu đề *"));
         txtTitle = createTextField();
         formPanel.add(txtTitle);
         formPanel.add(Box.createVerticalStrut(15));
 
-        // Mô tả
         formPanel.add(createLabel("Mô tả"));
         txtDescription = createTextArea();
         JScrollPane scrollDesc = new JScrollPane(txtDescription);
@@ -95,22 +73,11 @@ public class ProjectCard extends JFrame {
         scrollDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
         formPanel.add(scrollDesc);
 
-        // Buttons Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         buttonPanel.setOpaque(false);
         buttonPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
-        btnCancel = new JButton("Hủy");
-        btnCancel.setFont(style.getFONT_NORMAL());
-        btnCancel.setForeground(style.getCOLOR_TEXT_PRIMARY());
-        btnCancel.setBackground(Color.WHITE);
-        btnCancel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(style.getCOLOR_BORDER(), 1, true),
-                BorderFactory.createEmptyBorder(10, 25, 10, 25)
-        ));
-        btnCancel.setFocusPainted(false);
-        btnCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnCancel.addActionListener(e -> dispose());
+        JButton btnCancel = getBtnCancel();
 
         btnSave = new JButton("Lưu công việc");
         btnSave.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -128,6 +95,21 @@ public class ProjectCard extends JFrame {
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
 
         add(mainPanel);
+    }
+
+    private JButton getBtnCancel() {
+        JButton btnCancel = new JButton("Hủy");
+        btnCancel.setFont(style.getFONT_NORMAL());
+        btnCancel.setForeground(style.getCOLOR_TEXT_PRIMARY());
+        btnCancel.setBackground(Color.WHITE);
+        btnCancel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(style.getCOLOR_BORDER(), 1, true),
+                BorderFactory.createEmptyBorder(10, 25, 10, 25)
+        ));
+        btnCancel.setFocusPainted(false);
+        btnCancel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnCancel.addActionListener(e -> dispose());
+        return btnCancel;
     }
 
     private JLabel createLabel(String text) {
@@ -170,5 +152,15 @@ public class ProjectCard extends JFrame {
 
     public JButton getBtnSave() {
         return btnSave;
+    }
+    public boolean validateInput() {
+        if (txtTitle.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Tiêu đề không được để trống!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 }

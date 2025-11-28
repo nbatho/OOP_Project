@@ -1,4 +1,6 @@
 import javax.swing.*;
+
+import main.java.service.ServiceFactory;
 import main.java.view.LoginView;
 import main.java.controller.LoginController;
 import main.java.view.GlobalStyle;
@@ -14,6 +16,7 @@ public class Main {
             }
         } catch (Exception ignored) {}
         GlobalStyle.init();
+        ServiceFactory.init();
         LoginView view = new  LoginView();
         new LoginController(view);
 

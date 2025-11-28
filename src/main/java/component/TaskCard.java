@@ -500,7 +500,33 @@ public class TaskCard extends JFrame {
 
         return item;
     }
-
+    public boolean validateComment() {
+        if (txtComment.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Bình luận không được để trống!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+    public boolean validateInput() {
+        if (txtTitle.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Tiêu đề không được để trống!",
+                    "Lỗi nhập liệu",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (endDateChooser.getDate() == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Ngày kết thúc không được để trống!",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
     public List<User> getAssignees() {
         return assignees;
     }

@@ -1,5 +1,6 @@
 package main.java.view;
 
+import main.java.model.Project;
 import main.java.model.User;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -11,38 +12,24 @@ import java.util.function.Consumer;
 
 public class DashboardView extends JFrame {
     private final GlobalStyle style = new GlobalStyle();
-
-    // Header components
     private JToggleButton kanbanButton;
-    private JToggleButton tableButton;
     private JToggleButton calendarButton;
     private JButton createTaskButton;
     private JButton userButton;
-
-    // Project menu components
     private JLabel titleLabel;
     private JPopupMenu projectMenu;
     private JMenuItem createProjectMenuItem;
-
-    // Listener interface cho project selection
     private ProjectSelectionListener projectSelectionListener;
 
-    // Menu items
-    private JMenuItem infoMenuItem;
     private JMenuItem logoutMenuItem;
     private JPopupMenu userMenu;
 
-    // Panels
     private JPanel sidebarPanel;
     private JPanel mainContentPanel;
     private CardLayout cardLayout;
     private KanbanView kanbanView;
-
-    // Teams card panel
     private JPanel membersCardPanel;
     private JButton addMemberButton;
-
-    // Project info components
     private JLabel projectNameLabel;
     private JTextArea projectDescriptionArea;
     private JPanel projectInfoPanel;
@@ -171,18 +158,15 @@ public class DashboardView extends JFrame {
 
     private JPanel createViewTogglePanel() {
         kanbanButton = new JToggleButton("Kanban", true);
-        tableButton = new JToggleButton("Bảng");
         calendarButton = new JToggleButton("Lịch");
 
         ButtonGroup viewGroup = new ButtonGroup();
         viewGroup.add(kanbanButton);
-        viewGroup.add(tableButton);
         viewGroup.add(calendarButton);
 
         JPanel viewTogglePanel = new JPanel();
         viewTogglePanel.setOpaque(false);
         viewTogglePanel.add(kanbanButton);
-        viewTogglePanel.add(tableButton);
         viewTogglePanel.add(calendarButton);
 
         return viewTogglePanel;
@@ -216,9 +200,7 @@ public class DashboardView extends JFrame {
 
     private void createUserMenu() {
         userMenu = new JPopupMenu();
-        infoMenuItem = new JMenuItem("Thông tin");
         logoutMenuItem = new JMenuItem("Đăng xuất");
-        userMenu.add(infoMenuItem);
         userMenu.add(logoutMenuItem);
     }
 
@@ -304,7 +286,7 @@ public class DashboardView extends JFrame {
             }
         }
 
-        return sb.length() > 0 ? sb.toString() : "--";
+        return !sb.isEmpty() ? sb.toString() : "--";
     }
 
     private JPanel createMemberCard(User user) {
@@ -439,14 +421,14 @@ public class DashboardView extends JFrame {
         popupMenu.show(addMemberButton, 0, addMemberButton.getHeight());
     }
 
-    // ============= UPDATE METHODS =============
 
     public void setCurrentProjectName(String projectName) {
         titleLabel.setText(projectName);
         projectNameLabel.setText(projectName);
     }
 
-    public void updateSidebarProjectInfo(String projectInfo) {
+    public void updateSidebarProjectInfo(Project project) {
+        String projectInfo = "Tên: " + project.getName() + "\n" + "Mô tả: " + project.getDescription() + "\n" + "Ngày tạo: " + project.getCreatedAt() + "\n";
         projectDescriptionArea.setText(projectInfo);
         projectInfoPanel.revalidate();
         projectInfoPanel.repaint();
@@ -510,17 +492,32 @@ public class DashboardView extends JFrame {
     public interface ProjectSelectionListener {
         void onProjectSelected(String projectName);
     }
+    public void showSuccessMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Thành công",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
 
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Lỗi",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showWarningMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Cảnh báo",
+                JOptionPane.WARNING_MESSAGE);
+    }
+
+    public boolean showConfirmDialog(String message) {
+        return JOptionPane.showConfirmDialog(this, message, "Xác nhận",
+                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+    }
 
     public JToggleButton getKanbanButton() { return kanbanButton; }
-    public JToggleButton getTableButton() { return tableButton; }
     public JToggleButton getCalendarButton() { return calendarButton; }
     public JButton getCreateTaskButton() { return createTaskButton; }
-    public JButton getUserButton() { return userButton; }
     public JButton getaddMemberButton() { return addMemberButton; }
     public JPanel getMainContentPanel() { return mainContentPanel; }
     public CardLayout getCardLayout() { return cardLayout; }
-    public JMenuItem getInfoMenuItem() { return infoMenuItem; }
     public JMenuItem getLogoutMenuItem() { return logoutMenuItem; }
     public JMenuItem getCreateProjectMenuItem() { return createProjectMenuItem; }
 }

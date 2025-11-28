@@ -3,15 +3,27 @@ package main.java.service.impl;
 import java.util.List;
 import java.util.UUID;
 import main.java.model.Project;
+import main.java.model.ProjectMember;
 import main.java.repository.ProjectRepository;
+import main.java.service.ProjectMemberService;
 import main.java.service.ProjectService;
+import main.java.service.UserService;
 
 public class ProjectServiceImpl implements ProjectService {
-    
+    private static ProjectServiceImpl instance;
+    private ProjectMemberService projectMemberService;
     private final ProjectRepository projectRepository;
-
-    public ProjectServiceImpl() {
+    private ProjectServiceImpl() {
         this.projectRepository = new ProjectRepository();
+    }
+    public static ProjectServiceImpl getInstance() {
+        if (instance == null) {
+            instance = new ProjectServiceImpl();
+        }
+        return instance;
+    }
+    public void setProjectMemberService(ProjectMemberService service) {
+        this.projectMemberService = service;
     }
 
     @Override
@@ -33,7 +45,20 @@ public class ProjectServiceImpl implements ProjectService {
     public List<Project> getAllProjects() {
         return projectRepository.getAllProjects();
     }
-    
+
+    @Override
+    public String[] getProjectNameByUserId(String userId) {
+        List<ProjectMember> listProjectMembers = projectMemberService.getByUserId(userId);
+        String[] projectNames = new String[listProjectMembers.size()];
+
+        for (int i = 0; i < listProjectMembers.size(); i++) {
+            Project project = getProjectById(listProjectMembers.get(i).getProjectId());
+            projectNames[i] = project.getName();
+        }
+
+        return projectNames;
+    }
+
     @Override
     public Project getProjectById(String projectId) {
         if (projectId == null || projectId.trim().isEmpty()) {

@@ -35,40 +35,6 @@ public interface TaskService {
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
     boolean updateTask(Task task, List<User> assignees);
-
-    /**
-     * Cập nhật trạng thái task
-     * @param taskId mã task cần cập nhật
-     * @param projectId mã project
-     * @param status trạng thái mới (TODO, IN_PROGRESS, DONE)
-     * @return true nếu cập nhật thành công, false nếu thất bại
-     */
-    boolean updateTaskStatus(String taskId, String projectId, String status);
-
-    /**
-     * Cập nhật mức độ ưu tiên task
-     * @param taskId mã task cần cập nhật
-     * @param projectId mã project
-     * @param priority mức độ ưu tiên mới (HIGH, MEDIUM, LOW)
-     * @return true nếu cập nhật thành công, false nếu thất bại
-     */
-    boolean updateTaskPriority(String taskId, String projectId, String priority);
-
-    /**
-     * Cập nhật hạn chót task
-     * @param taskId mã task cần cập nhật
-     * @param projectId mã project
-     * @param dueDate hạn chót mới
-     * @return true nếu cập nhật thành công, false nếu thất bại
-     */
-    boolean updateTaskDueDate(String taskId, String projectId, Date dueDate);
-
-    /**
-     * Xóa task theo taskId
-     * @param taskId mã task cần xóa
-     * @param projectId mã project
-     * @return true nếu xóa thành công, false nếu thất bại
-     */
     boolean deleteTask(String taskId, String projectId);
 
     /**
