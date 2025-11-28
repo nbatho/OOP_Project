@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.UUID;
 import main.java.model.User;
 import main.java.repository.UserRepository;
+import main.java.service.ProjectMemberService;
 import main.java.service.UserService;
 
 public class UserServiceImpl implements UserService {
-    
+    private static UserServiceImpl instance;
+    private UserService userService;
     private final UserRepository userRepository;
     private User currentUser = null;
     public UserServiceImpl() {
@@ -17,7 +19,13 @@ public class UserServiceImpl implements UserService {
     }
 
     public static UserServiceImpl getInstance() {
-        return SessionHolder.INSTANCE;
+        if (instance == null) {
+            instance = new UserServiceImpl();
+        }
+        return instance;
+    }
+    public void setUserService(UserService service) {
+        this.userService = service;
     }
     private static class SessionHolder {
         private static final UserServiceImpl INSTANCE = new UserServiceImpl();

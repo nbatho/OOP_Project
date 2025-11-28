@@ -29,13 +29,15 @@ public class DashboardController {
         this.kanbanView = view.getKanbanView();
         this.calendarView = new CalendarView();
         this.helper = new Helper();
-
+        initController();
+        this.view.setVisible(true);
+    }
+    private void initController() {
         try {
-            if (userService.getCurrentUser() != null) {
-                view.setUserInitials(userService.getCurrentUser().getFullName());
-            }
+            User user = userService.getCurrentUser();
+            if (user != null) view.setUserInitials(user.getFullName());
         } catch (Exception ex) {
-            System.out.println("Error in getting current user" + ex.getMessage());
+            ex.printStackTrace();
         }
         view.getMainContentPanel().add(calendarView, "CALENDAR");
         view.getKanbanButton().addActionListener(e -> showView("KANBAN"));
@@ -46,9 +48,7 @@ public class DashboardController {
         view.setMemberDeleteListener(this::handleDeleteUser);
         view.setProjectSelectionListener(this::handleProjectSelected);
         view.getaddMemberButton().addActionListener(e -> handleAddMember());
-
         loadProjectList();
-
         kanbanView.setTaskClickListener(this::onTaskClicked);
         calendarView.setTaskClickListener(this::onTaskClicked);
     }

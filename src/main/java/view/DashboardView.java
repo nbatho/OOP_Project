@@ -20,10 +20,8 @@ public class DashboardView extends JFrame {
     private JPopupMenu projectMenu;
     private JMenuItem createProjectMenuItem;
     private ProjectSelectionListener projectSelectionListener;
-
     private JMenuItem logoutMenuItem;
     private JPopupMenu userMenu;
-
     private JPanel sidebarPanel;
     private JPanel mainContentPanel;
     private CardLayout cardLayout;
@@ -33,7 +31,6 @@ public class DashboardView extends JFrame {
     private JLabel projectNameLabel;
     private JTextArea projectDescriptionArea;
     private JPanel projectInfoPanel;
-
     private OnMemberDeleteListener memberDeleteListener;
 
     public DashboardView() {
@@ -65,21 +62,12 @@ public class DashboardView extends JFrame {
         this.kanbanView = new KanbanView();
         int boardWidth = kanbanView.getColumnWidth() * 4 + GlobalStyle.scale(16) * 3 + GlobalStyle.scale(30);
         kanbanView.setPreferredSize(new Dimension(boardWidth, GlobalStyle.scale(800)));
-
-        JScrollPane kanbanScroll = new JScrollPane(kanbanView,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        JScrollPane kanbanScroll = new JScrollPane(kanbanView, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         kanbanScroll.getHorizontalScrollBar().setUnitIncrement(20);
         kanbanScroll.setBorder(null);
-
         mainContentPanel.add(kanbanScroll, "KANBAN");
         cardLayout.show(mainContentPanel, "KANBAN");
     }
-
-    public KanbanView getKanbanView() {
-        return this.kanbanView;
-    }
-
     private JPanel createHeaderPanel() {
         JPanel headerPanel = new JPanel(new BorderLayout());
         headerPanel.setBackground(style.getCOLOR_CARD());
@@ -94,24 +82,20 @@ public class DashboardView extends JFrame {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.anchor = GridBagConstraints.WEST;
 
-        // Title panel with dropdown
         JPanel titlePanel = createTitlePanel();
         gbc.gridx = 0;
         gbc.weightx = 1.0;
         topRow.add(titlePanel, gbc);
 
-        // View toggle buttons
         JPanel viewTogglePanel = createViewTogglePanel();
         gbc.gridx = 1;
         gbc.weightx = 0;
         topRow.add(viewTogglePanel, gbc);
 
-        // Create task button
         gbc.gridx = 2;
         createTaskButton = createStyledButton("Tạo mới", style.getCOLOR_PRIMARY(), Color.WHITE);
         topRow.add(createTaskButton, gbc);
 
-        // User button
         gbc.gridx = 3;
         userButton = new JButton("User");
         userButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
@@ -210,67 +194,53 @@ public class DashboardView extends JFrame {
         sidebarPanel.setBackground(style.getCOLOR_CARD());
         sidebarPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         sidebarPanel.setPreferredSize(new Dimension(GlobalStyle.scale(420), 0));
-
-        // Project info card
         projectInfoPanel = createProjectInfoPanel();
         sidebarPanel.add(projectInfoPanel);
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
-
-        // Teams section
         JLabel teamsLabel = new JLabel("Thành viên nhóm");
         teamsLabel.setFont(style.getFONT_BOLD());
         teamsLabel.setForeground(style.getCOLOR_TEXT_PRIMARY());
         teamsLabel.setBorder(new EmptyBorder(0, 0, 10, 0));
         sidebarPanel.add(teamsLabel);
-
-        // Members panel with scroll
         membersCardPanel = new JPanel();
         membersCardPanel.setLayout(new BoxLayout(membersCardPanel, BoxLayout.Y_AXIS));
         membersCardPanel.setBackground(style.getCOLOR_CARD());
-
         JScrollPane teamsScrollPane = new JScrollPane(membersCardPanel);
         teamsScrollPane.setPreferredSize(new Dimension(GlobalStyle.scale(360), GlobalStyle.scale(420)));
         teamsScrollPane.setBorder(null);
         teamsScrollPane.getVerticalScrollBar().setUnitIncrement(10);
         sidebarPanel.add(teamsScrollPane);
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-
-        // Add member button
         addMemberButton = createStyledButton("+ Thêm thành viên mới", style.getCOLOR_PRIMARY(), Color.WHITE);
         sidebarPanel.add(addMemberButton);
-
         return sidebarPanel;
     }
 
     private JPanel createProjectInfoPanel() {
         JPanel card = new JPanel(new BorderLayout());
         card.setOpaque(true);
-        card.setBackground(style.getCOLOR_PRIMARY());
+        card.setBackground(Color.WHITE);
+
         card.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(style.getCOLOR_PRIMARY()),
+                new LineBorder(Color.BLACK, 1),
                 new EmptyBorder(16, 16, 16, 16)
         ));
 
         projectNameLabel = new JLabel("");
         projectNameLabel.setFont(GlobalStyle.scaleFont(style.getFONT_BOLD()));
-        projectNameLabel.setForeground(Color.WHITE);
+        projectNameLabel.setForeground(Color.BLACK);
         card.add(projectNameLabel, BorderLayout.NORTH);
-
         projectDescriptionArea = new JTextArea("");
         projectDescriptionArea.setEditable(false);
         projectDescriptionArea.setOpaque(false);
-        projectDescriptionArea.setForeground(new Color(0xDCEFEF));
+        projectDescriptionArea.setForeground(Color.BLACK);
         projectDescriptionArea.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
         projectDescriptionArea.setLineWrap(true);
         projectDescriptionArea.setWrapStyleWord(true);
         card.add(projectDescriptionArea, BorderLayout.CENTER);
-
         return card;
     }
 
-    /**
-     * Tính initials từ tên đầy đủ (lấy 2 ký tự đầu không phải khoảng trắng)
-     */
     private String getInitials(String fullName) {
         if (fullName == null || fullName.trim().isEmpty()) {
             return "--";
@@ -297,17 +267,11 @@ public class DashboardView extends JFrame {
                 new EmptyBorder(12, 12, 12, 12)
         ));
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, GlobalStyle.scale(90)));
-
-        // Avatar panel
         JPanel left = new JPanel(new BorderLayout());
         left.setOpaque(false);
-
         JLabel avatarLabel = createAvatarLabel(user);
         left.add(avatarLabel, BorderLayout.CENTER);
-
-        // User info panel
         JPanel infoPanel = createUserInfoPanel(user);
-
         card.add(left, BorderLayout.WEST);
         card.add(infoPanel, BorderLayout.CENTER);
 
@@ -326,11 +290,7 @@ public class DashboardView extends JFrame {
         avatarLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                int confirm = JOptionPane.showConfirmDialog(
-                        DashboardView.this,
-                        "Bạn có chắc muốn xóa user?",
-                        "Xác nhận xóa",
-                        JOptionPane.YES_NO_OPTION
+                int confirm = JOptionPane.showConfirmDialog(DashboardView.this, "Bạn có chắc muốn xóa user?", "Xác nhận xóa", JOptionPane.YES_NO_OPTION
                 );
                 if (confirm == JOptionPane.YES_OPTION && memberDeleteListener != null) {
                     memberDeleteListener.onDelete(user);
@@ -343,7 +303,6 @@ public class DashboardView extends JFrame {
                 avatarLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
                 avatarLabel.setToolTipText("Xóa thành viên này");
             }
-
             @Override
             public void mouseExited(MouseEvent e) {
                 avatarLabel.setBackground(style.getCOLOR_PRIMARY());
@@ -485,33 +444,20 @@ public class DashboardView extends JFrame {
         this.projectSelectionListener = listener;
     }
 
-    public interface OnMemberDeleteListener {
-        void onDelete(User user);
-    }
-
-    public interface ProjectSelectionListener {
-        void onProjectSelected(String projectName);
-    }
+    public interface OnMemberDeleteListener { void onDelete(User user);}
+    public interface ProjectSelectionListener { void onProjectSelected(String projectName);}
     public void showSuccessMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Thành công",
-                JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Thành công", JOptionPane.INFORMATION_MESSAGE);
     }
-
     public void showErrorMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Lỗi",
-                JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-
     public void showWarningMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Cảnh báo",
-                JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(this, message, "Cảnh báo", JOptionPane.WARNING_MESSAGE);
     }
-
     public boolean showConfirmDialog(String message) {
-        return JOptionPane.showConfirmDialog(this, message, "Xác nhận",
-                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
+        return JOptionPane.showConfirmDialog(this, message, "Xác nhận", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
-
     public JToggleButton getKanbanButton() { return kanbanButton; }
     public JToggleButton getCalendarButton() { return calendarButton; }
     public JButton getCreateTaskButton() { return createTaskButton; }
@@ -520,4 +466,5 @@ public class DashboardView extends JFrame {
     public CardLayout getCardLayout() { return cardLayout; }
     public JMenuItem getLogoutMenuItem() { return logoutMenuItem; }
     public JMenuItem getCreateProjectMenuItem() { return createProjectMenuItem; }
+    public KanbanView getKanbanView() {return this.kanbanView;}
 }

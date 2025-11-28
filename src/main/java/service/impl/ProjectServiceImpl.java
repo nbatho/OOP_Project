@@ -7,7 +7,6 @@ import main.java.model.ProjectMember;
 import main.java.repository.ProjectRepository;
 import main.java.service.ProjectMemberService;
 import main.java.service.ProjectService;
-import main.java.service.UserService;
 
 public class ProjectServiceImpl implements ProjectService {
     private static ProjectServiceImpl instance;
