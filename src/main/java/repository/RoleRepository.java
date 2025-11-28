@@ -15,17 +15,31 @@ public class RoleRepository {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             
-            if (role.getRoleId() == null || role.getRoleId().isEmpty()) {
+            if (role.getRoleId() == null || role.getRoleId().trim().isEmpty()) {
                 role.setRoleId(UUID.randomUUID().toString());
             }
             
             pstmt.setString(1, role.getRoleId());
             pstmt.setString(2, role.getName());
-            pstmt.setString(3, role.getDescription());
+            pstmt.setString(3, role.getDescription() != null ? role.getDescription() : "");
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            // Nếu lỗi do description column, thử insert không có description
+            if (e.getMessage().contains("description")) {
+                try (Connection conn = DatabaseConnection.getConnection();
+                     PreparedStatement pstmt = conn.prepareStatement("INSERT INTO roles (role_id, name) VALUES (?, ?)")) {
+                    
+                    pstmt.setString(1, role.getRoleId());
+                    pstmt.setString(2, role.getName());
+                    
+                    return pstmt.executeUpdate() > 0;
+                } catch (SQLException e2) {
+                    System.err.println("Error creating role: " + e2.getMessage());
+                }
+            } else {
+                System.err.println("Error creating role: " + e.getMessage());
+            }
             return false;
         }
     }
@@ -43,7 +57,6 @@ public class RoleRepository {
                 return mapResultSetToRole(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -61,7 +74,6 @@ public class RoleRepository {
                 return mapResultSetToRole(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -78,7 +90,6 @@ public class RoleRepository {
                 roles.add(mapResultSetToRole(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return roles;
     }
@@ -95,7 +106,6 @@ public class RoleRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -109,7 +119,6 @@ public class RoleRepository {
             pstmt.setString(1, roleId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }

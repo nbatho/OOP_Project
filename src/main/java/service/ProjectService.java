@@ -9,13 +9,15 @@ public interface ProjectService {
      * @param project đối tượng Project cần tạo
      * @return true nếu tạo thành công, false nếu thất bại
      */
-    boolean createProject(Project project);
-
+    String createProject(Project project);
     /**
      * Lấy danh sách tất cả các project
      * @return List<Project> danh sách project, có thể rỗng
      */
     List<Project> getAllProjects();
+
+    String[] getProjectNameByUserId(String userId);
+
 
     /**
      * Lấy project theo projectId

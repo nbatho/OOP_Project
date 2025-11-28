@@ -3,6 +3,7 @@ package main.java.service;
 import java.sql.Date;
 import java.util.List;
 import main.java.model.Task;
+import main.java.model.User;
 
 public interface TaskService {
     /**
@@ -10,7 +11,7 @@ public interface TaskService {
      * @param task đối tượng Task cần tạo
      * @return true nếu tạo thành công, false nếu thất bại
      */
-    boolean createTask(Task task);
+    boolean createTask(Task task, List<User> assignees);
 
     /**
      * Lấy danh sách tất cả các task theo projectId
@@ -19,6 +20,7 @@ public interface TaskService {
      */
     List<Task> getTasksByProjectId(String projectId);
 
+    List<Task> getTasksWithAssignees(String projectId);
     /**
      * Lấy task theo taskId
      * @param taskId mã của task cần tìm
@@ -32,41 +34,7 @@ public interface TaskService {
      * @param task đối tượng Task với thông tin mới
      * @return true nếu cập nhật thành công, false nếu thất bại
      */
-    boolean updateTask(Task task);
-
-    /**
-     * Cập nhật trạng thái task
-     * @param taskId mã task cần cập nhật
-     * @param projectId mã project
-     * @param status trạng thái mới (TODO, IN_PROGRESS, DONE)
-     * @return true nếu cập nhật thành công, false nếu thất bại
-     */
-    boolean updateTaskStatus(String taskId, String projectId, String status);
-
-    /**
-     * Cập nhật mức độ ưu tiên task
-     * @param taskId mã task cần cập nhật
-     * @param projectId mã project
-     * @param priority mức độ ưu tiên mới (HIGH, MEDIUM, LOW)
-     * @return true nếu cập nhật thành công, false nếu thất bại
-     */
-    boolean updateTaskPriority(String taskId, String projectId, String priority);
-
-    /**
-     * Cập nhật hạn chót task
-     * @param taskId mã task cần cập nhật
-     * @param projectId mã project
-     * @param dueDate hạn chót mới
-     * @return true nếu cập nhật thành công, false nếu thất bại
-     */
-    boolean updateTaskDueDate(String taskId, String projectId, Date dueDate);
-
-    /**
-     * Xóa task theo taskId
-     * @param taskId mã task cần xóa
-     * @param projectId mã project
-     * @return true nếu xóa thành công, false nếu thất bại
-     */
+    boolean updateTask(Task task, List<User> assignees);
     boolean deleteTask(String taskId, String projectId);
 
     /**

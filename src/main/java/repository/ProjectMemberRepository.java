@@ -46,13 +46,12 @@ public class ProjectMemberRepository {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Project member created: Project " + projectMember.getProjectId() + " - User " + projectMember.getUserId());
+//                System.out.println("Project member created: Project " + projectMember.getProjectId() + " - User " + projectMember.getUserId());
                 return true;
             }
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi tạo project member: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -69,10 +68,9 @@ public class ProjectMemberRepository {
             while (rs.next()) {
                 members.add(mapResultSetToProjectMember(rs));
             }
-            System.out.println("Found " + members.size() + " project members");
+//            System.out.println("Found " + members.size() + " project members");
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách project members: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return members;
@@ -91,14 +89,13 @@ public class ProjectMemberRepository {
             stmt.setString(2, user_id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                System.out.println("Project member found: Project " + project_id + " - User " + user_id);
+//                System.out.println("Project member found: Project " + project_id + " - User " + user_id);
                 return mapResultSetToProjectMember(rs);
             } else {
                 System.out.println("Project member not found: Project " + project_id + " - User " + user_id);
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi tìm project member by project_id và user_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return null;
     }
@@ -117,10 +114,9 @@ public class ProjectMemberRepository {
             while (rs.next()) {
                 members.add(mapResultSetToProjectMember(rs));
             }
-            System.out.println("Found " + members.size() + " members in project " + project_id);
+//            System.out.println("Found " + members.size() + " members in project " + project_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy members by project_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return members;
@@ -140,10 +136,9 @@ public class ProjectMemberRepository {
             while (rs.next()) {
                 members.add(mapResultSetToProjectMember(rs));
             }
-            System.out.println("Found " + members.size() + " projects for user " + user_id);
+//            System.out.println("Found " + members.size() + " projects for user " + user_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy members by user_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return members;
@@ -163,10 +158,9 @@ public class ProjectMemberRepository {
             while (rs.next()) {
                 members.add(mapResultSetToProjectMember(rs));
             }
-            System.out.println("Found " + members.size() + " members with role " + role_id);
+//            System.out.println("Found " + members.size() + " members with role " + role_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy members by role_id: " + e.getMessage());
-            e.printStackTrace();
         }
 
         return members;
@@ -188,12 +182,11 @@ public class ProjectMemberRepository {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Project member role updated: Project " + project_id + " - User " + user_id);
+//                System.out.println("Project member role updated: Project " + project_id + " - User " + user_id);
                 return true;
             }
         } catch (SQLException e) {
             System.err.println("Lỗi khi update project member role: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -211,7 +204,7 @@ public class ProjectMemberRepository {
             stmt.setString(2, user_id);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("Project member deleted: Project " + project_id + " - User " + user_id);
+//                System.out.println("Project member deleted: Project " + project_id + " - User " + user_id);
                 return true;
             } else {
                 System.out.println("Project member not found: Project " + project_id + " - User " + user_id);
@@ -219,7 +212,6 @@ public class ProjectMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa project member: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -235,7 +227,7 @@ public class ProjectMemberRepository {
             stmt.setString(1, project_id);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("All members for project " + project_id + " deleted");
+//                System.out.println("All members for project " + project_id + " deleted");
                 return true;
             } else {
                 System.out.println("No members found for project " + project_id);
@@ -243,7 +235,6 @@ public class ProjectMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa members by project_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }
@@ -259,7 +250,7 @@ public class ProjectMemberRepository {
             stmt.setString(1, user_id);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-                System.out.println("All project memberships for user " + user_id + " deleted");
+//                System.out.println("All project memberships for user " + user_id + " deleted");
                 return true;
             } else {
                 System.out.println("No project memberships found for user " + user_id);
@@ -267,7 +258,6 @@ public class ProjectMemberRepository {
 
         } catch (SQLException e) {
             System.err.println("Lỗi khi xóa members by user_id: " + e.getMessage());
-            e.printStackTrace();
         }
         return false;
     }

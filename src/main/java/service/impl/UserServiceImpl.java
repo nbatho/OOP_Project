@@ -10,12 +10,18 @@ import main.java.service.UserService;
 
 public class UserServiceImpl implements UserService {
     
-    private UserRepository userRepository;
-    
+    private final UserRepository userRepository;
+    private User currentUser = null;
     public UserServiceImpl() {
         this.userRepository = new UserRepository();
     }
-    
+
+    public static UserServiceImpl getInstance() {
+        return SessionHolder.INSTANCE;
+    }
+    private static class SessionHolder {
+        private static final UserServiceImpl INSTANCE = new UserServiceImpl();
+    }
     @Override
     public boolean createUser(User user) {
         if (user == null) {
@@ -65,7 +71,7 @@ public class UserServiceImpl implements UserService {
             System.err.println("User ID không được để trống");
             return null;
         }
-        return userRepository.getUserById(userId);
+        return userRepository.findUserById(userId);
     }
     
     @Override
@@ -164,6 +170,7 @@ public class UserServiceImpl implements UserService {
         String hashedPassword = hashPassword(password);
         if (user.getPasswordHash().equals(hashedPassword)) {
             System.out.println("Đăng nhập thành công cho user: " + email);
+            this.currentUser = user;
             return user;
         } else {
             System.err.println("Sai mật khẩu cho user: " + email);
@@ -180,13 +187,13 @@ public class UserServiceImpl implements UserService {
     }
     
     /**
-     * Hash password bằng SHA-256
+     * Hash password bằng MD5
      * @param password password gốc
      * @return password đã hash
      */
     private String hashPassword(String password) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] hashedBytes = md.digest(password.getBytes());
             
             // Convert byte array thành hex string
@@ -208,5 +215,9 @@ public class UserServiceImpl implements UserService {
         }
         User user = getUserById(userId);
         return user != null;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
     }
 }

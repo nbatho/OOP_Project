@@ -17,6 +17,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public boolean createComment(Comments comment) {
         try {
+
             if (comment == null) {
                 System.out.println("Comment không được null");
                 return false;
@@ -46,7 +47,6 @@ public class CommentServiceImpl implements CommentService {
             return commentRepository.createComment(comment);
         } catch (Exception e) {
             System.out.println("Lỗi khi tạo comment: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -57,7 +57,6 @@ public class CommentServiceImpl implements CommentService {
             return commentRepository.findAll();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy danh sách comments: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -73,7 +72,6 @@ public class CommentServiceImpl implements CommentService {
             return commentRepository.findByCommentId(commentId);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy comment theo ID: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
@@ -91,7 +89,6 @@ public class CommentServiceImpl implements CommentService {
                     .toList();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy comments theo task ID: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -109,7 +106,6 @@ public class CommentServiceImpl implements CommentService {
                     .toList();
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy comments theo user ID: " + e.getMessage());
-            e.printStackTrace();
             return List.of();
         }
     }
@@ -135,7 +131,6 @@ public class CommentServiceImpl implements CommentService {
             return commentRepository.updateComment(comment);
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật comment: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -167,7 +162,6 @@ public class CommentServiceImpl implements CommentService {
             return commentRepository.updateCommentBody(commentId, body.trim());
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật nội dung comment: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -188,7 +182,6 @@ public class CommentServiceImpl implements CommentService {
             return commentRepository.deleteByCommentId(commentId);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa comment: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -214,7 +207,6 @@ public class CommentServiceImpl implements CommentService {
             return allDeleted;
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa comments theo task ID: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -240,7 +232,6 @@ public class CommentServiceImpl implements CommentService {
             return allDeleted;
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa comments theo user ID: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

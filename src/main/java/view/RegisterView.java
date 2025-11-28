@@ -10,7 +10,7 @@ public class RegisterView extends JFrame {
     private JPasswordField txtRePassword;
     private JCheckBox chkAgree;
     private JButton btnRegister;
-    private JLabel lblLoginLink; // label thật sự dùng cho "Đăng nhập"
+    private JLabel lblLoginLink;
 
     public RegisterView() {
         setTitle("Đăng ký");
@@ -36,7 +36,6 @@ public class RegisterView extends JFrame {
         titlePanel.add(lblTitle);
         titlePanel.add(lblSubtitle);
 
-        // --- Card chính ---
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -50,7 +49,7 @@ public class RegisterView extends JFrame {
         gbc.gridx = 0;
         gbc.weightx = 1;
 
-        // --- Tiêu đề card ---
+
         JLabel lblFormTitle = new JLabel("Đăng ký", SwingConstants.CENTER);
         lblFormTitle.setFont(new Font("Segoe UI", Font.BOLD, GlobalStyle.scale(20)));
         lblFormTitle.setForeground(new Color(0x005B50));
@@ -63,7 +62,7 @@ public class RegisterView extends JFrame {
         gbc.gridy = 1;
         card.add(lblFormSub, gbc);
 
-        // --- Họ và tên ---
+
         JLabel lblName = new JLabel("Họ và tên");
         lblName.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(13)));
         gbc.gridy = 2;
@@ -74,7 +73,7 @@ public class RegisterView extends JFrame {
         gbc.gridy = 3;
         card.add(txtFullName, gbc);
 
-        // --- Email ---
+
         JLabel lblEmail = new JLabel("Email");
         lblEmail.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(13)));
         gbc.gridy = 4;
@@ -85,7 +84,7 @@ public class RegisterView extends JFrame {
         gbc.gridy = 5;
         card.add(txtEmail, gbc);
 
-        // --- Mật khẩu ---
+
         JLabel lblPassword = new JLabel("Mật khẩu");
         lblPassword.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(13)));
         gbc.gridy = 6;
@@ -96,7 +95,7 @@ public class RegisterView extends JFrame {
         gbc.gridy = 7;
         card.add(txtPassword, gbc);
 
-        // --- Xác nhận mật khẩu ---
+
         JLabel lblRePassword = new JLabel("Xác nhận mật khẩu");
         lblRePassword.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(13)));
         gbc.gridy = 8;
@@ -107,19 +106,18 @@ public class RegisterView extends JFrame {
         gbc.gridy = 9;
         card.add(txtRePassword, gbc);
 
-        // --- Checkbox ---
+
         chkAgree = new JCheckBox("Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật");
         chkAgree.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(12)));
         chkAgree.setOpaque(false);
         gbc.gridy = 10;
         card.add(chkAgree, gbc);
 
-        // --- Nút & đăng nhập (layout dọc, căn giữa) ---
+
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
         bottomPanel.setOpaque(false);
 
-        // --- Nút Đăng ký ---
         btnRegister = new JButton("Đăng ký");
         btnRegister.setFont(new Font("Segoe UI", Font.BOLD, GlobalStyle.scale(14)));
         btnRegister.setBackground(new Color(0x00796B));
@@ -146,21 +144,20 @@ public class RegisterView extends JFrame {
         gbc.gridy = 11;
         card.add(bottomPanel, gbc);
 
-        // --- Layout tổng ---
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(new Color(0xF8FDFD));
         content.setBorder(BorderFactory.createEmptyBorder(
-                GlobalStyle.scale(30),  // top - giảm từ 40
-                GlobalStyle.scale(50),  // left - padding 2 bên
-                GlobalStyle.scale(30),  // bottom - giảm từ 40
-                GlobalStyle.scale(50)   // right - padding 2 bên
+                GlobalStyle.scale(30),
+                GlobalStyle.scale(50),
+                GlobalStyle.scale(30),
+                GlobalStyle.scale(50)
         ));
-        content.add(Box.createVerticalStrut(GlobalStyle.scale(20))); // Giảm từ 40 xuống 20
+        content.add(Box.createVerticalStrut(GlobalStyle.scale(20)));
         content.add(titlePanel);
-        content.add(Box.createVerticalStrut(GlobalStyle.scale(20))); // Giảm từ 40 xuống 20
+        content.add(Box.createVerticalStrut(GlobalStyle.scale(20)));
         content.add(card);
-        content.add(Box.createVerticalStrut(GlobalStyle.scale(20))); // Giảm từ 40 xuống 20
+        content.add(Box.createVerticalStrut(GlobalStyle.scale(20)));
 
         add(content, BorderLayout.CENTER);
     }
@@ -173,7 +170,6 @@ public class RegisterView extends JFrame {
                 BorderFactory.createEmptyBorder(10, 12, 10, 12)
         ));
     }
-    // --- Getter cho controller ---
     public JTextField getTxtUsername() {
         return txtFullName;
     }

@@ -1,7 +1,8 @@
 package main.java.controller;
 
-import main.java.component.MessageCard;
 import main.java.model.User;
+import main.java.service.UserService;
+import main.java.service.impl.UserServiceImpl;
 import main.java.view.LoginView;
 import main.java.view.RegisterView;
 import main.java.view.DashboardView;
@@ -11,13 +12,12 @@ import java.awt.event.MouseEvent;
 import javax.swing.JOptionPane;
 
 public class LoginController {
-    private final LoginView lview;
+    private final UserService userService;
 
     public LoginController(LoginView lview) {
-        this.lview = lview;
+        this.userService = UserServiceImpl.getInstance();
 
-        // Sự kiện: nhấn "Đăng ký"
-        this.lview.getLblRegister().addMouseListener(new MouseAdapter() {
+        lview.getLblRegister().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 lview.dispose();
@@ -25,25 +25,29 @@ public class LoginController {
             }
         });
 
-        // Sự kiện: nhấn "Đăng nhập"
-        this.lview.getBtnLogin().addMouseListener(new MouseAdapter() {
+        lview.getBtnLogin().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                String name = lview.getTxtUsername().getText();
+                String email = lview.getTxtUsername().getText();
                 String password = new String(lview.getTxtPassword().getPassword());
 
-                if (name.isEmpty() || password.isEmpty()) {
-                    new MessageCard("Vui lòng nhập đầy đủ thông tin!",MessageCard.MessageType.ERROR);
+                if (email.isEmpty() || password.isEmpty()) {
+                    JOptionPane.showMessageDialog(lview,
+                            "Vui lòng nhập đầy đủ thông tin!",
+                            "Lỗi nhập liệu",
+                            JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
-
-                User user = UserController.checkLogin(name, password);
+                User user = userService.authenticateUser(email, password);
                 if (user != null) {
                     lview.dispose();
                     new DashboardController(new DashboardView());
                 } else {
-                    new MessageCard("Sai tài khoản hoặc mật khẩu!",MessageCard.MessageType.ERROR);
+                    JOptionPane.showMessageDialog(lview,
+                            "Sai tài khoản hoặc mật khẩu!",
+                            "Lỗi đăng nhập",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

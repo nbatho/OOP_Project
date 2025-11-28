@@ -59,7 +59,7 @@ public class LoginView extends JFrame {
         gbc.gridy = 1;
         card.add(lblLoginSub, gbc);
 
-        JLabel lblUsername = new JLabel("Tên đăng nhập");
+        JLabel lblUsername = new JLabel("Email");
         lblUsername.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(14)));
         gbc.gridy = 2;
         card.add(lblUsername, gbc);
@@ -113,7 +113,7 @@ public class LoginView extends JFrame {
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(new Color(0xF9F9F9));
-        content.setBorder(BorderFactory.createEmptyBorder(0, GlobalStyle.scale(50), 0, GlobalStyle.scale(50))); // Thêm dòng này
+        content.setBorder(BorderFactory.createEmptyBorder(0, GlobalStyle.scale(50), 0, GlobalStyle.scale(50)));
         content.add(Box.createVerticalStrut(GlobalStyle.scale(40)));
         content.add(titlePanel);
         content.add(Box.createVerticalStrut(GlobalStyle.scale(30)));
@@ -122,7 +122,6 @@ public class LoginView extends JFrame {
         add(content, BorderLayout.CENTER);
     }
 
-    // ===== Getter cho Controller =====
     public JButton getBtnLogin() { return btnLogin; }
     public JLabel getLblRegister() { return lblRegister; }
     public JTextField getTxtUsername() { return txtUsername; }

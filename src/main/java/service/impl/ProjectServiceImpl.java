@@ -3,63 +3,62 @@ package main.java.service.impl;
 import java.util.List;
 import java.util.UUID;
 import main.java.model.Project;
+import main.java.model.ProjectMember;
 import main.java.repository.ProjectRepository;
+import main.java.service.ProjectMemberService;
 import main.java.service.ProjectService;
-import main.java.service.TeamService;
+import main.java.service.UserService;
 
 public class ProjectServiceImpl implements ProjectService {
-    
-    private ProjectRepository projectRepository;
-    private TeamService teamService;
-    
-    public ProjectServiceImpl() {
+    private static ProjectServiceImpl instance;
+    private ProjectMemberService projectMemberService;
+    private final ProjectRepository projectRepository;
+    private ProjectServiceImpl() {
         this.projectRepository = new ProjectRepository();
-        this.teamService = new main.java.service.impl.TeamServiceImpl();
     }
-    
+    public static ProjectServiceImpl getInstance() {
+        if (instance == null) {
+            instance = new ProjectServiceImpl();
+        }
+        return instance;
+    }
+    public void setProjectMemberService(ProjectMemberService service) {
+        this.projectMemberService = service;
+    }
+
     @Override
-    public boolean createProject(Project project) {
-        if (project == null) {
-            System.err.println("Project object không được null");
-            return false;
-        }
-        
-        // Validate dữ liệu
-        if (project.getName() == null || project.getName().trim().isEmpty()) {
-            System.err.println("Tên project không được để trống");
-            return false;
-        }
-        
-        if (project.getTeamId() == null || project.getTeamId().trim().isEmpty()) {
-            System.err.println("Team ID không được để trống");
-            return false;
-        }
-        
-        // Kiểm tra team có tồn tại không
-        if (teamService.getTeamById(project.getTeamId()) == null) {
-            System.err.println("Team không tồn tại với ID: " + project.getTeamId());
-            return false;
-        }
-        
-        // Kiểm tra tên project đã tồn tại chưa
-        if (isProjectNameExists(project.getName())) {
-            System.err.println("Tên project đã tồn tại: " + project.getName());
-            return false;
-        }
-        
-        // Tự động tạo ID nếu chưa có
-        if (project.getProjectId() == null || project.getProjectId().trim().isEmpty()) {
+    public String createProject(Project project) {
+        if (project == null) return null;
+        if (project.getName() == null || project.getName().trim().isEmpty()) return null;
+
+        if (isProjectNameExists(project.getName())) return null;
+
+        if (project.getProjectId() == null || project.getProjectId().isEmpty()) {
             project.setProjectId(UUID.randomUUID().toString());
         }
-        
-        return projectRepository.createProject(project);
+
+        boolean created = projectRepository.createProject(project);
+        return created ? project.getProjectId() : null;
     }
-    
+
     @Override
     public List<Project> getAllProjects() {
         return projectRepository.getAllProjects();
     }
-    
+
+    @Override
+    public String[] getProjectNameByUserId(String userId) {
+        List<ProjectMember> listProjectMembers = projectMemberService.getByUserId(userId);
+        String[] projectNames = new String[listProjectMembers.size()];
+
+        for (int i = 0; i < listProjectMembers.size(); i++) {
+            Project project = getProjectById(listProjectMembers.get(i).getProjectId());
+            projectNames[i] = project.getName();
+        }
+
+        return projectNames;
+    }
+
     @Override
     public Project getProjectById(String projectId) {
         if (projectId == null || projectId.trim().isEmpty()) {
@@ -100,12 +99,7 @@ public class ProjectServiceImpl implements ProjectService {
             System.err.println("Project không tồn tại với ID: " + project.getProjectId());
             return false;
         }
-        
-        // Kiểm tra team có tồn tại không
-        if (project.getTeamId() != null && teamService.getTeamById(project.getTeamId()) == null) {
-            System.err.println("Team không tồn tại với ID: " + project.getTeamId());
-            return false;
-        }
+
         
         // Nếu tên thay đổi, kiểm tra tên mới có trùng không
         if (!existingProject.getName().equals(project.getName()) && isProjectNameExists(project.getName())) {

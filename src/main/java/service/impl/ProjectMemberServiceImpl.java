@@ -1,21 +1,35 @@
 package main.java.service.impl;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import main.java.model.ProjectMember;
+import main.java.model.User;
+import main.java.repository.ProjectMemberRepository;
 import main.java.service.ProjectMemberService;
 import main.java.service.ProjectService;
-import main.java.service.RoleService;
 import main.java.service.UserService;
 
 public class ProjectMemberServiceImpl implements ProjectMemberService {
-    private final ProjectService projectService;
+    private static ProjectMemberServiceImpl instance;
+    private ProjectService projectService;
     private final UserService userService;
-    private final RoleService roleService;
-
-    public ProjectMemberServiceImpl() {
-        this.projectService = new ProjectServiceImpl();
+    private final ProjectMemberRepository projectMemberRepository;
+    private ProjectMemberServiceImpl() {
         this.userService = new UserServiceImpl();
-        this.roleService = new RoleServiceImpl();
+        this.projectMemberRepository = new ProjectMemberRepository();
+    }
+    public static ProjectMemberServiceImpl getInstance() {
+        if (instance == null) {
+            instance = new ProjectMemberServiceImpl();
+        }
+        return instance;
+    }
+
+    public void setProjectService(ProjectService service) {
+        this.projectService = service;
     }
 
     @Override
@@ -49,9 +63,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return false;
             }
 
-            // return projectMemberRepository.createProjectMember(projectMember);
             System.out.println("Thêm project member thành công: " + projectMember.getUserId());
-            return true;
+             return projectMemberRepository.createProjectMember(projectMember);
         } catch (Exception e) {
             System.out.println("Lỗi khi tạo project member: " + e.getMessage());
             return false;
@@ -83,12 +96,62 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return null;
             }
 
-            // return projectMemberRepository.getByProjectAndUser(project_id, user_id);
             System.out.println("Lấy project member theo project và user: " + project_id + ", " + user_id);
-            return null; // Placeholder
+             return projectMemberRepository.findByProjectIdAndUserId(project_id, user_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy project member: " + e.getMessage());
             return null;
+        }
+    }
+
+    @Override
+    public List<User> getProjectMember(String project_id) {
+        try {
+            if (project_id == null || project_id.trim().isEmpty()) {
+                System.out.println("Project ID không được null hoặc rỗng");
+                return List.of();
+            }
+            List<ProjectMember> listProjectMembers = getByProjectId(project_id);
+
+            List<User> listMembers = new ArrayList<>();
+            for (ProjectMember projectMember : listProjectMembers) {
+                User users = userService.getUserById(projectMember.getUserId());
+                if (users != null) {
+
+                    listMembers.add(users);
+                }
+            }
+            return listMembers;
+        }
+        catch (Exception e) {
+            System.out.println("Lỗi khi lấy memeers trong project: " + e.getMessage());
+            return List.of();
+        }
+    }
+
+    @Override
+    public List<User> getAvailableUsers(String project_id) {
+        try {
+            List<User> projectMembers = getProjectMember(project_id);
+            List<User> allUsers = userService.getAllUsers();
+            List <User> availableUsers = new ArrayList<>();
+
+            Set<String> memberIds = new HashSet<>();
+            for (User member : projectMembers) {
+                memberIds.add(member.getUserId());
+            }
+
+
+            for (User user : allUsers) {
+                if (!memberIds.contains(user.getUserId())) {
+                    availableUsers.add(user);
+                }
+            }
+
+            return availableUsers;
+        } catch (Exception e) {
+            System.out.println("Lỗi khi add memeers trong project: " + e.getMessage());
+            return List.of();
         }
     }
 
@@ -100,9 +163,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return List.of();
             }
 
-            // return projectMemberRepository.getMembersByProject(project_id);
-            System.out.println("Lấy members theo project: " + project_id);
-            return List.of(); // Placeholder
+//            System.out.println("Lấy members theo project: " + project_id);
+             return projectMemberRepository.findByProjectId(project_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy members của project: " + e.getMessage());
             return List.of();
@@ -117,9 +179,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return List.of();
             }
 
-            // return projectMemberRepository.getProjectsByUser(user_id);
-            System.out.println("Lấy projects theo user: " + user_id);
-            return List.of(); // Placeholder
+                System.out.println("Lấy projects theo user: " + user_id);
+             return projectMemberRepository.findByUserId(user_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy projects của user: " + e.getMessage());
             return List.of();
@@ -170,9 +231,8 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                 return false;
             }
 
-            // return projectMemberRepository.deleteByProjectAndUser(project_id, user_id);
             System.out.println("Xóa project member thành công");
-            return true;
+             return projectMemberRepository.deleteByProjectIdAndUserId(project_id, user_id);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa project member: " + e.getMessage());
             return false;

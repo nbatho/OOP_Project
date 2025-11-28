@@ -1,58 +1,86 @@
 package main.java.service.impl;
 
 import main.java.model.Task;
+import main.java.model.TaskAssignees;
+import main.java.model.User;
 import main.java.repository.TaskRepository;
 import main.java.service.TaskService;
 
 import java.sql.Date;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
+    private final TaskAssigneesServiceImpl taskAssigneesService;
+    private final UserServiceImpl  userService;
     private final String[] VALID_STATUSES = {"TODO", "IN_PROGRESS", "DONE", "CANCELLED"};
     private final String[] VALID_PRIORITIES = {"HIGH", "MEDIUM", "LOW"};
 
     public TaskServiceImpl() {
         this.taskRepository = new TaskRepository();
+        this.taskAssigneesService = new TaskAssigneesServiceImpl();
+        this.userService = new UserServiceImpl();
     }
 
     @Override
-    public boolean createTask(Task task) {
+    public boolean createTask(Task task, List<User> assignees) {
         try {
             if (task == null) {
                 System.out.println("Task không được null");
                 return false;
             }
-
-            // Validate thông tin task
+            if (assignees.isEmpty()) {
+                System.out.println("assignees không được rỗng");
+                return false;
+            }
             if (!isValidTaskData(task)) {
                 return false;
             }
-
-            // Tạo ID mới nếu chưa có
             if (task.getTaskId() == null || task.getTaskId().trim().isEmpty()) {
                 task.setTaskId(UUID.randomUUID().toString());
             }
-
-            // Kiểm tra task đã tồn tại chưa
+            if (task.getProjectId() == null) {
+                System.out.println("ProjectId không được null");
+                return false;
+            }
             if (taskRepository.findByTaskId(task.getTaskId(), task.getProjectId()) != null) {
                 System.out.println("Task ID đã tồn tại: " + task.getTaskId());
                 return false;
             }
 
             // Set default values
-            if (task.getStatus() == null) {
-                task.setStatus("TODO");
-            }
-            if (task.getPriority() == null) {
-                task.setPriority("MEDIUM");
+            if (task.getStatus() == null) task.setStatus("Todo");
+            if (task.getPriority() == null) task.setPriority("Normal");
+
+            // 1. Tạo task
+            boolean created = taskRepository.createTask(task);
+            if (!created) {
+                System.out.println("Không thể tạo task");
+                return false;
             }
 
-            return taskRepository.createTask(task);
+            // 2. Tạo assignee
+
+            boolean assigned = false;
+            for (User assignee : assignees) {
+                taskAssigneesService.create(new TaskAssignees(task.getTaskId(), assignee.getUserId()));
+                assigned = true;
+            }
+            if (!assigned) {
+                taskRepository.deleteByTaskId(task.getTaskId(), task.getProjectId());
+                System.out.println("Không thể lưu assignee, task đã rollback");
+                return false;
+            }
+
+            // 3. Nếu cả hai đều thành công
+            return true;
+
         } catch (Exception e) {
-            System.out.println("Lỗi khi tạo task: " + e.getMessage());
             e.printStackTrace();
+            System.out.println("Lỗi khi tạo task: " + e.getMessage());
             return false;
         }
     }
@@ -68,7 +96,37 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.findAll(projectId);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy tasks theo project ID: " + e.getMessage());
-            e.printStackTrace();
+            return List.of();
+        }
+    }
+
+    @Override
+    public List<Task> getTasksWithAssignees(String projectId) {
+        try {
+            if (projectId == null || projectId.trim().isEmpty()) {
+                System.out.println("Project ID không được null hoặc rỗng");
+                return List.of();
+            }
+
+            List<Task> listTasks = getTasksByProjectId(projectId);
+
+            for (Task task : listTasks) {
+                List<TaskAssignees> taskAssignees = taskAssigneesService.getByTaskId(task.getTaskId());
+                List<User> listAssignees = new ArrayList<>();
+
+                for (TaskAssignees taskAssigned : taskAssignees) {
+                    User user = userService.getUserById(taskAssigned.getUserId());
+                    if (user != null) {
+                        listAssignees.add(user);
+                    }
+                }
+                task.setAssignedUsers(listAssignees);
+            }
+
+            return listTasks;
+
+        } catch (Exception e) {
+            System.out.println("Lỗi khi lấy tasks với assignees: " + e.getMessage());
             return List.of();
         }
     }
@@ -89,13 +147,12 @@ public class TaskServiceImpl implements TaskService {
             return taskRepository.findByTaskId(taskId, projectId);
         } catch (Exception e) {
             System.out.println("Lỗi khi lấy task theo ID: " + e.getMessage());
-            e.printStackTrace();
             return null;
         }
     }
 
     @Override
-    public boolean updateTask(Task task) {
+    public boolean updateTask(Task task,List<User> newAssignees) {
         try {
             if (task == null) {
                 System.out.println("Task không được null");
@@ -111,6 +168,16 @@ public class TaskServiceImpl implements TaskService {
                 System.out.println("Task không tồn tại");
                 return false;
             }
+            taskAssigneesService.deleteByTaskId(task.getTaskId());
+            if (newAssignees != null && !newAssignees.isEmpty()) {
+                for (User user : newAssignees) {
+                    TaskAssignees ta = new TaskAssignees(task.getTaskId(), user.getUserId());
+                    boolean assigned = taskAssigneesService.create(ta);
+                    if (!assigned) {
+                        throw new SQLException("Lỗi khi thêm assignee: " + user.getFullName());
+                    }
+                }
+            }
 
             return taskRepository.updateTask(
                 task.getTaskId(),
@@ -123,69 +190,9 @@ public class TaskServiceImpl implements TaskService {
             );
         } catch (Exception e) {
             System.out.println("Lỗi khi cập nhật task: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
-
-    @Override
-    public boolean updateTaskStatus(String taskId, String projectId, String status) {
-        try {
-            if (!isValidStatus(status)) {
-                System.out.println("Status không hợp lệ: " + status);
-                return false;
-            }
-
-            if (!taskExists(taskId, projectId)) {
-                System.out.println("Task không tồn tại");
-                return false;
-            }
-
-            return taskRepository.updateTaskStatus(taskId, projectId, status);
-        } catch (Exception e) {
-            System.out.println("Lỗi khi cập nhật status task: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean updateTaskPriority(String taskId, String projectId, String priority) {
-        try {
-            if (!isValidPriority(priority)) {
-                System.out.println("Priority không hợp lệ: " + priority);
-                return false;
-            }
-
-            if (!taskExists(taskId, projectId)) {
-                System.out.println("Task không tồn tại");
-                return false;
-            }
-
-            return taskRepository.updateTaskPriority(taskId, projectId, priority);
-        } catch (Exception e) {
-            System.out.println("Lỗi khi cập nhật priority task: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @Override
-    public boolean updateTaskDueDate(String taskId, String projectId, Date dueDate) {
-        try {
-            if (!taskExists(taskId, projectId)) {
-                System.out.println("Task không tồn tại");
-                return false;
-            }
-
-            return taskRepository.updateTaskDueDate(taskId, projectId, dueDate);
-        } catch (Exception e) {
-            System.out.println("Lỗi khi cập nhật due date task: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     @Override
     public boolean deleteTask(String taskId, String projectId) {
         try {
@@ -193,11 +200,9 @@ public class TaskServiceImpl implements TaskService {
                 System.out.println("Task không tồn tại");
                 return false;
             }
-
             return taskRepository.deleteByTaskId(taskId, projectId);
         } catch (Exception e) {
             System.out.println("Lỗi khi xóa task: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }

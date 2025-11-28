@@ -26,7 +26,25 @@ public class ProjectRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean createProjectEmpty(Project project) {
+        String sql = "INSERT INTO projects (project_id, name, description) VALUES (?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            if (project.getProjectId() == null || project.getProjectId().isEmpty()) {
+                project.setProjectId(UUID.randomUUID().toString());
+            }
+
+            pstmt.setString(1, project.getProjectId());
+            pstmt.setString(2, project.getName());
+            pstmt.setString(3, project.getDescription());
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
             return false;
         }
     }
@@ -44,7 +62,6 @@ public class ProjectRepository {
                 return mapResultSetToProject(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -62,7 +79,6 @@ public class ProjectRepository {
                 return mapResultSetToProject(rs);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return null;
     }
@@ -79,7 +95,6 @@ public class ProjectRepository {
                 projects.add(mapResultSetToProject(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return projects;
     }
@@ -98,7 +113,6 @@ public class ProjectRepository {
                 projects.add(mapResultSetToProject(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return projects;
     }
@@ -122,7 +136,6 @@ public class ProjectRepository {
                 projects.add(mapResultSetToProject(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
         }
         return projects;
     }
@@ -140,7 +153,6 @@ public class ProjectRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -154,7 +166,6 @@ public class ProjectRepository {
             pstmt.setString(1, projectId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            e.printStackTrace();
             return false;
         }
     }
