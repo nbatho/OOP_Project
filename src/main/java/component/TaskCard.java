@@ -485,7 +485,6 @@ public class TaskCard extends JFrame {
         header.add(lblUserName, BorderLayout.WEST);
         header.add(lblTimestamp, BorderLayout.EAST);
 
-        // Content
         JTextArea txtContent = new JTextArea(commentText);
         txtContent.setFont(style.getFONT_NORMAL());
         txtContent.setForeground(style.getCOLOR_TEXT_PRIMARY());
@@ -518,6 +517,20 @@ public class TaskCard extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        if (assignees.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Người được giao task không được để trống!",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        if (startDateChooser.getDate() == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Ngày bắt đầu không được để trống!",
+                    "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
         if (endDateChooser.getDate() == null) {
             JOptionPane.showMessageDialog(this,
                     "Ngày kết thúc không được để trống!",
@@ -526,6 +539,18 @@ public class TaskCard extends JFrame {
             return false;
         }
         return true;
+    }
+    public void showSuccessMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Thành công", JOptionPane.INFORMATION_MESSAGE);
+    }
+    public void showErrorMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+    public void showWarningMessage(String message) {
+        JOptionPane.showMessageDialog(this, message, "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+    }
+    public boolean showConfirmDialog(String message) {
+        return JOptionPane.showConfirmDialog(this, message, "Xác nhận", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;
     }
     public List<User> getAssignees() {
         return assignees;

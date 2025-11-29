@@ -99,9 +99,7 @@ public class DashboardView extends JFrame {
 
         gbc.gridx = 3;
         userButton = new JButton("User");
-        userButton.setFont(GlobalStyle.scaleFont(style.getFONT_NORMAL()));
-        userButton.setBackground(Color.WHITE);
-        userButton.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
+        userButton = createStyledButton("User", Color.WHITE, Color.DARK_GRAY);
         userButton.addActionListener(e -> {
             if (userMenu != null) {
                 userMenu.show(userButton, 0, userButton.getHeight());
@@ -144,7 +142,6 @@ public class DashboardView extends JFrame {
     private JPanel createViewTogglePanel() {
         kanbanButton = new JToggleButton("Kanban", true);
         calendarButton = new JToggleButton("Lịch");
-
         ButtonGroup viewGroup = new ButtonGroup();
         viewGroup.add(kanbanButton);
         viewGroup.add(calendarButton);
@@ -417,8 +414,6 @@ public class DashboardView extends JFrame {
     public void setProjectSelectionListener(ProjectSelectionListener listener) {
         this.projectSelectionListener = listener;
     }
-    
-
     public interface OnMemberDeleteListener { void onDelete(User user);}
     public interface ProjectSelectionListener { void onProjectSelected(String projectName);}
     public void showSuccessMessage(String message) {
