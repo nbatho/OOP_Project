@@ -28,8 +28,7 @@ public class DatabaseConnection {
     private static void initializeDatabase() {
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
-            
-            // Create tables
+
             createTables(stmt);
             System.out.println("Database initialized successfully!");
             

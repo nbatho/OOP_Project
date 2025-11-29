@@ -3,32 +3,29 @@ package main.java.view;
 import com.toedter.calendar.JCalendar;
 import main.java.model.Task;
 import main.java.model.User;
-
 import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import main.java.Utility.Helper;
 import java.util.List;
-
 public class CalendarView extends JPanel {
-
     private final GlobalStyle style = new GlobalStyle();
     private final JCalendar calendar;
     private final JPanel taskListPanel;
     private final JPanel upcomingListPanel;
     private final JLabel selectedDateLabel;
-
+    private OnDateSelectedListener onDateSelectedListener;
+    private TaskCardClickListener taskCardClickListener;
+    private final Helper helper;
     private TaskClickListener taskClickListener;
     private List<Task> allTasks = new java.util.ArrayList<>();
 
     public CalendarView() {
+        this.helper = new Helper();
         setLayout(new BorderLayout(10, 10));
-
         add(createHeader(), BorderLayout.NORTH);
 
         JPanel mainPanel = new JPanel(new GridLayout(1, 2, 10, 10));
@@ -40,7 +37,6 @@ public class CalendarView extends JPanel {
 
         JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setBorder(new TitledBorder("Công việc trong ngày"));
-
         selectedDateLabel = new JLabel();
         selectedDateLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         selectedDateLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -48,7 +44,6 @@ public class CalendarView extends JPanel {
         selectedDateLabel.setOpaque(true);
         selectedDateLabel.setBackground(new Color(230, 240, 255));
         updateSelectedDateLabel(LocalDate.now());
-
         rightPanel.add(selectedDateLabel, BorderLayout.NORTH);
 
         taskListPanel = new JPanel();
@@ -60,18 +55,15 @@ public class CalendarView extends JPanel {
         taskScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         taskScrollPane.getVerticalScrollBar().setUnitIncrement(16);
         taskScrollPane.setBorder(null);
-
         rightPanel.add(taskScrollPane, BorderLayout.CENTER);
+
         mainPanel.add(rightPanel);
-
         add(mainPanel, BorderLayout.CENTER);
-
 
         JPanel upcomingPanel = new JPanel(new BorderLayout());
         upcomingPanel.setBorder(new TitledBorder("Công việc sắp đến hạn"));
         upcomingPanel.setPreferredSize(new Dimension(0, 250));
         upcomingPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
-
         upcomingListPanel = new JPanel();
         upcomingListPanel.setLayout(new BoxLayout(upcomingListPanel, BoxLayout.Y_AXIS));
         upcomingListPanel.setBackground(Color.WHITE);
@@ -80,19 +72,15 @@ public class CalendarView extends JPanel {
         upcomingScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         upcomingScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         upcomingScrollPane.getVerticalScrollBar().setUnitIncrement(16);
-
         upcomingPanel.add(upcomingScrollPane, BorderLayout.CENTER);
         add(upcomingPanel, BorderLayout.SOUTH);
 
         calendar.addPropertyChangeListener("calendar", evt -> {
-            LocalDate selected = convertToLocalDate(calendar.getDate());
+            LocalDate selected = helper.convertToLocalDate(calendar.getDate());
             updateSelectedDateLabel(selected);
-
-
             if (!allTasks.isEmpty()) {
                 updateTasksForSelectedDate(selected);
             }
-
             if (onDateSelectedListener != null) {
                 onDateSelectedListener.onDateSelected(selected);
             }
@@ -100,9 +88,7 @@ public class CalendarView extends JPanel {
     }
 
     private void updateSelectedDateLabel(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy");
-        String formattedDate = date.format(formatter);
-        formattedDate = formattedDate.substring(0, 1).toUpperCase() + formattedDate.substring(1);
+        String formattedDate = helper.formatDateFull(date);
         selectedDateLabel.setText(formattedDate);
     }
 
@@ -111,10 +97,8 @@ public class CalendarView extends JPanel {
             SwingUtilities.invokeLater(() -> updateTasks(tasks));
             return;
         }
-
         this.allTasks = new java.util.ArrayList<>(tasks);
-
-        LocalDate selectedDate = convertToLocalDate(calendar.getDate());
+        LocalDate selectedDate = helper.convertToLocalDate(calendar.getDate());
         updateTasksForSelectedDate(selectedDate);
     }
 
@@ -122,7 +106,7 @@ public class CalendarView extends JPanel {
         List<Task> tasksOfDay = allTasks.stream()
                 .filter(task -> task.getDueDate() != null)
                 .filter(task -> {
-                    LocalDate taskDate = convertSqlDateToLocalDate(task.getDueDate());
+                    LocalDate taskDate = helper.convertSqlDateToLocalDate(task.getDueDate());
                     return taskDate.equals(selectedDate);
                 })
                 .toList();
@@ -132,18 +116,18 @@ public class CalendarView extends JPanel {
         List<Task> upcomingTasks = allTasks.stream()
                 .filter(task -> task.getDueDate() != null)
                 .filter(task -> {
-                    LocalDate taskDate = convertSqlDateToLocalDate(task.getDueDate());
+                    LocalDate taskDate = helper.convertSqlDateToLocalDate(task.getDueDate());
                     return taskDate.isAfter(selectedDate) && !taskDate.isAfter(weekLater);
                 })
                 .sorted((t1, t2) -> t1.getDueDate().compareTo(t2.getDueDate()))
                 .toList();
 
 
-        setTasksOfDay(tasksOfDay, null);
-        setUpcomingTasks(upcomingTasks, null);
+        setTasksOfDay(tasksOfDay);
+        setUpcomingTasks(upcomingTasks);
     }
 
-    public void setTasksOfDay(List<Task> tasks, List<User> projectUsers) {
+    public void setTasksOfDay(List<Task> tasks) {
         taskListPanel.removeAll();
 
         if (tasks.isEmpty()) {
@@ -165,7 +149,7 @@ public class CalendarView extends JPanel {
         taskListPanel.repaint();
     }
 
-    public void setUpcomingTasks(List<Task> tasks, List<User> projectUsers) {
+    public void setUpcomingTasks(List<Task> tasks) {
         upcomingListPanel.removeAll();
 
         if (tasks.isEmpty()) {
@@ -216,7 +200,7 @@ public class CalendarView extends JPanel {
         headerPanel.add(Box.createHorizontalGlue());
 
         if (task.getPriority() != null && !task.getPriority().isEmpty()) {
-            JLabel priorityBadge = createPriorityBadge(task.getPriority());
+            JLabel priorityBadge = helper.createPriorityBadge(task.getPriority());
             headerPanel.add(priorityBadge);
         }
 
@@ -236,7 +220,6 @@ public class CalendarView extends JPanel {
             card.add(Box.createVerticalStrut(8));
         }
 
-        // Footer: Due date + Avatars
         JPanel footerPanel = new JPanel();
         footerPanel.setLayout(new BoxLayout(footerPanel, BoxLayout.X_AXIS));
         footerPanel.setOpaque(false);
@@ -254,7 +237,7 @@ public class CalendarView extends JPanel {
         if (task.getAssignedUsers() != null && !task.getAssignedUsers().isEmpty()) {
             List<User> users = task.getAssignedUsers();
             for (User user : users) {
-                JLabel avatarLabel = new JLabel(getInitials(user.getFullName()), SwingConstants.CENTER);
+                JLabel avatarLabel = new JLabel(helper.getInitials(user.getFullName()), SwingConstants.CENTER);
                 avatarLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
                 avatarLabel.setForeground(Color.WHITE);
                 avatarLabel.setOpaque(true);
@@ -294,97 +277,19 @@ public class CalendarView extends JPanel {
         return card;
     }
 
-    private JLabel createPriorityBadge(String priority) {
-        JLabel badge = new JLabel(priority);
-        badge.setFont(style.getFONT_SMALL());
-        badge.setOpaque(true);
-        badge.setBorder(new EmptyBorder(4, 8, 4, 8));
+    public interface OnDateSelectedListener { void onDateSelected(LocalDate date); }
 
-        String normalizedPriority = priority.toUpperCase().trim();
+    public interface TaskClickListener { void onTaskClicked(Task task); }
 
-        switch (normalizedPriority) {
-            case "HIGH":
-            case "URGENT":
-            case "CRITICAL":
-                badge.setBackground(new Color(255, 230, 230));
-                badge.setForeground(new Color(200, 50, 50));
-                badge.setText("Cao");
-                break;
-            case "MEDIUM":
-            case "NORMAL":
-            case "MODERATE":
-                badge.setBackground(new Color(255, 245, 220));
-                badge.setForeground(new Color(200, 140, 50));
-                badge.setText("Trung bình");
-                break;
-            case "LOW":
-                badge.setBackground(new Color(230, 245, 230));
-                badge.setForeground(new Color(80, 150, 80));
-                badge.setText("Thấp");
-                break;
-            default:
-                badge.setBackground(new Color(240, 240, 240));
-                badge.setForeground(Color.GRAY);
-                badge.setText(priority);
-        }
+    public interface TaskCardClickListener { void onTaskCardClicked(String projectId, String taskId); }
 
-        return badge;
-    }
+    public void setOnDateSelectedListener(OnDateSelectedListener listener) { this.onDateSelectedListener = listener; }
+
+    public void setTaskClickListener(TaskClickListener listener) { this.taskClickListener = listener; }
+
+    public void setTaskCardClickListener(TaskCardClickListener listener) { this.taskCardClickListener = listener; }
 
 
-    private String getInitials(String fullName) {
-        if (fullName == null || fullName.trim().isEmpty()) return "--";
-        String cleaned = fullName.trim();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < cleaned.length() && sb.length() < 2; i++) {
-            char c = cleaned.charAt(i);
-            if (!Character.isWhitespace(c)) sb.append(Character.toUpperCase(c));
-        }
-        String initials = sb.toString();
-        if (initials.isEmpty()) initials = "--";
-        return initials;
-    }
-
-    public interface OnDateSelectedListener {
-        void onDateSelected(LocalDate date);
-    }
-
-    public interface TaskClickListener {
-        void onTaskClicked(Task task);
-    }
-
-    public interface TaskCardClickListener {
-        void onTaskCardClicked(String projectId, String taskId);
-    }
-
-    private OnDateSelectedListener onDateSelectedListener;
-    private TaskCardClickListener taskCardClickListener;
-
-    public void setOnDateSelectedListener(OnDateSelectedListener listener) {
-        this.onDateSelectedListener = listener;
-    }
-
-    public void setTaskClickListener(TaskClickListener listener) {
-        this.taskClickListener = listener;
-    }
-
-    public void setTaskCardClickListener(TaskCardClickListener listener) {
-        this.taskCardClickListener = listener;
-    }
-
-    private LocalDate convertToLocalDate(Date date) {
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    }
-
-    private LocalDate convertSqlDateToLocalDate(java.util.Date date) {
-        if (date == null) return null;
-
-        if (date instanceof java.sql.Date) {
-            return ((java.sql.Date) date).toLocalDate();
-        }
-
-        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-    }
 
     private JPanel createHeader() {
         JPanel header = new JPanel(new BorderLayout());

@@ -41,7 +41,6 @@ public class TaskAssigneesRepository {
 
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-//                System.out.println("Task assignees created: Task " + taskAssignees.getTaskId() + " assigned to User " + taskAssignees.getUserId());
                 return true;
             }
 
@@ -63,7 +62,6 @@ public class TaskAssigneesRepository {
             while (rs.next()) {
                 assigneesList.add(mapResultSetToTaskAssignees(rs));
             }
-//            System.out.println("Found " + assigneesList.size() + " task assignees");
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy danh sách task assignees: " + e.getMessage());
         }
@@ -84,7 +82,6 @@ public class TaskAssigneesRepository {
             stmt.setString(2, user_id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-//                System.out.println("Task assignees found: Task " + task_id + " - User " + user_id);
                 return mapResultSetToTaskAssignees(rs);
             } else {
                 System.out.println("Task assignees not found: Task " + task_id + " - User " + user_id);
@@ -109,7 +106,6 @@ public class TaskAssigneesRepository {
             while (rs.next()) {
                 assigneesList.add(mapResultSetToTaskAssignees(rs));
             }
-//            System.out.println("Found " + assigneesList.size() + " users assigned to task " + task_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy assignees by task_id: " + e.getMessage());
         }
@@ -131,7 +127,6 @@ public class TaskAssigneesRepository {
             while (rs.next()) {
                 assigneesList.add(mapResultSetToTaskAssignees(rs));
             }
-//            System.out.println("Found " + assigneesList.size() + " tasks assigned to user " + user_id);
         } catch (SQLException e) {
             System.err.println("Lỗi khi lấy assignees by user_id: " + e.getMessage());
         }
@@ -152,7 +147,6 @@ public class TaskAssigneesRepository {
             stmt.setString(2, user_id);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-//                System.out.println("Task assignees deleted: Task " + task_id + " - User " + user_id);
                 return true;
             } else {
                 System.out.println("Task assignees not found: Task " + task_id + " - User " + user_id);
@@ -175,7 +169,6 @@ public class TaskAssigneesRepository {
             stmt.setString(1, task_id);
             int rows = stmt.executeUpdate();
             if (rows > 0) {
-//                System.out.println("All assignees for task " + task_id + " deleted");
                 return true;
             } else {
                 System.out.println("No assignees found for task " + task_id);
@@ -186,30 +179,6 @@ public class TaskAssigneesRepository {
         }
         return false;
     }
-
-    /**
-     * Xóa tất cả assignees của một user
-     * @param user_id mã của user
-     * @return true nếu xóa thành công, false nếu thất bại
-     */
-    public boolean deleteByUserId(String user_id) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            PreparedStatement stmt = conn.prepareStatement(DELETE_BY_USER_ID);
-            stmt.setString(1, user_id);
-            int rows = stmt.executeUpdate();
-            if (rows > 0) {
-//                System.out.println("All assignees for user " + user_id + " deleted");
-                return true;
-            } else {
-                System.out.println("No assignees found for user " + user_id);
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Lỗi khi xóa assignees by user_id: " + e.getMessage());
-        }
-        return false;
-    }
-
     /**
      * Map dữ liệu ResultSet sang đối tượng TaskAssignees
      * @param rs ResultSet chứa dữ liệu task assignees

@@ -17,13 +17,6 @@ public interface CommentService {
      * @return true nếu tạo thành công, false nếu thất bại
      */
     boolean createComment(Comments comment);
-
-    /**
-     * Lấy danh sách tất cả các comments
-     * @return List<Comments> danh sách comments, có thể rỗng
-     */
-    List<Comments> getAllComments();
-
     /**
      * Lấy comment theo commentId
      * @param commentId mã của comment cần tìm

@@ -6,11 +6,8 @@ import main.java.service.impl.UserServiceImpl;
 import main.java.view.LoginView;
 import main.java.view.RegisterView;
 import main.java.view.DashboardView;
-
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JOptionPane;
-
 public class LoginController {
     private final UserService userService;
 
@@ -32,23 +29,22 @@ public class LoginController {
                 String password = new String(lview.getTxtPassword().getPassword());
 
                 if (email.isEmpty() || password.isEmpty()) {
-                    JOptionPane.showMessageDialog(lview,
-                            "Vui lòng nhập đầy đủ thông tin!",
-                            "Lỗi nhập liệu",
-                            JOptionPane.ERROR_MESSAGE);
+                    lview.showError("Vui lòng nhập đầy đủ thông tin!");
                     return;
                 }
-
-                User user = userService.authenticateUser(email, password);
-                if (user != null) {
-                    lview.dispose();
-                    new DashboardController(new DashboardView());
-                } else {
-                    JOptionPane.showMessageDialog(lview,
-                            "Sai tài khoản hoặc mật khẩu!",
-                            "Lỗi đăng nhập",
-                            JOptionPane.ERROR_MESSAGE);
+                try {
+                    User user = userService.authenticateUser(email, password);
+                    if (user != null) {
+                        lview.dispose();
+                        new DashboardController(new DashboardView());
+                    } else {
+                        lview.showError("Sai tài khoản hoặc mật khẩu!");
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Error during registration: " + ex.getMessage());
+                    lview.showError("Có lỗi xảy ra trong quá trình đăng nhập. Vui lòng thử lại sau.");
                 }
+
             }
         });
     }

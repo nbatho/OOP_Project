@@ -122,6 +122,16 @@ public class LoginView extends JFrame {
         add(content, BorderLayout.CENTER);
     }
 
+    public void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this, message, "Thành công", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void showInfo(String message) {
+        JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+    }
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
     public JButton getBtnLogin() { return btnLogin; }
     public JLabel getLblRegister() { return lblRegister; }
     public JTextField getTxtUsername() { return txtUsername; }

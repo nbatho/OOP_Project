@@ -1,5 +1,6 @@
 package main.java.view;
 
+import main.java.Utility.Helper;
 import main.java.model.Project;
 import main.java.model.User;
 import javax.swing.*;
@@ -22,7 +23,6 @@ public class DashboardView extends JFrame {
     private ProjectSelectionListener projectSelectionListener;
     private JMenuItem logoutMenuItem;
     private JPopupMenu userMenu;
-    private JPanel sidebarPanel;
     private JPanel mainContentPanel;
     private CardLayout cardLayout;
     private KanbanView kanbanView;
@@ -32,8 +32,9 @@ public class DashboardView extends JFrame {
     private JTextArea projectDescriptionArea;
     private JPanel projectInfoPanel;
     private OnMemberDeleteListener memberDeleteListener;
-
+    private final Helper helper;
     public DashboardView() {
+        this.helper = new Helper();
         setTitle("Quản lý Công việc Dashboard");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1600, 900);
@@ -189,7 +190,7 @@ public class DashboardView extends JFrame {
     }
 
     private JPanel createSidebarPanel() {
-        sidebarPanel = new JPanel();
+        JPanel sidebarPanel = new JPanel();
         sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
         sidebarPanel.setBackground(style.getCOLOR_CARD());
         sidebarPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -241,24 +242,6 @@ public class DashboardView extends JFrame {
         return card;
     }
 
-    private String getInitials(String fullName) {
-        if (fullName == null || fullName.trim().isEmpty()) {
-            return "--";
-        }
-
-        String cleaned = fullName.trim();
-        StringBuilder sb = new StringBuilder();
-
-        for (int i = 0; i < cleaned.length() && sb.length() < 2; i++) {
-            char c = cleaned.charAt(i);
-            if (!Character.isWhitespace(c)) {
-                sb.append(Character.toUpperCase(c));
-            }
-        }
-
-        return !sb.isEmpty() ? sb.toString() : "--";
-    }
-
     private JPanel createMemberCard(User user) {
         JPanel card = new JPanel(new BorderLayout(10, 10));
         card.setBackground(Color.WHITE);
@@ -279,7 +262,7 @@ public class DashboardView extends JFrame {
     }
 
     private JLabel createAvatarLabel(User user) {
-        JLabel avatarLabel = new JLabel(getInitials(user.getFullName()), SwingConstants.CENTER);
+        JLabel avatarLabel = new JLabel(helper.getInitials(user.getFullName()), SwingConstants.CENTER);
         avatarLabel.setFont(GlobalStyle.scaleFont(new Font("Segoe UI", Font.BOLD, 18)));
         avatarLabel.setForeground(Color.WHITE);
         avatarLabel.setOpaque(true);
@@ -379,20 +362,16 @@ public class DashboardView extends JFrame {
         popupMenu.add(scrollPane);
         popupMenu.show(addMemberButton, 0, addMemberButton.getHeight());
     }
-
-
     public void setCurrentProjectName(String projectName) {
         titleLabel.setText(projectName);
         projectNameLabel.setText(projectName);
     }
-
     public void updateSidebarProjectInfo(Project project) {
         String projectInfo = "Tên: " + project.getName() + "\n" + "Mô tả: " + project.getDescription() + "\n" + "Ngày tạo: " + project.getCreatedAt() + "\n";
         projectDescriptionArea.setText(projectInfo);
         projectInfoPanel.revalidate();
         projectInfoPanel.repaint();
     }
-
     public void updateMembersList(List<User> users) {
         membersCardPanel.removeAll();
 
@@ -405,7 +384,6 @@ public class DashboardView extends JFrame {
         membersCardPanel.revalidate();
         membersCardPanel.repaint();
     }
-
     public void updateProjectList(String[] projects) {
         projectMenu.removeAll();
 
@@ -430,19 +408,16 @@ public class DashboardView extends JFrame {
         projectMenu.addSeparator();
         projectMenu.add(createProjectMenuItem);
     }
-
     public void setUserInitials(String fullName) {
-        userButton.setText(getInitials(fullName));
+        userButton.setText(helper.getInitials(fullName));
     }
-
-
     public void setMemberDeleteListener(OnMemberDeleteListener listener) {
         this.memberDeleteListener = listener;
     }
-
     public void setProjectSelectionListener(ProjectSelectionListener listener) {
         this.projectSelectionListener = listener;
     }
+    
 
     public interface OnMemberDeleteListener { void onDelete(User user);}
     public interface ProjectSelectionListener { void onProjectSelected(String projectName);}

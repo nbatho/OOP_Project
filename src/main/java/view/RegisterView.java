@@ -44,7 +44,7 @@ public class RegisterView extends JFrame {
         ));
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(GlobalStyle.scale(6), 0, GlobalStyle.scale(6), 0); // Giảm từ 8 xuống 6
+        gbc.insets = new Insets(GlobalStyle.scale(6), 0, GlobalStyle.scale(6), 0);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.weightx = 1;
@@ -127,9 +127,8 @@ public class RegisterView extends JFrame {
         btnRegister.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnRegister.setMaximumSize(new Dimension(Integer.MAX_VALUE, GlobalStyle.scale(45)));
         bottomPanel.add(btnRegister);
-        bottomPanel.add(Box.createVerticalStrut(GlobalStyle.scale(10))); // Giảm từ 15 xuống 10
+        bottomPanel.add(Box.createVerticalStrut(GlobalStyle.scale(10)));
 
-        // --- Link Đăng nhập ---
         JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
         loginPanel.setOpaque(false);
         JLabel lblHaveAcc = new JLabel("Đã có tài khoản?");
@@ -169,6 +168,17 @@ public class RegisterView extends JFrame {
                 BorderFactory.createLineBorder(new Color(210, 210, 210), 1, true),
                 BorderFactory.createEmptyBorder(10, 12, 10, 12)
         ));
+    }
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this, message, "Thành công", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void showInfo(String message) {
+        JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
     }
     public JTextField getTxtUsername() {
         return txtFullName;

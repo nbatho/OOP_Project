@@ -26,12 +26,6 @@ public interface ProjectService {
      */
     Project getProjectById(String projectId);
 
-    /**
-     * Lấy danh sách các project theo teamId
-     * @param teamId mã của team
-     * @return List<Project> danh sách projects của team, có thể rỗng
-     */
-    List<Project> getProjectsByTeamId(String teamId);
 
     /**
      * Lấy project theo tên

@@ -10,7 +10,6 @@ public class GlobalStyle {
     private final Color COLOR_TEXT_PRIMARY = new Color(0x1F3B3A);
     private final Color COLOR_TEXT_MUTED = new Color(0x6C7C7B);
     private final Color COLOR_PRIMARY = new Color(0x2F7D7A);
-    private final Color COLOR_SUCCESS = new Color(0x22C55E);
     private final Font FONT_BOLD = new Font("Segoe UI", Font.BOLD, 14);
     private final Font FONT_NORMAL = new Font("Segoe UI", Font.PLAIN, 12);
     private final Font FONT_SMALL = new Font("Segoe UI", Font.PLAIN, 11);
@@ -73,10 +72,6 @@ public class GlobalStyle {
         return FONT_SMALL;
     }
 
-    public Color getCOLOR_SUCCESS() {
-        return COLOR_SUCCESS;
-    }
-
     public Color getCOLOR_BACKGROUND() {
         return COLOR_BACKGROUND;
     }
@@ -115,33 +110,5 @@ public class GlobalStyle {
 
     public Font getFONT_TITLE() {
         return FONT_TITLE;
-    }
-
-    public static int getBaseWidth() {
-        return BASE_WIDTH;
-    }
-
-    public static int getBaseHeight() {
-        return BASE_HEIGHT;
-    }
-
-    public static int getCurrentWidth() {
-        return currentWidth;
-    }
-
-    public static int getCurrentHeight() {
-        return currentHeight;
-    }
-
-    public static double getScaleX() {
-        return SCALE_X;
-    }
-
-    public static double getScaleY() {
-        return SCALE_Y;
-    }
-
-    public static double getSCALE() {
-        return SCALE;
     }
 }

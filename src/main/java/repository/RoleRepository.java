@@ -25,7 +25,6 @@ public class RoleRepository {
             
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            // Nếu lỗi do description column, thử insert không có description
             if (e.getMessage().contains("description")) {
                 try (Connection conn = DatabaseConnection.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement("INSERT INTO roles (role_id, name) VALUES (?, ?)")) {

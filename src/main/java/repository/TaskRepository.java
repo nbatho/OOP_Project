@@ -68,23 +68,6 @@ public class TaskRepository {
         );
     }
 
-    public boolean updateTaskStatus(String taskId, String projectId, String status) {
-        return executeUpdate(SQL.UPDATE_STATUS.query, status, taskId, projectId);
-    }
-
-    public boolean updateTaskPriority(String taskId, String projectId, String priority) {
-        return executeUpdate(SQL.UPDATE_PRIORITY.query, priority, taskId, projectId);
-    }
-
-    public boolean updateTaskDueDate(String taskId, String projectId, java.util.Date dueDate) {
-        return executeUpdate(
-                SQL.UPDATE_DUE_DATE.query,
-                new java.sql.Date(dueDate.getTime()),
-                taskId,
-                projectId
-        );
-    }
-
     public boolean deleteByTaskId(String taskId, String projectId) {
         return executeUpdate(SQL.DELETE.query, taskId, projectId);
     }

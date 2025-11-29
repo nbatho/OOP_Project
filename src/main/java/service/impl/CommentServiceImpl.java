@@ -51,15 +51,6 @@ public class CommentServiceImpl implements CommentService {
         }
     }
 
-    @Override
-    public List<Comments> getAllComments() {
-        try {
-            return commentRepository.findAll();
-        } catch (Exception e) {
-            System.out.println("Lỗi khi lấy danh sách comments: " + e.getMessage());
-            return List.of();
-        }
-    }
 
     @Override
     public Comments getCommentById(String commentId) {

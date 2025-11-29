@@ -203,8 +203,6 @@ public class UserServiceImpl implements UserService {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] hashedBytes = md.digest(password.getBytes());
-            
-            // Convert byte array thành hex string
             StringBuilder sb = new StringBuilder();
             for (byte b : hashedBytes) {
                 sb.append(String.format("%02x", b));
@@ -212,7 +210,7 @@ public class UserServiceImpl implements UserService {
             return sb.toString();
         } catch (NoSuchAlgorithmException e) {
             System.err.println("Lỗi khi hash password: " + e.getMessage());
-            return password; // Fallback, không an toàn trong production
+            return password;
         }
     }
 

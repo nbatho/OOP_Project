@@ -12,12 +12,9 @@ public class CommentRepository {
         INSERT("INSERT INTO comments(comment_id, task_id, user_id, body) VALUES (?, ?, ?, ?)"),
         SELECT_ALL("SELECT comment_id, task_id, user_id, body FROM comments"),
         SELECT_BY_ID("SELECT comment_id, task_id, user_id, body FROM comments WHERE comment_id = ?"),
-        SELECT_BY_TASK("SELECT comment_id, task_id, user_id, body FROM comments WHERE task_id = ?"),
-        SELECT_BY_USER("SELECT comment_id, task_id, user_id, body FROM comments WHERE user_id = ?"),
         UPDATE_BODY("UPDATE comments SET body = ? WHERE comment_id = ?"),
         DELETE("DELETE FROM comments WHERE comment_id = ?"),
-        DELETE_BY_TASK("DELETE FROM comments WHERE task_id = ?"),
-        DELETE_BY_USER("DELETE FROM comments WHERE user_id = ?");
+        DELETE_BY_TASK("DELETE FROM comments WHERE task_id = ?");
 
         final String query;
         SQL(String q) { this.query = q; }
@@ -47,14 +44,6 @@ public class CommentRepository {
         return querySingle(SQL.SELECT_BY_ID.query, id);
     }
 
-    public List<Comments> findByTaskId(String taskId) {
-        return queryList(SQL.SELECT_BY_TASK.query, taskId);
-    }
-
-    public List<Comments> findByUserId(String userId) {
-        return queryList(SQL.SELECT_BY_USER.query, userId);
-    }
-
     public boolean updateCommentBody(String commentId, String body) {
         return executeUpdate(SQL.UPDATE_BODY.query, body, commentId);
     }
@@ -70,13 +59,6 @@ public class CommentRepository {
     public boolean deleteByTaskId(String taskId) {
         return executeUpdate(SQL.DELETE_BY_TASK.query, taskId);
     }
-
-    public boolean deleteByUserId(String userId) {
-        return executeUpdate(SQL.DELETE_BY_USER.query, userId);
-    }
-
-
-
     private Comments map(ResultSet rs) throws SQLException {
         return new Comments(
             rs.getString("comment_id"),

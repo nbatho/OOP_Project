@@ -66,16 +66,8 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return projectRepository.getProjectById(projectId);
     }
-    
-    @Override
-    public List<Project> getProjectsByTeamId(String teamId) {
-        if (teamId == null || teamId.trim().isEmpty()) {
-            System.err.println("Team ID không được để trống");
-            return List.of();
-        }
-        return projectRepository.getProjectsByTeamId(teamId);
-    }
-    
+
+
     @Override
     public Project getProjectByName(String name) {
         if (name == null || name.trim().isEmpty()) {

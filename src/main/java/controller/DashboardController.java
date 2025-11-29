@@ -1,12 +1,10 @@
 package main.java.controller;
 
-import main.java.component.ProjectCard;
-import main.java.component.TaskCard;
+import main.java.component.*;
 import main.java.model.*;
 import main.java.service.impl.*;
 import main.java.Utility.Helper;
 import main.java.view.*;
-
 import javax.swing.*;
 import java.util.*;
 
@@ -14,7 +12,6 @@ public class DashboardController {
     private final DashboardView view;
     private final KanbanView kanbanView;
     private final CalendarView calendarView;
-
     private final UserServiceImpl userService = UserServiceImpl.getInstance();
     private final ProjectServiceImpl projectService = ProjectServiceImpl.getInstance();
     private final ProjectMemberServiceImpl projectMemberService = ProjectMemberServiceImpl.getInstance();
@@ -22,7 +19,6 @@ public class DashboardController {
     private final CommentServiceImpl commentService = new CommentServiceImpl();
     private String currentProjectId;
     private List<User> currentProjectMembers = new ArrayList<>();
-
     private final Helper helper;
     public DashboardController(DashboardView view) {
         this.view = view;
@@ -211,7 +207,9 @@ public class DashboardController {
     private void handleLogout() {
         if (view.showConfirmDialog("Bạn có chắc muốn đăng xuất?")) {
             view.dispose();
-            new LoginView();
+            LoginView loginView = new LoginView();
+            new LoginController(loginView);
+
         }
     }
 
