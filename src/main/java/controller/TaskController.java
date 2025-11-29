@@ -66,6 +66,7 @@ public class TaskController {
                 List<User> assignees = card.getAssignees();
                 String status = (String) card.getCmbStatus().getSelectedItem();
                 String priority = (String) card.getCmbPriority().getSelectedItem();
+                Date startDate = card.getStartDateChooser().getDate();
                 Date endDate = card.getEndDateChooser().getDate();
 
                 Task newTask = new Task();
@@ -75,7 +76,9 @@ public class TaskController {
                 newTask.setStatus(status);
                 newTask.setPriority(priority);
                 newTask.setCreatedBy(userService.getCurrentUser().getUserId());
-
+                if (startDate != null) {
+                    newTask.setStartDate(new java.sql.Date(startDate.getTime()));
+                }
                 if (endDate != null) {
                     newTask.setDueDate(new java.sql.Date(endDate.getTime()));
                 }
@@ -100,7 +103,7 @@ public class TaskController {
             TaskCard taskCard = new TaskCard(task.getProjectId(), memberList, true);
             taskCard.setTaskData(task);
             new CommentController(mainView, taskCard, task);
-
+            System.out.println(task);
             taskCard.getBtnSave().addActionListener(e -> handleUpdateTask(taskCard, task));
             taskCard.getBtnDelete().addActionListener(e -> handleDeleteTask(taskCard, task));
         } catch (Exception ex) {
@@ -115,7 +118,10 @@ public class TaskController {
             List<User> userAssignees = card.getAssignees();
             String priority = (String) card.getCmbPriority().getSelectedItem();
             String status = (String) card.getCmbStatus().getSelectedItem();
+
+            Date startDate = card.getStartDateChooser().getDate();
             Date endDate = card.getEndDateChooser().getDate();
+
             Task updatedTask = new Task();
             updatedTask.setTaskId(oldTask.getTaskId());
             updatedTask.setProjectId(oldTask.getProjectId());
@@ -123,9 +129,13 @@ public class TaskController {
             updatedTask.setDescription(description);
             updatedTask.setPriority(priority);
             updatedTask.setStatus(status);
+            if (startDate != null) {
+                updatedTask.setStartDate(new java.sql.Date(startDate.getTime()));
+            }
             if (endDate != null) {
                 updatedTask.setDueDate(new java.sql.Date(endDate.getTime()));
             }
+
             taskService.updateTask(updatedTask, userAssignees);
             loadProjectTasks(updatedTask.getProjectId());
             card.showSuccessMessage("Cập nhật task thành công!");

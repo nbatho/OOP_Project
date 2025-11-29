@@ -11,6 +11,7 @@ public class Task {
     private String description;
     private String status;
     private String priority;
+    private Date  startDate;
     private Date dueDate;
     private String createdBy;
     private Timestamp createdAt;
@@ -18,31 +19,18 @@ public class Task {
     public Task() {}
 
     public Task(String taskId, String projectId, String title, String description, 
-                String status, String priority, Date dueDate, String createdBy) {
+                String status, String priority,Date startDate ,Date dueDate, String createdBy) {
         this.taskId = taskId;
         this.projectId = projectId;
         this.title = title;
         this.description = description;
         this.status = status;
         this.priority = priority;
+        this.startDate = startDate;
         this.dueDate = dueDate;
         this.createdBy = createdBy;
         this.createdAt = new Timestamp(System.currentTimeMillis());
     }
-
-    public Task(String taskId, String projectId, String title, String description,
-                String status, String priority, Date dueDate, String createdBy, Timestamp createdAt) {
-        this.taskId = taskId;
-        this.projectId = projectId;
-        this.title = title;
-        this.description = description;
-        this.status = status;
-        this.priority = priority;
-        this.dueDate = dueDate;
-        this.createdBy = createdBy;
-        this.createdAt = createdAt;
-    }
-
     // Getters
     public String getTaskId() {
         return taskId;
@@ -68,6 +56,9 @@ public class Task {
         return priority;
     }
 
+    public Date getStartDate() {return startDate;}
+
+
     public Date getDueDate() {
         return dueDate;
     }
@@ -83,7 +74,6 @@ public class Task {
     public List<User> getAssignedUsers() {
         return assignedUsers;
     }
-
 
 
     // Setters
@@ -111,6 +101,7 @@ public class Task {
         this.priority = priority;
     }
 
+    public void setStartDate(Date startDate) {this.startDate = startDate;}
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
     }

@@ -186,6 +186,7 @@ public class TaskServiceImpl implements TaskService {
                 task.getDescription(),
                 task.getStatus(),
                 task.getPriority(),
+                task.getStartDate(),
                 task.getDueDate()
             );
         } catch (Exception e) {

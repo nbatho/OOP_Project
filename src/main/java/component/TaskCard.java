@@ -418,7 +418,12 @@ public class TaskCard extends JFrame {
 
         cmbPriority.setSelectedItem(task.getPriority());
         cmbStatus.setSelectedItem(task.getStatus());
-
+        if (task.getDueDate() != null) {
+            endDateChooser.setDate(task.getDueDate());
+        }
+        if (task.getStartDate() != null) {
+            startDateChooser.setDate(task.getStartDate());
+        }
     }
 
     // Getters
