@@ -1,140 +1,104 @@
-#  ỨNG DỤNG QUẢN LÝ TIẾN ĐỘ CÔNG VIỆC
+# ỨNG DỤNG QUẢN LÝ TIẾN ĐỘ CÔNG VIỆC
 
-## ️ Giới thiệu
+##  Giới thiệu dự án
+Ứng dụng quản lý công việc đội nhóm là một ứng dụng Java được xây dựng nhằm mục đích theo dõi, cập nhật tiến độ công việc trong một dự án cá nhân hay đội nhóm.
 
-Ứng dụng **Quản lý tiến độ công việc** là một hệ thống giúp **người dùng, nhóm hoặc tổ chức** có thể **tạo, theo dõi và quản lý các dự án cũng như nhiệm vụ (task)** của mình một cách hiệu quả.
+##  Mục tiêu dự án
+- Ứng dụng nhằm mục đích áp dụng các khái niệm về lập trình hướng đối tượng (OOP), mô hình MVC.
+- Vận dụng kiến thức về cơ sở dữ liệu trong việc quản lý dữ liệu người dùng, dự án, công việc, nhóm làm việc và phân quyền.
+- Mang lại sản phẩm có tính ứng dụng thực tiễn, dễ mở rộng và phát triển thêm các chức năng nâng cao.
 
-Hệ thống hỗ trợ **phân công công việc, gán nhãn, thiết lập thời hạn và theo dõi tiến độ** cho từng nhiệm vụ, đồng thời cho phép **nhiều người dùng cùng tham gia trong một dự án.**
+##  Phạm vi và Đối tượng sử dụng
+**Phạm vi**: Dự án tập trung vào quản lý các đầu việc trong một dự án cụ thể.
+
+**Đối tượng sử dụng**:
+- **Người dùng cá nhân**: Có nhu cầu đặt ra mục tiêu các task nhằm theo dõi tiến độ của dự án.
+- **Các đội nhóm vừa và nhỏ**: Quản lý thành viên và công việc trong nhóm hiệu quả.
 
 ---
 
 ##  Các tính năng chính
 
-###  Người dùng (Users)
-**Chức năng:**
-- Đăng ký tài khoản mới.
-- Đăng nhập vào hệ thống.
-- Cập nhật thông tin cá nhân (họ tên, email, mật khẩu, v.v.).
-- Tạo và quản lý các công việc của bản thân hoặc nhóm.
+###  Quản lý công việc (Task Management)
+- **Kanban Board**: Quản lý công việc trực quan với giao diện bảng Kanban.
+- **Calendar View**: Xem lịch làm việc và hạn chót.
+- **Danh sách công việc**: CRUD nhiệm vụ, checklist, labels, comments.
 
-**Thông tin lưu trữ:**
-- Họ tên
-- Email
-- Mật khẩu
-- Ngày tạo tài khoản
+###  Quản lý Dự án & Nhóm
+- **Dự án**: Quản lý thông tin dự án, tiến độ.
+- **Nhóm**: Quản lý thành viên, phân quyền (Roles & Permissions).
 
----
-
-###  Nhóm làm việc (Teams)
-**Chức năng:**
-- Tạo nhóm mới.
-- Mời thành viên tham gia nhóm.
-- Quản lý vai trò (Role) của từng thành viên.
-
-**Thông tin lưu trữ:**
-- Tên nhóm
-- Ngày tạo
-- Danh sách thành viên
+###  Người dùng
+- Đăng ký, đăng nhập, quản lý profile.
 
 ---
 
-###  Dự án (Projects)
-**Chức năng:**
-- Tạo mới, cập nhật, xóa và xem thông tin dự án.
-- Phân công người thực hiện (thành viên nhóm).
-- Theo dõi tiến độ của từng dự án.
-
-**Thông tin lưu trữ:**
-- Tên dự án
-- Mô tả chi tiết
-- Nhóm thực hiện
-- Ngày tạo
+##  Công nghệ sử dụng
+- **Ngôn ngữ**: Java (JDK 8+)
+- **Cơ sở dữ liệu**: MySQL
+- **Công cụ phát triển**: IntelliJ IDEA, VS Code, MySQL Workbench
+- **Quản lý phiên bản**: GitHub
+- **Giao diện**: Java Swing
+- **Kiến trúc**: Model-View-Controller (MVC)
 
 ---
 
-###  Nhiệm vụ (Tasks)
-**Chức năng:**
-- Tạo, cập nhật, xóa hoặc xem chi tiết nhiệm vụ.
-- Gán nhiệm vụ cho thành viên trong dự án.
-- Thiết lập trạng thái (đang làm, hoàn thành, v.v.).
-- Thiết lập mức độ ưu tiên và hạn chót (deadline).
-- Gắn nhãn (Label) để phân loại công việc.
+##  Cài đặt và Sử dụng
 
-**Thông tin lưu trữ:**
-- Tiêu đề
-- Mô tả
-- Trạng thái
-- Mức độ ưu tiên
-- Thời hạn hoàn thành
-- Người tạo / người được giao
+### 1. Sao chép dự án (Clone Repository)
+Mở terminal hoặc command prompt và chạy lệnh sau để tải dự án về máy:
+```bash
+git clone https://github.com/nbatho/OOP_Project.git
+cd OOP_Project
+```
 
----
+### 2. Cài đặt môi trường (JDK Setup)
+- Đảm bảo máy tính đã cài đặt **JDK 21**.
+- Kiểm tra phiên bản Java bằng lệnh:
+  ```bash
+  java -version
+  ```
 
-### Nhãn (Labels)
-**Chức năng:**
-- Tạo nhãn để phân loại công việc.
-- Gắn nhiều nhãn cho một nhiệm vụ.
+### 3. Thêm thư viện (Add Libraries)
+Dự án sử dụng các thư viện ngoài nằm trong thư mục `lib`. Bạn cần thêm chúng vào **Project Structure / Libraries** trong IDE của mình:
+- `lib/jcalendar-1.4.jar` (Hỗ trợ lịch)
+- `lib/mysql-connector-j-9.5.0.jar` (Kết nối MySQL)
 
-**Thông tin lưu trữ:**
-- Tên nhãn
-- Màu sắc
-- Nhóm sở hữu
+### 4. Thiết lập Cơ sở dữ liệu
+1. Tạo database: `CREATE DATABASE task_manager_db;`
+2. Chạy ứng dụng lần đầu để tự động tạo bảng.
+3. (Tùy chọn) Chạy `docs/dataSechema.sql` để thêm dữ liệu mẫu.
 
----
+### 5. Cấu hình
+Cập nhật `src/main/java/config/DatabaseConnection.java` với thông tin MySQL của bạn.
 
-###  Bình luận (Comments)
-**Chức năng:**
-- Cho phép người dùng trao đổi, thảo luận trong từng nhiệm vụ.
-- Hiển thị thời gian và người bình luận.
-
-**Thông tin lưu trữ:**
-- Nội dung bình luận
-- Người tạo bình luận
-- Thời gian tạo
+### 6. Chạy ứng dụng
+Chạy file `src/Main.java`.
 
 ---
 
-###  Danh sách công việc con (Checklists)
-**Chức năng:**
-- Thêm các công việc con trong mỗi nhiệm vụ.
-- Đánh dấu hoàn thành từng mục nhỏ.
+##  Cấu trúc dự án
+Dự án được tổ chức theo mô hình MVC, phân chia rõ ràng giữa các tầng:
 
-**Thông tin lưu trữ:**
-- Tiêu đề danh sách
-- Nội dung từng mục
-- Trạng thái hoàn thành (đã làm / chưa làm)
-
----
-
-### Phân quyền (Roles & Permissions)
-**Chức năng:**
-- Quản lý vai trò của người dùng trong nhóm hoặc dự án.
-- Gán quyền cụ thể (xem, tạo, sửa, xóa, v.v.) cho từng vai trò.
-
-**Thông tin lưu trữ:**
-- Tên vai trò
-- Danh sách quyền được phép thực hiện
-
----
-
-
-### Công nghệ sử dụng
-- Ngôn ngữ Java (JDK 8+)
-- UI : Java Swing
-- Kiến trúc: Model-View-Controller (MVC)
-- Cơ sở dữ liệu : MySQL
-
----
-### Cấu trúc dự án 
-Dự án được tổ chức theo mô hình MVC với JavaSwing:
-- Model: Chứa các lớp đại diện cho dữ liệu của ứng dụng
-- View: Giao diện ngươời dùng desktop
-- Controller : Xử lý các yêu cầu từ người dùng, tương tác với Model
-- DAO : Data Access Objects - Tương tác với database
-
-
-Dự án được xây dựng dựa trên mô hình hướng đối tượng với các lớp chính 
+```
+src
+└── main
+    └── java
+        ├── config          # Cấu hình hệ thống (DatabaseConnection)
+        ├── controller      # Xử lý logic, điều hướng (LoginController, DashboardController...)
+        ├── model           # Các lớp thực thể (User, Task, Project...)
+        ├── repository      # Tương tác cơ sở dữ liệu (DAO)
+        ├── service         # Xử lý nghiệp vụ (AuthService, TaskService...)
+        ├── view            # Giao diện người dùng (DashboardView, KanbanView...)
+        ├── component       # Các thành phần UI tái sử dụng
+        └── Utility         # Các tiện ích hỗ trợ
+```
 
 <div align="center">
 <img align="center" style="width: 40%; height: auto;" src="./docs/ClassDiagram.png">
 </div>
+
+---
+
+## 📄 Báo cáo & Tài liệu
+- **Link nộp báo cáo**: [Điền link báo cáo tại đây](https://docs.google.com/document/d/1wYD9f5Ori1-Zo6Jsndia_HcDmGf3vs-4NzfKXtR7XSg/edit?tab=t.0)]

@@ -15,7 +15,7 @@ public class GlobalStyle {
     private final Font FONT_SMALL = new Font("Segoe UI", Font.PLAIN, 11);
     private final Font FONT_TITLE = new Font("Segoe UI", Font.BOLD, 24);
     private final Font FONT_INPUT = new Font("Segoe UI", Font.PLAIN, 14);
-    private final static int BASE_WIDTH = 1920;
+    private final static int BASE_WIDTH = 1240;
     private final static int BASE_HEIGHT = 1080;
 
 
@@ -31,14 +31,14 @@ public class GlobalStyle {
     public static void init() {
 
         Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-        currentWidth = screen.width;
-        currentHeight = screen.height;
+        currentWidth = 1240;
+        currentHeight = 1080;
 
 
         SCALE_X = currentWidth / (double) BASE_WIDTH;
         SCALE_Y = currentHeight / (double) BASE_HEIGHT;
 
-        SCALE = (SCALE_X + SCALE_Y) / 2.0;
+        SCALE = Math.min(SCALE_X, SCALE_Y);
 
         applyGlobalScale();
     }
