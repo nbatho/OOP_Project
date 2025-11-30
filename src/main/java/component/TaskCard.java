@@ -87,12 +87,13 @@ public class TaskCard extends JFrame {
         formPanel.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
+        int row = 0;
+        gbc.gridx = row;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1;
         gbc.insets = new Insets(0, 0, 8, 0);
 
-        int row = 0;
+
 
         gbc.gridy = row++;
         formPanel.add(createLabel("Tiêu đề *"), gbc);
@@ -383,18 +384,6 @@ public class TaskCard extends JFrame {
         area.setWrapStyleWord(true);
         return area;
     }
-
-    private JComboBox<String> createComboBox(String[] items) {
-        JComboBox<String> combo = new JComboBox<>(items);
-        combo.setFont(style.getFONT_INPUT());
-        combo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
-        combo.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(style.getCOLOR_BORDER(), 1, true),
-                new EmptyBorder(8, 10, 8, 10)
-        ));
-        return combo;
-    }
-
     private static class UserRenderer extends DefaultListCellRenderer {
         @Override
         public Component getListCellRendererComponent(JList<?> list, Object value,
@@ -428,7 +417,6 @@ public class TaskCard extends JFrame {
 
     // Getters
     public JButton getBtnSave() { return btnSave; }
-    public JButton getBtnCancel() { return btnCancel; }
     public JButton getBtnDelete() {
         return btnDelete;
     }
@@ -437,8 +425,6 @@ public class TaskCard extends JFrame {
     public JTextField getTxtTitle() { return txtTitle; }
     public JTextArea getTxtDescription() { return txtDescription; }
     public JTextArea getTxtComment() { return txtComment; }
-
-    public JComboBox<User> getCmbUser() { return cmbUser; }
     public JComboBox<String> getCmbPriority() { return cmbPriority; }
     public JComboBox<String> getCmbStatus() { return cmbStatus; }
 
@@ -520,39 +506,36 @@ public class TaskCard extends JFrame {
                     "Tiêu đề không được để trống!",
                     "Lỗi nhập liệu",
                     JOptionPane.ERROR_MESSAGE);
-            return false;
+            return true;
         }
         if (assignees.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Người được giao task không được để trống!",
                     "Lỗi",
                     JOptionPane.ERROR_MESSAGE);
-            return false;
+            return true;
         }
         if (startDateChooser.getDate() == null) {
             JOptionPane.showMessageDialog(this,
                     "Ngày bắt đầu không được để trống!",
                     "Lỗi",
                     JOptionPane.ERROR_MESSAGE);
-            return false;
+            return true;
         }
         if (endDateChooser.getDate() == null) {
             JOptionPane.showMessageDialog(this,
                     "Ngày kết thúc không được để trống!",
                     "Lỗi",
                     JOptionPane.ERROR_MESSAGE);
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
     public void showSuccessMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Thành công", JOptionPane.INFORMATION_MESSAGE);
     }
     public void showErrorMessage(String message) {
         JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-    public void showWarningMessage(String message) {
-        JOptionPane.showMessageDialog(this, message, "Cảnh báo", JOptionPane.WARNING_MESSAGE);
     }
     public boolean showConfirmDialog(String message) {
         return JOptionPane.showConfirmDialog(this, message, "Xác nhận", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION;

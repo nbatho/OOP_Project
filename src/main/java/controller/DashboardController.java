@@ -1,16 +1,18 @@
 package main.java.controller;
 
 import main.java.model.User;
+import main.java.service.UserService;
 import main.java.service.impl.UserServiceImpl;
 import main.java.view.DashboardView;
 import main.java.view.LoginView;
 
 public class DashboardController {
     private final DashboardView view;
-    private final UserServiceImpl userService = UserServiceImpl.getInstance();
+    private final UserService userService;
     private TaskController taskController;
 
     public DashboardController(DashboardView view) {
+        this.userService = UserServiceImpl.getInstance();
         this.view = view;
         initUserInfo();
         setupControllers();
@@ -23,7 +25,7 @@ public class DashboardController {
             User user = userService.getCurrentUser();
             if (user != null) view.setUserInitials(user.getFullName());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.err.println(ex);
         }
     }
 

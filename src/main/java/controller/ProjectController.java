@@ -1,10 +1,12 @@
 package main.java.controller;
 
-import main.java.Utility.Helper;
 import main.java.component.ProjectCard;
 import main.java.model.Project;
 import main.java.model.ProjectMember;
 import main.java.model.User;
+import main.java.service.ProjectMemberService;
+import main.java.service.ProjectService;
+import main.java.service.UserService;
 import main.java.service.impl.ProjectMemberServiceImpl;
 import main.java.service.impl.ProjectServiceImpl;
 import main.java.service.impl.UserServiceImpl;
@@ -17,20 +19,19 @@ import java.util.function.Consumer;
 public class ProjectController {
     private final DashboardView view;
     private final Consumer<String> onProjectSelected;
-    private final Helper helper;
-
     private String currentProjectId;
     private List<User> currentProjectMembers = new ArrayList<>();
 
-    private final UserServiceImpl userService = UserServiceImpl.getInstance();
-    private final ProjectServiceImpl projectService = ProjectServiceImpl.getInstance();
-    private final ProjectMemberServiceImpl projectMemberService = ProjectMemberServiceImpl.getInstance();
+    private final UserService userService;
+    private final ProjectService projectService;
+    private final ProjectMemberService projectMemberService;
 
     public ProjectController(DashboardView view, Consumer<String> onProjectSelected) {
+        this.userService = UserServiceImpl.getInstance();
+        this.projectService = ProjectServiceImpl.getInstance();
+        this.projectMemberService = ProjectMemberServiceImpl.getInstance();
         this.view = view;
         this.onProjectSelected = onProjectSelected;
-        this.helper = new Helper();
-
         initListeners();
     }
 

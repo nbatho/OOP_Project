@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.43, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: task_manager_db
+-- Host: localhost    Database: task_manager_db
 -- ------------------------------------------------------
 -- Server version	8.0.43
 
@@ -14,59 +14,6 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-
---
--- Table structure for table `checklist_items`
---
-
-DROP TABLE IF EXISTS `checklist_items`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `checklist_items` (
-  `item_id` char(36) NOT NULL,
-  `checklist_id` char(36) NOT NULL,
-  `content` varchar(255) NOT NULL,
-  `is_done` tinyint(1) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`item_id`),
-  KEY `checklist_id` (`checklist_id`),
-  CONSTRAINT `checklist_items_ibfk_1` FOREIGN KEY (`checklist_id`) REFERENCES `checklists` (`checklist_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `checklist_items`
---
-
-LOCK TABLES `checklist_items` WRITE;
-/*!40000 ALTER TABLE `checklist_items` DISABLE KEYS */;
-/*!40000 ALTER TABLE `checklist_items` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `checklists`
---
-
-DROP TABLE IF EXISTS `checklists`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `checklists` (
-  `checklist_id` char(36) NOT NULL,
-  `task_id` char(36) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  PRIMARY KEY (`checklist_id`),
-  KEY `task_id` (`task_id`),
-  CONSTRAINT `checklists_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`task_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `checklists`
---
-
-LOCK TABLES `checklists` WRITE;
-/*!40000 ALTER TABLE `checklists` DISABLE KEYS */;
-/*!40000 ALTER TABLE `checklists` ENABLE KEYS */;
-UNLOCK TABLES;
 
 --
 -- Table structure for table `comments`
@@ -97,57 +44,6 @@ LOCK TABLES `comments` WRITE;
 /*!40000 ALTER TABLE `comments` DISABLE KEYS */;
 INSERT INTO `comments` VALUES ('CM1762799105676','TK10','U_ADMIN','hoàn thiện đầy đủ thông tin nhé','2025-11-10 11:25:06'),('CM3','TK15','U18','Sử dụng GitLab CI/CD hay Jenkins?','2025-11-10 08:33:15'),('f8a7b754-0d60-4921-96ea-96f8ce95e15a','63cf2210-607f-495e-a5d8-c0b7bab61e7e','a53508eb-813c-4f67-bde7-de0eaef69bcb','helo','2025-11-29 13:11:04');
 /*!40000 ALTER TABLE `comments` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `labels`
---
-
-DROP TABLE IF EXISTS `labels`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `labels` (
-  `label_id` char(36) NOT NULL,
-  `team_id` char(36) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `color` char(7) NOT NULL,
-  PRIMARY KEY (`label_id`),
-  KEY `team_id` (`team_id`),
-  CONSTRAINT `labels_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`team_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `labels`
---
-
-LOCK TABLES `labels` WRITE;
-/*!40000 ALTER TABLE `labels` DISABLE KEYS */;
-/*!40000 ALTER TABLE `labels` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `permissions`
---
-
-DROP TABLE IF EXISTS `permissions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `permissions` (
-  `permission_id` char(36) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `description` text,
-  PRIMARY KEY (`permission_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `permissions`
---
-
-LOCK TABLES `permissions` WRITE;
-/*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -207,32 +103,6 @@ INSERT INTO `projects` VALUES ('15012acc-e1f4-41e9-9181-d938e1332238','test','12
 UNLOCK TABLES;
 
 --
--- Table structure for table `role_permissions`
---
-
-DROP TABLE IF EXISTS `role_permissions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `role_permissions` (
-  `role_id` char(36) NOT NULL,
-  `permission_id` char(36) NOT NULL,
-  PRIMARY KEY (`role_id`,`permission_id`),
-  KEY `permission_id` (`permission_id`),
-  CONSTRAINT `role_permissions_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`) ON DELETE CASCADE,
-  CONSTRAINT `role_permissions_ibfk_2` FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`permission_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `role_permissions`
---
-
-LOCK TABLES `role_permissions` WRITE;
-/*!40000 ALTER TABLE `role_permissions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `role_permissions` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `roles`
 --
 
@@ -279,34 +149,8 @@ CREATE TABLE `task_assignees` (
 
 LOCK TABLES `task_assignees` WRITE;
 /*!40000 ALTER TABLE `task_assignees` DISABLE KEYS */;
-INSERT INTO `task_assignees` VALUES ('0daaff56-b14e-4972-b71f-ac25acbc32e1','a53508eb-813c-4f67-bde7-de0eaef69bcb'),('63cf2210-607f-495e-a5d8-c0b7bab61e7e','a53508eb-813c-4f67-bde7-de0eaef69bcb'),('7ea2cfdb-9c6d-4623-8289-1e0305f49a5e','a53508eb-813c-4f67-bde7-de0eaef69bcb'),('fedf492d-0828-436f-8a60-bebef9bd60c8','a53508eb-813c-4f67-bde7-de0eaef69bcb'),('f76ef839-4a2d-46b0-a73f-56dc9c7a6dfc','U_ADMIN'),('7ea2cfdb-9c6d-4623-8289-1e0305f49a5e','U1'),('TK17','U1'),('7ea2cfdb-9c6d-4623-8289-1e0305f49a5e','U10'),('TK7','U12'),('8f8b0367-f5e8-44b0-9be3-9fa1b24a0afd','U13'),('TK19','U13'),('TK12','U14'),('TK24','U14'),('TK20','U15'),('TK6','U15'),('b15d0a1b-4364-4989-bf87-095c9be55ee5','U16'),('TK15','U16'),('TK16','U16'),('TK6','U16'),('TK11','U17'),('TK23','U17'),('d39b66ba-7f0b-4f6b-ad87-ad4e43bb78fa','U1762907651539'),('fedf492d-0828-436f-8a60-bebef9bd60c8','U1762907651539'),('TK22','U19'),('TK2','U2'),('4e4a753d-a865-4da3-8c8a-acbe06f8a77a','U20'),('TK15','U20'),('TK8','U3'),('TK3','U5'),('TK13','U6'),('TK4','U6'),('TK14','U7'),('TK9','U7'),('TK21','U8'),('TK18','U9');
+INSERT INTO `task_assignees` VALUES ('63cf2210-607f-495e-a5d8-c0b7bab61e7e','a53508eb-813c-4f67-bde7-de0eaef69bcb'),('7ea2cfdb-9c6d-4623-8289-1e0305f49a5e','a53508eb-813c-4f67-bde7-de0eaef69bcb'),('fedf492d-0828-436f-8a60-bebef9bd60c8','a53508eb-813c-4f67-bde7-de0eaef69bcb'),('f76ef839-4a2d-46b0-a73f-56dc9c7a6dfc','U_ADMIN'),('7ea2cfdb-9c6d-4623-8289-1e0305f49a5e','U1'),('TK17','U1'),('7ea2cfdb-9c6d-4623-8289-1e0305f49a5e','U10'),('TK7','U12'),('8f8b0367-f5e8-44b0-9be3-9fa1b24a0afd','U13'),('TK19','U13'),('TK12','U14'),('TK24','U14'),('TK20','U15'),('TK6','U15'),('b15d0a1b-4364-4989-bf87-095c9be55ee5','U16'),('TK15','U16'),('TK16','U16'),('TK6','U16'),('TK11','U17'),('TK23','U17'),('d39b66ba-7f0b-4f6b-ad87-ad4e43bb78fa','U1762907651539'),('fedf492d-0828-436f-8a60-bebef9bd60c8','U1762907651539'),('TK22','U19'),('TK2','U2'),('4e4a753d-a865-4da3-8c8a-acbe06f8a77a','U20'),('TK15','U20'),('TK8','U3'),('TK3','U5'),('TK13','U6'),('TK4','U6'),('TK14','U7'),('TK9','U7'),('TK21','U8'),('TK18','U9');
 /*!40000 ALTER TABLE `task_assignees` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `task_labels`
---
-
-DROP TABLE IF EXISTS `task_labels`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `task_labels` (
-  `task_id` char(36) NOT NULL,
-  `label_id` char(36) NOT NULL,
-  PRIMARY KEY (`task_id`,`label_id`),
-  KEY `label_id` (`label_id`),
-  CONSTRAINT `task_labels_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`task_id`) ON DELETE CASCADE,
-  CONSTRAINT `task_labels_ibfk_2` FOREIGN KEY (`label_id`) REFERENCES `labels` (`label_id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `task_labels`
---
-
-LOCK TABLES `task_labels` WRITE;
-/*!40000 ALTER TABLE `task_labels` DISABLE KEYS */;
-/*!40000 ALTER TABLE `task_labels` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -341,61 +185,8 @@ CREATE TABLE `tasks` (
 
 LOCK TABLES `tasks` WRITE;
 /*!40000 ALTER TABLE `tasks` DISABLE KEYS */;
-INSERT INTO `tasks` VALUES ('0daaff56-b14e-4972-b71f-ac25acbc32e1','P2','test tao task moi','new task','2025-11-27','IN_PROGRESS','HIGH','2025-11-30','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-29 16:48:15'),('4e4a753d-a865-4da3-8c8a-acbe06f8a77a','P3','User tao tho','THO','2025-11-28','TODO','HIGH','2025-11-27','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-26 08:26:11'),('63cf2210-607f-495e-a5d8-c0b7bab61e7e','P2','Test Delete','demo','2025-11-28','TODO','HIGH','2025-11-26','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-26 08:12:29'),('7ea2cfdb-9c6d-4623-8289-1e0305f49a5e','P2','hehe','hehe','2025-11-28','TODO','HIGH','2025-11-27','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-26 08:46:02'),('8f8b0367-f5e8-44b0-9be3-9fa1b24a0afd','P4','Nghich thu','','2025-11-28','TODO','LOW','2025-11-27','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-25 12:32:08'),('b15d0a1b-4364-4989-bf87-095c9be55ee5','4826f8f7-f519-48e1-a593-f7cf59d501b6','ọc ọc 123','','2025-11-28','TODO','HIGH','2025-11-26','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-29 03:37:22'),('d39b66ba-7f0b-4f6b-ad87-ad4e43bb78fa','5fb21d79-a9fb-4d33-8dc0-5a4656f666cc','123','123','2025-11-28','DONE','HIGH','2025-11-27','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-28 08:11:15'),('f76ef839-4a2d-46b0-a73f-56dc9c7a6dfc','P4','demo','omed','2025-11-28','IN_PROGRESS','HIGH','2025-11-28','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-25 12:41:53'),('fedf492d-0828-436f-8a60-bebef9bd60c8','5fb21d79-a9fb-4d33-8dc0-5a4656f666cc','123','123','2025-11-28','TODO','HIGH','2025-11-28','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-27 07:14:00'),('TK10','P2','Prototype mobile screens','Tạo bản mẫu (prototype) chi tiết cho các màn hình di động.','2025-11-28','TODO','HIGH','2025-11-25','U14','2025-11-10 08:33:15'),('TK11','P2','Test mobile app trên 3 thiết bị','Kiểm thử khả năng tương thích của ứng dụng trên iOS, Android và Tablet.','2025-11-28','TODO','HIGH','2025-12-20','U12','2025-11-10 08:33:15'),('TK12','P2','Requirement gathering','Thu thập và phân tích yêu cầu nghiệp vụ chi tiết.','2025-11-28','CANCELLED','LOW','2025-11-29','U14','2025-11-10 08:33:15'),('TK13','P3','JWT Access/Refresh token','Phát triển logic tạo, kiểm tra và làm mới JWT.','2025-11-28','TODO','HIGH','2025-11-28','U5','2025-11-10 08:33:15'),('TK14','P3','OAuth2 Google Login','Tích hợp đăng nhập thông qua Google OAuth2.','2025-11-28','TODO','LOW','2025-12-05','U5','2025-11-10 08:33:15'),('TK15','P3','CI/CD pipeline','Xây dựng pipeline tự động hóa triển khai (Deployment) cho Auth Service.','2025-11-28','TODO','HIGH','2025-12-10','U5','2025-11-10 08:33:15'),('TK16','P3','Test login & token expiration','Kiểm thử bảo mật đăng nhập và cơ chế hết hạn token.','2025-11-28','TODO','LOW','2025-12-12','U7','2025-11-10 08:33:15'),('TK17','P4','Admin table UI + pagination','Xây dựng giao diện bảng quản trị với chức năng phân trang.','2025-11-28','TODO','LOW','2025-11-30','U13','2025-11-10 08:33:15'),('TK18','P4','Dashboard charts','Thiết kế và triển khai các biểu đồ hiển thị dữ liệu trên Dashboard.','2025-11-28','TODO','LOW','2025-12-05','U13','2025-11-10 08:33:15'),('TK19','P4','Functional specification','Viết tài liệu đặc tả chức năng chi tiết cho toàn bộ Dashboard.','2025-11-28','DONE','LOW','2025-11-18','U13','2025-11-10 08:33:15'),('TK2','P1','Product Detail UI + Responsive','Phát triển trang chi tiết sản phẩm, đảm bảo hiển thị tốt trên di động.','2025-11-28','TODO','HIGH','2025-12-10','U13','2025-11-10 08:33:15'),('TK20','P4','Regression test','Thực hiện kiểm thử hồi quy cho toàn bộ chức năng hiện có.','2025-11-28','TODO','LOW','2025-12-10','U1','2025-11-10 08:33:15'),('TK21','P5','LLM API integration','Tích hợp API của mô hình ngôn ngữ lớn (LLM) vào Backend.','2025-11-28','TODO','HIGH','2025-12-15','U14','2025-11-10 08:33:15'),('TK22','P5','Deploy inference server','Triển khai máy chủ suy luận (Inference Server) cho mô hình AI.','2025-11-28','TODO','HIGH','2025-12-20','U14','2025-11-10 08:33:15'),('TK23','P5','Test conversation flows','Kiểm thử các kịch bản hội thoại phức tạp của Chatbot.','2025-11-28','TODO','LOW','2025-12-22','U14','2025-11-10 08:33:15'),('TK24','P5','Business flow diagrams','Thiết kế sơ đồ luồng nghiệp vụ của Chatbot.','2025-11-28','DONE','LOW','2025-11-15','U14','2025-11-10 08:33:15'),('TK3','P1','API Products (CRUD)','Xây dựng API cho phép Thêm, Đọc, Cập nhật, Xóa sản phẩm.','2025-11-28','TODO','HIGH','2025-11-25','U12','2025-11-10 08:33:15'),('TK4','P1','Payment Integration','Tích hợp cổng thanh toán bên thứ ba (ví dụ: VNPAY/Momo).','2025-11-28','TODO','HIGH','2025-12-15','U12','2025-11-10 08:33:15'),('TK6','P1','Test payment flow','Xây dựng kịch bản và thực hiện kiểm thử end-to-end luồng thanh toán.','2025-11-28','TODO','HIGH','2025-12-16','U12','2025-11-10 08:33:15'),('TK7','P1','Viết SRS + Use Case','Tài liệu đặc tả yêu cầu phần mềm và các trường hợp sử dụng.','2025-11-28','DONE','LOW','2025-11-15','U12','2025-11-10 08:33:15'),('TK8','P2','Write booking UI on React Native','Xây dựng giao diện đặt lịch trên ứng dụng di động.','2025-11-28','TODO','LOW','2025-12-05','U14','2025-11-10 08:33:15'),('TK9','P2','API schedule / booking','Xây dựng các API quản lý lịch hẹn và đặt chỗ.','2025-11-28','TODO','HIGH','2025-12-10','U14','2025-11-10 08:33:15');
+INSERT INTO `tasks` VALUES ('4e4a753d-a865-4da3-8c8a-acbe06f8a77a','P3','User tao tho','THO','2025-11-28','TODO','HIGH','2025-11-27','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-26 08:26:11'),('63cf2210-607f-495e-a5d8-c0b7bab61e7e','P2','Test Delete','demo','2025-11-28','TODO','HIGH','2025-11-26','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-26 08:12:29'),('7ea2cfdb-9c6d-4623-8289-1e0305f49a5e','P2','hehe','hehe','2025-11-28','TODO','HIGH','2025-11-27','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-26 08:46:02'),('8f8b0367-f5e8-44b0-9be3-9fa1b24a0afd','P4','Nghich thu','','2025-11-28','TODO','LOW','2025-11-27','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-25 12:32:08'),('b15d0a1b-4364-4989-bf87-095c9be55ee5','4826f8f7-f519-48e1-a593-f7cf59d501b6','ọc ọc 123','','2025-11-28','TODO','HIGH','2025-11-26','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-29 03:37:22'),('d39b66ba-7f0b-4f6b-ad87-ad4e43bb78fa','5fb21d79-a9fb-4d33-8dc0-5a4656f666cc','123','123','2025-11-28','DONE','HIGH','2025-11-27','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-28 08:11:15'),('f76ef839-4a2d-46b0-a73f-56dc9c7a6dfc','P4','demo','omed','2025-11-28','IN_PROGRESS','HIGH','2025-11-28','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-25 12:41:53'),('fedf492d-0828-436f-8a60-bebef9bd60c8','5fb21d79-a9fb-4d33-8dc0-5a4656f666cc','123','123','2025-11-28','TODO','HIGH','2025-11-28','a53508eb-813c-4f67-bde7-de0eaef69bcb','2025-11-27 07:14:00'),('TK10','P2','Prototype mobile screens','Tạo bản mẫu (prototype) chi tiết cho các màn hình di động.','2025-11-28','TODO','HIGH','2025-11-25','U14','2025-11-10 08:33:15'),('TK11','P2','Test mobile app trên 3 thiết bị','Kiểm thử khả năng tương thích của ứng dụng trên iOS, Android và Tablet.','2025-11-28','TODO','HIGH','2025-12-20','U12','2025-11-10 08:33:15'),('TK12','P2','Requirement gathering','Thu thập và phân tích yêu cầu nghiệp vụ chi tiết.','2025-11-28','CANCELLED','LOW','2025-11-29','U14','2025-11-10 08:33:15'),('TK13','P3','JWT Access/Refresh token','Phát triển logic tạo, kiểm tra và làm mới JWT.','2025-11-28','TODO','HIGH','2025-11-28','U5','2025-11-10 08:33:15'),('TK14','P3','OAuth2 Google Login','Tích hợp đăng nhập thông qua Google OAuth2.','2025-11-28','TODO','LOW','2025-12-05','U5','2025-11-10 08:33:15'),('TK15','P3','CI/CD pipeline','Xây dựng pipeline tự động hóa triển khai (Deployment) cho Auth Service.','2025-11-28','TODO','HIGH','2025-12-10','U5','2025-11-10 08:33:15'),('TK16','P3','Test login & token expiration','Kiểm thử bảo mật đăng nhập và cơ chế hết hạn token.','2025-11-28','TODO','LOW','2025-12-12','U7','2025-11-10 08:33:15'),('TK17','P4','Admin table UI + pagination','Xây dựng giao diện bảng quản trị với chức năng phân trang.','2025-11-28','TODO','LOW','2025-11-30','U13','2025-11-10 08:33:15'),('TK18','P4','Dashboard charts','Thiết kế và triển khai các biểu đồ hiển thị dữ liệu trên Dashboard.','2025-11-28','TODO','LOW','2025-12-05','U13','2025-11-10 08:33:15'),('TK19','P4','Functional specification','Viết tài liệu đặc tả chức năng chi tiết cho toàn bộ Dashboard.','2025-11-28','DONE','LOW','2025-11-18','U13','2025-11-10 08:33:15'),('TK2','P1','Product Detail UI + Responsive','Phát triển trang chi tiết sản phẩm, đảm bảo hiển thị tốt trên di động.','2025-11-28','TODO','HIGH','2025-12-10','U13','2025-11-10 08:33:15'),('TK20','P4','Regression test','Thực hiện kiểm thử hồi quy cho toàn bộ chức năng hiện có.','2025-11-28','TODO','LOW','2025-12-10','U1','2025-11-10 08:33:15'),('TK21','P5','LLM API integration','Tích hợp API của mô hình ngôn ngữ lớn (LLM) vào Backend.','2025-11-28','TODO','HIGH','2025-12-15','U14','2025-11-10 08:33:15'),('TK22','P5','Deploy inference server','Triển khai máy chủ suy luận (Inference Server) cho mô hình AI.','2025-11-28','TODO','HIGH','2025-12-20','U14','2025-11-10 08:33:15'),('TK23','P5','Test conversation flows','Kiểm thử các kịch bản hội thoại phức tạp của Chatbot.','2025-11-28','TODO','LOW','2025-12-22','U14','2025-11-10 08:33:15'),('TK24','P5','Business flow diagrams','Thiết kế sơ đồ luồng nghiệp vụ của Chatbot.','2025-11-28','DONE','LOW','2025-11-15','U14','2025-11-10 08:33:15'),('TK3','P1','API Products (CRUD)','Xây dựng API cho phép Thêm, Đọc, Cập nhật, Xóa sản phẩm.','2025-11-28','TODO','HIGH','2025-11-25','U12','2025-11-10 08:33:15'),('TK4','P1','Payment Integration','Tích hợp cổng thanh toán bên thứ ba (ví dụ: VNPAY/Momo).','2025-11-28','TODO','HIGH','2025-12-15','U12','2025-11-10 08:33:15'),('TK6','P1','Test payment flow','Xây dựng kịch bản và thực hiện kiểm thử end-to-end luồng thanh toán.','2025-11-28','TODO','HIGH','2025-12-16','U12','2025-11-10 08:33:15'),('TK7','P1','Viết SRS + Use Case','Tài liệu đặc tả yêu cầu phần mềm và các trường hợp sử dụng.','2025-11-28','DONE','LOW','2025-11-15','U12','2025-11-10 08:33:15'),('TK8','P2','Write booking UI on React Native','Xây dựng giao diện đặt lịch trên ứng dụng di động.','2025-11-28','TODO','LOW','2025-12-05','U14','2025-11-10 08:33:15'),('TK9','P2','API schedule / booking','Xây dựng các API quản lý lịch hẹn và đặt chỗ.','2025-11-28','TODO','HIGH','2025-12-10','U14','2025-11-10 08:33:15');
 /*!40000 ALTER TABLE `tasks` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `team_members`
---
-
-DROP TABLE IF EXISTS `team_members`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `team_members` (
-  `team_id` char(36) NOT NULL,
-  `user_id` char(36) NOT NULL,
-  `role_id` char(36) NOT NULL,
-  PRIMARY KEY (`team_id`,`user_id`),
-  KEY `user_id` (`user_id`),
-  KEY `role_id` (`role_id`),
-  CONSTRAINT `team_members_ibfk_1` FOREIGN KEY (`team_id`) REFERENCES `teams` (`team_id`) ON DELETE CASCADE,
-  CONSTRAINT `team_members_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
-  CONSTRAINT `team_members_ibfk_3` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `team_members`
---
-
-LOCK TABLES `team_members` WRITE;
-/*!40000 ALTER TABLE `team_members` DISABLE KEYS */;
-/*!40000 ALTER TABLE `team_members` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `teams`
---
-
-DROP TABLE IF EXISTS `teams`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `teams` (
-  `team_id` char(36) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`team_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `teams`
---
-
-LOCK TABLES `teams` WRITE;
-/*!40000 ALTER TABLE `teams` DISABLE KEYS */;
-/*!40000 ALTER TABLE `teams` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -435,4 +226,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-11-29 23:49:13
+-- Dump completed on 2025-11-30  9:56:15

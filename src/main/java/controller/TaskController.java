@@ -3,6 +3,9 @@ package main.java.controller;
 import main.java.component.TaskCard;
 import main.java.model.Task;
 import main.java.model.User;
+import main.java.service.ProjectMemberService;
+import main.java.service.TaskService;
+import main.java.service.UserService;
 import main.java.service.impl.ProjectMemberServiceImpl;
 import main.java.service.impl.TaskServiceImpl;
 import main.java.service.impl.UserServiceImpl;
@@ -17,12 +20,15 @@ public class TaskController {
     private final DashboardView mainView;
     private final KanbanView kanbanView;
     private final CalendarView calendarView;
-    private final TaskServiceImpl taskService = new TaskServiceImpl();
-    private final ProjectMemberServiceImpl projectMemberService = ProjectMemberServiceImpl.getInstance();
-    private final UserServiceImpl userService = UserServiceImpl.getInstance();
+    private final TaskService taskService;
+    private final ProjectMemberService projectMemberService;
+    private final UserService userService;
     private final ProjectController projectController;
 
     public TaskController(DashboardView mainView, ProjectController projectController) {
+        this.taskService = new TaskServiceImpl();
+        this.projectMemberService  = ProjectMemberServiceImpl.getInstance();
+        this.userService = UserServiceImpl.getInstance();
         this.mainView = mainView;
         this.projectController = projectController;
         this.kanbanView = mainView.getKanbanView();
@@ -37,8 +43,10 @@ public class TaskController {
         kanbanView.setTaskClickListener(this::onTaskClicked);
         calendarView.setTaskClickListener(this::onTaskClicked);
     }
+
     public void loadProjectTasks(String projectId) {
         try {
+            // taskService ở đây là Interface, nên chỉ gọi được các hàm định nghĩa trong Interface
             List<Task> listTasks = taskService.getTasksWithAssignees(projectId);
             kanbanView.updateTasks(listTasks);
             calendarView.updateTasks(listTasks);
@@ -59,7 +67,7 @@ public class TaskController {
 
         card.getBtnSave().addActionListener(e -> {
             try {
-                if (!card.validateInput()) return;
+                if (card.validateInput()) return;
 
                 String title = card.getTxtTitle().getText().trim();
                 String description = card.getTxtDescription().getText().trim();
@@ -76,6 +84,7 @@ public class TaskController {
                 newTask.setStatus(status);
                 newTask.setPriority(priority);
                 newTask.setCreatedBy(userService.getCurrentUser().getUserId());
+
                 if (startDate != null) {
                     newTask.setStartDate(new java.sql.Date(startDate.getTime()));
                 }
@@ -98,6 +107,7 @@ public class TaskController {
 
     private void onTaskClicked(Task task) {
         try {
+            // projectMemberService là Interface
             List<User> memberList = projectMemberService.getProjectMember(task.getProjectId());
 
             TaskCard taskCard = new TaskCard(task.getProjectId(), memberList, true);
@@ -110,9 +120,12 @@ public class TaskController {
             mainView.showErrorMessage("Không thể mở task: " + ex.getMessage());
         }
     }
+
+    // Các hàm handleUpdateTask và handleDeleteTask giữ nguyên logic
+    // Vì Interface TaskService cũng phải có các hàm updateTask, deleteTask
     private void handleUpdateTask(TaskCard card, Task oldTask) {
         try {
-            if (!card.validateInput()) return;
+            if (card.validateInput()) return;
             String title = card.getTxtTitle().getText().trim();
             String description = card.getTxtDescription().getText().trim();
             List<User> userAssignees = card.getAssignees();
@@ -144,6 +157,7 @@ public class TaskController {
             card.showErrorMessage("Không thể cập nhật task: " + ex.getMessage());
         }
     }
+
     private void handleDeleteTask(TaskCard card, Task task) {
         String currentProjectId = projectController.getCurrentProjectId();
         if (currentProjectId == null) return;

@@ -16,14 +16,7 @@ public class RegisterController {
     public RegisterController(RegisterView view) {
         this.view = view;
         this.userService = new UserServiceImpl();
-
-        this.view.getBtnRegister().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                handleRegister();
-            }
-        });
-
+        this.view.getBtnRegister().addActionListener(e -> handleRegister());
         this.view.getLblLogin().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {

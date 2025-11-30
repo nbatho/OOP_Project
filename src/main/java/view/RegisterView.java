@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class RegisterView extends JFrame {
+    // Khai báo biến nội bộ (Tên biến có thể đặt tùy ý, quan trọng là hàm get ở dưới)
     private JTextField txtFullName;
     private JTextField txtEmail;
     private JPasswordField txtPassword;
@@ -15,11 +16,10 @@ public class RegisterView extends JFrame {
     public RegisterView() {
         setTitle("Đăng ký");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(GlobalStyle.scale(600), GlobalStyle.scale(800));
+        setSize(GlobalStyle.scale(600), GlobalStyle.scale(850));
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
         initUI();
-        setVisible(true);
     }
 
     private void initUI() {
@@ -35,21 +35,17 @@ public class RegisterView extends JFrame {
         titlePanel.setOpaque(false);
         titlePanel.add(lblTitle);
         titlePanel.add(lblSubtitle);
-
         JPanel card = new JPanel(new GridBagLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(new Color(230, 230, 230), 1, true),
                 BorderFactory.createEmptyBorder(GlobalStyle.scale(25), GlobalStyle.scale(20), GlobalStyle.scale(25), GlobalStyle.scale(20))
         ));
-
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(GlobalStyle.scale(6), 0, GlobalStyle.scale(6), 0);
+        gbc.insets = new Insets(GlobalStyle.scale(4), 0, GlobalStyle.scale(4), 0);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.gridx = 0;
         gbc.weightx = 1;
-
-
         JLabel lblFormTitle = new JLabel("Đăng ký", SwingConstants.CENTER);
         lblFormTitle.setFont(new Font("Segoe UI", Font.BOLD, GlobalStyle.scale(20)));
         lblFormTitle.setForeground(new Color(0x005B50));
@@ -61,8 +57,6 @@ public class RegisterView extends JFrame {
         lblFormSub.setForeground(Color.GRAY);
         gbc.gridy = 1;
         card.add(lblFormSub, gbc);
-
-
         JLabel lblName = new JLabel("Họ và tên");
         lblName.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(13)));
         gbc.gridy = 2;
@@ -72,8 +66,6 @@ public class RegisterView extends JFrame {
         styleInput(txtFullName);
         gbc.gridy = 3;
         card.add(txtFullName, gbc);
-
-
         JLabel lblEmail = new JLabel("Email");
         lblEmail.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(13)));
         gbc.gridy = 4;
@@ -84,36 +76,37 @@ public class RegisterView extends JFrame {
         gbc.gridy = 5;
         card.add(txtEmail, gbc);
 
-
+        gbc.gridy = 6;
+        card.add(createHelperLabel("* Ví dụ: abc@gmail.com"), gbc);
         JLabel lblPassword = new JLabel("Mật khẩu");
         lblPassword.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(13)));
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         card.add(lblPassword, gbc);
 
         txtPassword = new JPasswordField("");
         styleInput(txtPassword);
-        gbc.gridy = 7;
+        gbc.gridy = 8;
         card.add(txtPassword, gbc);
 
-
+        gbc.gridy = 9;
+        card.add(createHelperLabel("* Tối thiểu 8 ký tự"), gbc);
         JLabel lblRePassword = new JLabel("Xác nhận mật khẩu");
         lblRePassword.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(13)));
-        gbc.gridy = 8;
+        gbc.gridy = 10;
         card.add(lblRePassword, gbc);
 
         txtRePassword = new JPasswordField("");
         styleInput(txtRePassword);
-        gbc.gridy = 9;
+        gbc.gridy = 11;
         card.add(txtRePassword, gbc);
 
-
+        gbc.gridy = 12;
+        card.add(createHelperLabel("* Nhập lại mật khẩu trùng khớp"), gbc);
         chkAgree = new JCheckBox("Tôi đồng ý với Điều khoản sử dụng và Chính sách bảo mật");
         chkAgree.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(12)));
         chkAgree.setOpaque(false);
-        gbc.gridy = 10;
+        gbc.gridy = 13;
         card.add(chkAgree, gbc);
-
-
         JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
         bottomPanel.setOpaque(false);
@@ -136,21 +129,18 @@ public class RegisterView extends JFrame {
         lblLoginLink = new JLabel("Đăng nhập");
         lblLoginLink.setFont(new Font("Segoe UI", Font.BOLD, GlobalStyle.scale(12)));
         lblLoginLink.setForeground(new Color(0x00796B));
+        lblLoginLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
         loginPanel.add(lblHaveAcc);
         loginPanel.add(lblLoginLink);
         bottomPanel.add(loginPanel);
 
-        gbc.gridy = 11;
+        gbc.gridy = 14;
         card.add(bottomPanel, gbc);
-
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
         content.setBackground(new Color(0xF8FDFD));
         content.setBorder(BorderFactory.createEmptyBorder(
-                GlobalStyle.scale(30),
-                GlobalStyle.scale(50),
-                GlobalStyle.scale(30),
-                GlobalStyle.scale(50)
+                GlobalStyle.scale(20), GlobalStyle.scale(50), GlobalStyle.scale(20), GlobalStyle.scale(50)
         ));
         content.add(Box.createVerticalStrut(GlobalStyle.scale(20)));
         content.add(titlePanel);
@@ -161,6 +151,12 @@ public class RegisterView extends JFrame {
         add(content, BorderLayout.CENTER);
     }
 
+    private JLabel createHelperLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Segoe UI", Font.ITALIC, GlobalStyle.scale(11)));
+        label.setForeground(new Color(150, 150, 150));
+        return label;
+    }
 
     private void styleInput(JTextField field) {
         field.setFont(new Font("Segoe UI", Font.PLAIN, GlobalStyle.scale(14)));
@@ -169,20 +165,14 @@ public class RegisterView extends JFrame {
                 BorderFactory.createEmptyBorder(10, 12, 10, 12)
         ));
     }
-    public void showError(String message) {
-        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
-    }
-
-    public void showSuccess(String message) {
-        JOptionPane.showMessageDialog(this, message, "Thành công", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void showInfo(String message) {
-        JOptionPane.showMessageDialog(this, message, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
-    }
     public JTextField getTxtUsername() {
         return txtFullName;
     }
+
+    public JTextField getTxtEmail() {
+        return txtEmail;
+    }
+
     public JPasswordField getTxtPassword() {
         return txtPassword;
     }
@@ -190,17 +180,21 @@ public class RegisterView extends JFrame {
     public JPasswordField getTxtRePassword() {
         return txtRePassword;
     }
-
-    public JTextField getTxtEmail() {
-        return txtEmail;
-    }
     public JCheckBox getAgree() {
         return chkAgree;
     }
+
     public JButton getBtnRegister() {
         return btnRegister;
     }
     public JLabel getLblLogin() {
         return lblLoginLink;
+    }
+    public void showError(String message) {
+        JOptionPane.showMessageDialog(this, message, "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+
+    public void showSuccess(String message) {
+        JOptionPane.showMessageDialog(this, message, "Thành công", JOptionPane.INFORMATION_MESSAGE);
     }
 }

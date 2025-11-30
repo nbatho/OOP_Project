@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 import main.java.model.User;
 import main.java.repository.UserRepository;
-import main.java.service.ProjectMemberService;
+import java.util.regex.Pattern;
 import main.java.service.UserService;
 
 public class UserServiceImpl implements UserService {
@@ -14,6 +14,7 @@ public class UserServiceImpl implements UserService {
     private UserService userService;
     private final UserRepository userRepository;
     private User currentUser = null;
+    private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     public UserServiceImpl() {
         this.userRepository = new UserRepository();
     }
@@ -36,35 +37,44 @@ public class UserServiceImpl implements UserService {
             System.err.println("User object không được null");
             return false;
         }
-        
-        // Validate dữ liệu
+
         if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
             System.err.println("Email không được để trống");
             return false;
         }
-        
+
+        if (!Pattern.matches(EMAIL_PATTERN, user.getEmail())) {
+            System.err.println("Email không đúng định dạng (phải chứa @ và tên miền, v.d: abc@gmail.com)");
+            return false;
+        }
+
         if (user.getFullName() == null || user.getFullName().trim().isEmpty()) {
             System.err.println("Full name không được để trống");
             return false;
         }
-        
-        // Kiểm tra email đã tồn tại chưa
+
+        String rawPassword = user.getPasswordHash();
+
+        if (rawPassword == null || rawPassword.trim().isEmpty()) {
+            System.err.println("Mật khẩu không được để trống");
+            return false;
+        }
+
+        if (rawPassword.length() < 8) {
+            System.err.println("Mật khẩu phải có ít nhất 8 ký tự");
+            return false;
+        }
+
         if (isEmailExists(user.getEmail())) {
             System.err.println("Email đã tồn tại: " + user.getEmail());
             return false;
         }
-        
-        // Tự động tạo ID nếu chưa có
+
         if (user.getUserId() == null || user.getUserId().trim().isEmpty()) {
             user.setUserId(UUID.randomUUID().toString());
         }
-        
-        // Hash password nếu cần
-        if (user.getPasswordHash() != null && !user.getPasswordHash().isEmpty()) {
-            // Giả định password đã được hash hoặc hash ở đây
-            user.setPasswordHash(hashPassword(user.getPasswordHash()));
-        }
-        
+        user.setPasswordHash(hashPassword(rawPassword));
+
         return userRepository.createUser(user);
     }
     

@@ -5,6 +5,8 @@ import main.java.component.TaskCard;
 import main.java.model.Comments;
 import main.java.model.Task;
 import main.java.model.User;
+import main.java.service.CommentService;
+import main.java.service.UserService;
 import main.java.service.impl.CommentServiceImpl;
 import main.java.service.impl.UserServiceImpl;
 import main.java.view.DashboardView;
@@ -17,9 +19,11 @@ public class CommentController {
     private final Task task;
     private final Helper helper;
 
-    private final CommentServiceImpl commentService = new CommentServiceImpl();
-    private final UserServiceImpl userService = UserServiceImpl.getInstance();
+    private final CommentService commentService;
+    private final UserService userService ;
     public CommentController(DashboardView view, TaskCard taskCard, Task task) {
+        this.commentService = new CommentServiceImpl();
+        this.userService = UserServiceImpl.getInstance();
         this.view = view;
         this.taskCard = taskCard;
         this.task = task;

@@ -24,4 +24,6 @@ public interface UserService {
     boolean isEmailExists(String email);
 
     boolean userExists(String userId);
+
+    User getCurrentUser();
 }
