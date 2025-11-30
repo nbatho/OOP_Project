@@ -93,12 +93,11 @@ src
         ├── component       # Các thành phần UI tái sử dụng
         └── Utility         # Các tiện ích hỗ trợ
 ```
-
+## UML 
 <div align="center">
 <img align="center" style="width: 40%; height: auto;" src="./docs/ClassDiagram.png">
 </div>
 
 ---
-
 ## 📄 Báo cáo & Tài liệu
-- **Link nộp báo cáo**: [Điền link báo cáo tại đây](https://docs.google.com/document/d/1wYD9f5Ori1-Zo6Jsndia_HcDmGf3vs-4NzfKXtR7XSg/edit?tab=t.0)]
+- **Link nộp báo cáo**: [link báo cáo](https://docs.google.com/document/d/1wYD9f5Ori1-Zo6Jsndia_HcDmGf3vs-4NzfKXtR7XSg/edit?tab=t.0)]
