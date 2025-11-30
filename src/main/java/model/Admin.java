@@ -11,6 +11,11 @@ public class Admin extends User {
     }
 
     @Override
+    public String getPasswordHash() {
+        return super.getPasswordHash();
+    }
+
+    @Override
     public String toString() {
         return "Admin{" +
                 "userId='" + getUserId() + '\'' +

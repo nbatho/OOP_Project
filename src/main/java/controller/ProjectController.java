@@ -120,7 +120,7 @@ public class ProjectController {
                 newProject.setName(title);
                 newProject.setDescription(description);
                 String projectId = projectService.createProject(newProject);
-                projectMemberService.create(new ProjectMember(projectId, userService.getCurrentUser().getUserId(), "R2"));
+                projectMemberService.create(new ProjectMember(projectId, userService.getCurrentUser().getUserId(), "R1"));
 
                 loadProjectList();
                 handleProjectSelected(title);
