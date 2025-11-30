@@ -100,4 +100,4 @@ src
 
 ---
 ## 📄 Báo cáo & Tài liệu
-- **Link nộp báo cáo**: [link báo cáo](https://docs.google.com/document/d/1wYD9f5Ori1-Zo6Jsndia_HcDmGf3vs-4NzfKXtR7XSg/edit?tab=t.0)]
+- **Link nộp báo cáo**: [link báo cáo](https://docs.google.com/document/d/1wYD9f5Ori1-Zo6Jsndia_HcDmGf3vs-4NzfKXtR7XSg/edit?tab=t.0)
